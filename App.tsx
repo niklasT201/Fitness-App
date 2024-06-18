@@ -6,27 +6,14 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View, TouchableOpacity, Image } from 'react-native';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
+type SectionProps = {
   title: string;
-}>;
+  children: React.ReactNode;
+};
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function Section({ children, title }: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -34,7 +21,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
         style={[
           styles.sectionTitle,
           {
-            color: isDarkMode ? Colors.white : Colors.black,
+            color: isDarkMode ? '#000000' : '#000000', // Changed to black
           },
         ]}>
         {title}
@@ -43,7 +30,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
         style={[
           styles.sectionDescription,
           {
-            color: isDarkMode ? Colors.light : Colors.dark,
+            color: isDarkMode ? '#333333' : '#333333', // Changed to darker grey
           },
         ]}>
         {children}
@@ -55,22 +42,29 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function Header(): React.JSX.Element {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>Stay Strong</Text>
+      <Image source={require('./assets/logo.png')} style={styles.logo} />
     </View>
   );
 }
 
-function Footer(): React.JSX.Element {
+function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
     <View style={styles.footerContainer}>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Home')}>
+          <Image source={require('./assets/homeW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Workouts')}>
+          <Image source={require('./assets/workoutW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Workouts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
+          <Image source={require('./assets/fireW.png')} style={styles.footerIcon} />
+          <Text style={styles.footerButtonText}>Calories</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
+          <Image source={require('./assets/userW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -82,38 +76,63 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: '#f5f5f5', // Changed to a brighter color
     flex: 1,
+  };
+
+  const [currentScreen, setCurrentScreen] = React.useState('Home');
+
+  const navigateTo = (screen: string) => {
+    setCurrentScreen(screen);
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'Workouts':
+        return (
+          <View style={{ ...backgroundStyle, padding: 16 }}>
+            <Section title="Workouts">
+              Here you can find various workouts tailored to your fitness goals.
+            </Section>
+          </View>
+        );
+      case 'Profile':
+        return (
+          <View style={{ ...backgroundStyle, padding: 16 }}>
+            <Section title="Profile">
+              This is your profile. View and edit your personal information and track your progress.
+            </Section>
+          </View>
+        );
+      case 'Home':
+      default:
+        return (
+          <View style={{ ...backgroundStyle, padding: 16 }}>
+            <Section title="Welcome to Stay Strong">
+              Your journey to a healthier life begins here! Start exploring the app to find workouts, track your progress, and stay motivated.
+            </Section>
+            <Section title="Workouts">
+              Find a variety of workouts tailored to your goals. Whether you're a beginner or an expert, there's something for everyone.
+            </Section>
+            <Section title="Track Progress">
+              Keep track of your progress with our easy-to-use tracking tools. Set goals, monitor your performance, and celebrate your achievements.
+            </Section>
+          </View>
+        );
+    }
   };
 
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor="#4CAF50" // Matching the header color
       />
-      <Header />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            flex: 1,
-            padding: 16,
-          }}>
-          <Section title="Welcome to Stay Strong">
-            Your journey to a healthier life begins here! Start exploring the app to find workouts, track your progress, and stay motivated.
-          </Section>
-          <Section title="Workouts">
-            Find a variety of workouts tailored to your goals. Whether you're a beginner or an expert, there's something for everyone.
-          </Section>
-          <Section title="Track Progress">
-            Keep track of your progress with our easy-to-use tracking tools. Set goals, monitor your performance, and celebrate your achievements.
-          </Section>
-        </View>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
+        <Header />
+        {renderScreen()}
       </ScrollView>
-      <Footer />
+      <Footer navigateTo={navigateTo} />
     </SafeAreaView>
   );
 }
@@ -123,20 +142,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50', // Primary color
     padding: 16,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   headerText: {
     fontSize: 24,
-    color: '#fff', // Secondary color
+    color: '#ffffff', // Secondary color
     fontWeight: 'bold',
+  },
+  logo: {
+    width: 200,
+    height: 40,
+    right: 0,
   },
   sectionContainer: {
     marginTop: 16,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#cccccc', // Changed to light grey
     borderRadius: 8,
-    backgroundColor: '#f8f8f8', // Tertiary color
+    backgroundColor: '#ffffff', // Changed to white
   },
   sectionTitle: {
     fontSize: 20,
@@ -159,13 +185,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: '#4CAF50', // Primary color
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderRadius: 20,
     width: '90%',
-    height: 60,
-    shadowColor: '#000',
+    height: 80, // Increased height to accommodate icons
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -177,10 +200,12 @@ const styles = StyleSheet.create({
   },
   footerButtonText: {
     fontSize: 16,
-    color: '#fff', // Secondary color
+    color: '#ffffff', // Secondary color
+    marginTop: 5, // Added margin to separate text from icon
   },
-  highlight: {
-    fontWeight: '700',
+  footerIcon: {
+    width: 24,
+    height: 24,
   },
 });
 
