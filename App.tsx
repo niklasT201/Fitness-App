@@ -101,8 +101,10 @@ function App(): React.JSX.Element {
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
-              <Text style={styles.greetingText}>Hello personxy</Text>
-              <Text style={styles.readyText}>Are you ready to workout?</Text>
+              <View style={styles.textContainer}>
+                <Text style={styles.greetingText}>Hello personxy</Text>
+                <Text style={styles.readyText}>Are you ready to workout?</Text>
+              </View>
               <Image source={require('./assets/profile.jpg')} style={styles.profilePicture} />
             </View>
             <View style={styles.workoutCard}>
@@ -201,18 +203,23 @@ const styles = StyleSheet.create({
     height: 24,
   },
   headerContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
+  },
+  textContainer: {
+    flexDirection: 'column',
   },
   greetingText: {
     fontSize: 18,
     fontWeight: '500',
+    color: '#000000',
   },
   readyText: {
     fontSize: 18,
     fontWeight: '500',
+    color: '#000000',
     marginBottom: 10,
   },
   profilePicture: {
