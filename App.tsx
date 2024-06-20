@@ -39,14 +39,6 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
   );
 }
 
-function Header(): React.JSX.Element {
-  return (
-    <View style={styles.header}>
-      <Image source={require('./assets/logo.png')} style={styles.logo} />
-    </View>
-  );
-}
-
 function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
     <View style={styles.footerContainer}>
@@ -126,10 +118,11 @@ function App(): React.JSX.Element {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor="#4CAF50" // Matching the header color
+        backgroundColor="#f5f5f5" // Matching the footer color
       />
-      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-        <Header />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}>
         {renderScreen()}
       </ScrollView>
       <Footer navigateTo={navigateTo} />
@@ -138,23 +131,6 @@ function App(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#4CAF50', // Primary color
-    padding: 16,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    color: '#ffffff', // Secondary color
-    fontWeight: 'bold',
-  },
-  logo: {
-    width: 200,
-    height: 40,
-    right: 0,
-  },
   sectionContainer: {
     marginTop: 16,
     paddingHorizontal: 16,
