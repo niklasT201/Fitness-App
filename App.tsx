@@ -102,32 +102,38 @@ function App(): React.JSX.Element {
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.greetingText}>Hello personxy</Text>
-                <Text style={styles.readyText}>Are you ready to workout?</Text>
+                <Text style={styles.greetingText}>Hello John!</Text>
+                <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
               <Image source={require('./assets/profile.jpg')} style={styles.profilePicture} />
             </View>
             <View style={styles.workoutCard}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
               <View style={styles.workoutDetails}>
-                <Text>Running</Text>
-                <Text>• Warm-up</Text>
-                <Text>• Interval Training</Text>
-                <Text>• Cool-down</Text>
+                <Text style={styles.workoutCategorie}>Running</Text>
+                <Text style={styles.workoutText}>• Warm-up</Text>
+                <Text style={styles.workoutText}>• Interval Training</Text>
+                <Text style={styles.workoutText}>• Cool-down</Text>
               </View>
             </View>
             <View style={styles.workoutCard}>
               <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
               <View style={styles.workoutDetails}>
-                <Text>Lifting</Text>
-                <Text>• Warm-up</Text>
-                <Text>• Strength Training</Text>
-                <Text>• Cool-down</Text>
+                <Text style={styles.workoutCategorie}>Lifting</Text>
+                <Text style={styles.workoutText}>• Warm-up</Text>
+                <Text style={styles.workoutText}>• Strength Training</Text>
+                <Text style={styles.workoutText}>• Cool-down</Text>
               </View>
             </View>
-            <Section title="Track Progress">
-              Keep track of your progress with our easy-to-use tracking tools. Set goals, monitor your performance, and celebrate your achievements.
-            </Section>
+            <View style={styles.workoutCard}>
+              <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
+              <View style={styles.workoutDetails}>
+                <Text style={styles.workoutCategorie}>Lifting</Text>
+                <Text style={styles.workoutText}>• Warm-up</Text>
+                <Text style={styles.workoutText}>• Strength Training</Text>
+                <Text style={styles.workoutText}>• Cool-down</Text>
+              </View>
+            </View>
           </View>
         );
     }
@@ -212,9 +218,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   greetingText: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#000000',
+    fontSize: 35,
+    fontWeight: '700',
+    color: '#4CAF50',
   },
   readyText: {
     fontSize: 18,
@@ -223,8 +229,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   profilePicture: {
-    width: 90,
-    height: 90,
+    width: 70,
+    height: 70,
     borderRadius: 35,
   },
   workoutCard: {
@@ -233,16 +239,24 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderColor: '#cccccc',
-    borderRadius: 8,
+    borderRadius: 15,
     backgroundColor: '#ffffff',
   },
   workoutImage: {
     width: 120,
-    height: 170,
+    height: 190,
     marginRight: 16,
   },
   workoutDetails: {
     justifyContent: 'center',
+  },
+  workoutText: {
+    color: '#000000',
+    fontSize: 15,
+  },
+  workoutCategorie: {
+    color: '#000000',
+    fontSize: 20,
   },
 });
 
