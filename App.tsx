@@ -5,8 +5,8 @@
  * @format
  */
 
-import React from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SectionProps = {
@@ -65,18 +65,63 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
   );
 }
 
+function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
+  const [name, setName] = useState('');
+
+  const handlePress = async () => {
+    if (name) {
+      await AsyncStorage.setItem('userName', name);
+      onFinish();
+    }
+  };
+
+  return (
+    <View style={styles.welcomeContainer}>
+      <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
+      <TextInput 
+        style={styles.input}
+        placeholder="Your Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <Button title="Save" onPress={handlePress} />
+    </View>
+  );
+}
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [currentScreen, setCurrentScreen] = useState('Home');
+  const [userName, setUserName] = useState<string | null>(null);
+  const [isFirstTime, setIsFirstTime] = useState(true);
+
+  useEffect(() => {
+    const checkUserName = async () => {
+      const storedName = await AsyncStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+        setIsFirstTime(false);
+      }
+    };
+    checkUserName();
+  }, []);
 
   const backgroundStyle = {
     backgroundColor: '#FAF3E0', // Changed to a light beige color
     flex: 1,
   };
 
-  const [currentScreen, setCurrentScreen] = React.useState('Home');
-
   const navigateTo = (screen: string) => {
     setCurrentScreen(screen);
+  };
+
+  const handleWelcomeFinish = () => {
+    const getUserName = async () => {
+      const storedName = await AsyncStorage.getItem('userName');
+      setUserName(storedName);
+    };
+    getUserName();
+    setIsFirstTime(false);
   };
 
   const renderScreen = () => {
@@ -103,7 +148,7 @@ function App(): React.JSX.Element {
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.greetingText}>Hello John!</Text>
+                <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
               <Image source={require('./assets/profile.jpg')} style={styles.profilePicture} />
@@ -152,9 +197,9 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        {renderScreen()}
+        {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      <Footer navigateTo={navigateTo} />
+      {!isFirstTime && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
   );
 }
@@ -283,9 +328,29 @@ const styles = StyleSheet.create({
   workoutCategorie: {
     color: '#000000',
     fontSize: 20,
-    marginBottom: 14,
+    marginBottom: 8,
+    textDecorationLine: 'underline', // Underline the category text
     marginLeft: 10, // Add margin to move text to the right
-    marginTop: 13,
+  },
+  welcomeContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  welcomeText: {
+    fontSize: 24,
+    marginBottom: 16,
+    color: '#000000',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 16,
   },
 });
 
