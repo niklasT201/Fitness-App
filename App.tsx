@@ -107,6 +107,9 @@ function App(): React.JSX.Element {
               </View>
               <Image source={require('./assets/profile.jpg')} style={styles.profilePicture} />
             </View>
+            <View style={styles.chooseTrainingContainer}>
+              <Text style={styles.chooseTrainingText}>Choose the Session</Text>
+            </View>
             <View style={styles.workoutCard}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
               <View style={styles.workoutDetails}>
@@ -128,9 +131,9 @@ function App(): React.JSX.Element {
             <View style={styles.workoutCard}>
               <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
               <View style={styles.workoutDetails}>
-                <Text style={styles.workoutCategorie}>Lifting</Text>
+                <Text style={styles.workoutCategorie}>Biking</Text>
                 <Text style={styles.workoutText}>• Warm-up</Text>
-                <Text style={styles.workoutText}>• Strength Training</Text>
+                <Text style={styles.workoutText}>• Interval Training</Text>
                 <Text style={styles.workoutText}>• Cool-down</Text>
               </View>
             </View>
@@ -212,7 +215,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   textContainer: {
     flexDirection: 'column',
@@ -233,6 +237,23 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
   },
+  chooseTrainingContainer: {
+    marginTop: 16,
+    width: '80%',
+    height: 40, // Reduced height
+    marginBottom: 8,
+    paddingVertical: 8, // Adjusted vertical padding for proper height
+    borderRadius: 20,
+    backgroundColor: '#4CAF50',
+    alignItems: 'center',
+    justifyContent: 'center', // Center the text vertically
+    alignSelf: 'center', // Center the container
+  },
+  chooseTrainingText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
   workoutCard: {
     flexDirection: 'row',
     marginVertical: 8,
@@ -248,15 +269,22 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   workoutDetails: {
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align text to the top
+    flex: 1,
+    paddingTop: 10, // Add padding to move text higher
   },
   workoutText: {
     color: '#000000',
     fontSize: 15,
+    marginBottom: 4,
+    marginLeft: 10, // Add margin to move text to the right
   },
   workoutCategorie: {
     color: '#000000',
     fontSize: 20,
+    marginBottom: 14,
+    marginLeft: 10, // Add margin to move text to the right
+    marginTop: 13,
   },
 });
 
