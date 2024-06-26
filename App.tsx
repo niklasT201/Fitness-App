@@ -329,7 +329,6 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     marginBottom: 8,
-    textDecorationLine: 'underline', // Underline the category text
     marginLeft: 10, // Add margin to move text to the right
   },
   welcomeContainer: {
