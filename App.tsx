@@ -107,7 +107,7 @@ function App(): React.JSX.Element {
   }, []);
 
   const backgroundStyle = {
-    backgroundColor: '#FAF3E0', // Changed to a light beige color
+    backgroundColor: '#4CAF50', // Changed to green color
     flex: 1,
   };
 
@@ -192,7 +192,7 @@ function App(): React.JSX.Element {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor="#FAF3E0" // Matching the background color
+        backgroundColor="#4CAF50" // Matching the background color
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#cccccc', // Changed to light grey
     borderRadius: 8,
-    backgroundColor: '#ffffff', // Changed to white
+    backgroundColor: '#ffffff', // Changed to beige
   },
   sectionTitle: {
     fontSize: 20,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingVertical: 5, // Reduced padding to make footer shorter
     paddingHorizontal: 20,
-    backgroundColor: '#4CAF50', // Primary color
+    backgroundColor: '#388E3C', // Darker green color
     borderRadius: 20,
     width: '90%',
     height: 60, // Reduced height
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   greetingText: {
     fontSize: 35,
     fontWeight: '700',
-    color: '#4CAF50',
+    color: '#ffffff', // Changed to beige color
   },
   readyText: {
     fontSize: 18,
@@ -290,13 +290,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingVertical: 8, // Adjusted vertical padding for proper height
     borderRadius: 20,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#ffffff', // Changed to beige color
     alignItems: 'center',
     justifyContent: 'center', // Center the text vertically
     alignSelf: 'center', // Center the container
   },
   chooseTrainingText: {
-    color: '#ffffff',
+    color: '#000000', // Changed to black color
     fontSize: 16,
     fontWeight: '700',
   },
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#cccccc',
     borderRadius: 15,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff', // Changed to beige color
   },
   workoutImage: {
     width: 120,
