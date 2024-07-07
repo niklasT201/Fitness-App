@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableOpacity, Image, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SectionProps = {
@@ -151,38 +151,20 @@ function App(): React.JSX.Element {
                 <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
-              <Image source={require('./assets/profile.jpg')} style={styles.profilePicture} />
+              <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
             </View>
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
-            <View style={styles.workoutCard}>
+            <TouchableOpacity onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
-              <View style={styles.workoutDetails}>
-                <Text style={styles.workoutCategorie}>Running</Text>
-                <Text style={styles.workoutText}>• Warm-up</Text>
-                <Text style={styles.workoutText}>• Interval Training</Text>
-                <Text style={styles.workoutText}>• Cool-down</Text>
-              </View>
-            </View>
-            <View style={styles.workoutCard}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigateTo('Lifting')}>
               <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
-              <View style={styles.workoutDetails}>
-                <Text style={styles.workoutCategorie}>Lifting</Text>
-                <Text style={styles.workoutText}>• Warm-up</Text>
-                <Text style={styles.workoutText}>• Strength Training</Text>
-                <Text style={styles.workoutText}>• Cool-down</Text>
-              </View>
-            </View>
-            <View style={styles.workoutCard}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigateTo('Biking')}>
               <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
-              <View style={styles.workoutDetails}>
-                <Text style={styles.workoutCategorie}>Biking</Text>
-                <Text style={styles.workoutText}>• Warm-up</Text>
-                <Text style={styles.workoutText}>• Interval Training</Text>
-                <Text style={styles.workoutText}>• Cool-down</Text>
-              </View>
-            </View>
+            </TouchableOpacity>
           </View>
         );
     }
@@ -257,6 +239,26 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  welcomeContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  welcomeText: {
+    fontSize: 24,
+    marginBottom: 16,
+    color: '#000000',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 16,
+  },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -300,56 +302,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  workoutCard: {
-    flexDirection: 'row',
-    marginVertical: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#cccccc',
-    borderRadius: 15,
-    backgroundColor: '#ffffff', // Changed to beige color
-  },
   workoutImage: {
-    width: 120,
-    height: 190,
-    marginRight: 16,
-  },
-  workoutDetails: {
-    justifyContent: 'flex-start', // Align text to the top
-    flex: 1,
-    paddingTop: 10, // Add padding to move text higher
-  },
-  workoutText: {
-    color: '#000000',
-    fontSize: 15,
-    marginBottom: 4,
-    marginLeft: 10, // Add margin to move text to the right
-  },
-  workoutCategorie: {
-    color: '#000000',
-    fontSize: 20,
-    marginBottom: 8,
-    marginLeft: 10, // Add margin to move text to the right
-  },
-  welcomeContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  welcomeText: {
-    fontSize: 24,
-    marginBottom: 16,
-    color: '#000000',
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: '#cccccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    marginBottom: 16,
+    width: '125%',
+    height: 200,
+    marginBottom: -25,
+    borderRadius: 15,
+    alignSelf: 'center',
+    transform: [{ scale: 0.8 }], // Scale down to zoom out
   },
 });
 
