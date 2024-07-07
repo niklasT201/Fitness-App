@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     marginBottom: 19,
+    marginRight: -25,
   },
   chooseTrainingContainer: {
     marginTop: 16,
