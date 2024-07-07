@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SectionProps = {
@@ -156,15 +156,15 @@ function App(): React.JSX.Element {
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
-            <TouchableOpacity onPress={() => navigateTo('Running')}>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigateTo('Lifting')}>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
               <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigateTo('Biking')}>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
               <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
           </View>
         );
     }
@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
+    marginBottom: 19,
   },
   chooseTrainingContainer: {
     marginTop: 16,
