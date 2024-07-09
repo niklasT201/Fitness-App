@@ -6,8 +6,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 type SectionProps = {
   title: string;
@@ -76,18 +78,22 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   };
 
   return (
-    <View style={styles.welcomeContainer}>
-      <Image source={require('./assets/start.png')} style={styles.welcomeImage} />
-      <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
-      <TextInput 
-        style={styles.input}
-        placeholder="Your Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <TouchableOpacity style={styles.saveButton} onPress={handlePress}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
+    <View style={[styles.welcomeContainer, { height: screenHeight}]}>
+      <View style={styles.welcomeContent}>
+        <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Your Name"
+          value={name}
+          onChangeText={setName}
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handlePress}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.welcomeImageContainer}>
+        <Image source={require('./assets/start.png')} style={styles.welcomeImage} />
+      </View>
     </View>
   );
 }
@@ -244,20 +250,22 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
     backgroundColor: '#4CAF50',
+    overflow: 'hidden',
   },
-  welcomeImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 16,
+  welcomeContent: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   welcomeText: {
     fontSize: 24,
     marginBottom: 16,
     color: '#ffffff',
+    textAlign: 'center',
+    marginTop: 50,
   },
   input: {
     width: '100%',
@@ -273,11 +281,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 45,
   },
   saveButtonText: {
     color: '#4CAF50',
     fontSize: 16,
     fontWeight: '600',
+  },
+  welcomeImageContainer: {
+    width: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  welcomeImage: {
+    width: '110%',
+    height: 450, // Adjust height as needed
   },
   headerContainer: {
     flexDirection: 'row',
