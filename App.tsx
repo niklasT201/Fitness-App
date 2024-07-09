@@ -77,6 +77,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
 
   return (
     <View style={styles.welcomeContainer}>
+      <Image source={require('./assets/start.png')} style={styles.welcomeImage} />
       <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
       <TextInput 
         style={styles.input}
@@ -84,7 +85,9 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
         value={name}
         onChangeText={setName}
       />
-      <Button title="Save" onPress={handlePress} />
+      <TouchableOpacity style={styles.saveButton} onPress={handlePress}>
+        <Text style={styles.saveButtonText}>Save</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -244,11 +247,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    backgroundColor: '#4CAF50',
+  },
+  welcomeImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 16,
   },
   welcomeText: {
     fontSize: 24,
     marginBottom: 16,
-    color: '#000000',
+    color: '#ffffff',
   },
   input: {
     width: '100%',
@@ -258,6 +267,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     marginBottom: 16,
+  },
+  saveButton: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: '#4CAF50',
+    fontSize: 16,
+    fontWeight: '600',
   },
   headerContainer: {
     flexDirection: 'row',
