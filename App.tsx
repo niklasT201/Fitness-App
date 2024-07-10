@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions  } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height: screenHeight } = Dimensions.get('window');
@@ -100,36 +100,134 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
 
 function CaloriesScreen(): React.JSX.Element {
   const [calories, setCalories] = useState('');
-  const [dailyCalories, setDailyCalories] = useState<number[]>([]);
+  const [fat, setFat] = useState('');
+  const [sugar, setSugar] = useState('');
+  const [protein, setProtein] = useState('');
+  const [dailyValues, setDailyValues] = useState<{ calories: number; fat: number; sugar: number; protein: number }>({ calories: 0, fat: 0, sugar: 0, protein: 0 });
 
-  const addCalories = () => {
-    const cal = parseInt(calories, 10);
-    if (!isNaN(cal)) {
-      setDailyCalories([...dailyCalories, cal]);
-      setCalories('');
-    }
+  useEffect(() => {
+    const resetDailyValues = async () => {
+      const lastReset = await AsyncStorage.getItem('lastReset');
+      const now = new Date();
+      if (lastReset) {
+        const lastResetDate = new Date(lastReset);
+        if (now.getDate() !== lastResetDate.getDate() || now.getMonth() !== lastResetDate.getMonth() || now.getFullYear() !== lastResetDate.getFullYear()) {
+          await AsyncStorage.setItem('dailyValues', JSON.stringify({ calories: 0, fat: 0, sugar: 0, protein: 0 }));
+          setDailyValues({ calories: 0, fat: 0, sugar: 0, protein: 0 });
+          await AsyncStorage.setItem('lastReset', now.toISOString());
+        }
+      } else {
+        await AsyncStorage.setItem('lastReset', now.toISOString());
+      }
+    };
+  
+    const loadDailyValues = async () => {
+      const storedValues = await AsyncStorage.getItem('dailyValues');
+      if (storedValues) {
+        setDailyValues(JSON.parse(storedValues));
+      }
+    };
+  
+    resetDailyValues();
+    loadDailyValues();
+  }, []);
+  
+
+  const addValues = async () => {
+    const cal = parseInt(calories, 10) || 0;
+    const fatVal = parseInt(fat, 10) || 0;
+    const sugarVal = parseInt(sugar, 10) || 0;
+    const proteinVal = parseInt(protein, 10) || 0;
+
+    const updatedValues = {
+      calories: dailyValues.calories + cal,
+      fat: dailyValues.fat + fatVal,
+      sugar: dailyValues.sugar + sugarVal,
+      protein: dailyValues.protein + proteinVal,
+    };
+
+    setDailyValues(updatedValues);
+    await AsyncStorage.setItem('dailyValues', JSON.stringify(updatedValues));
+    setCalories('');
+    setFat('');
+    setSugar('');
+    setProtein('');
   };
 
-  const totalCalories = dailyCalories.reduce((acc, cur) => acc + cur, 0);
-
   return (
-    <View style={{ ...styles.screenContainer, padding: 16 }}>
-      <Section title="Calories Tracker">
-        <TextInput
-          style={styles.input}
-          placeholder="Enter calories"
-          value={calories}
-          onChangeText={setCalories}
-          keyboardType="numeric"
-        />
-        <TouchableOpacity style={styles.saveButton} onPress={addCalories}>
-          <Text style={styles.saveButtonText}>Add</Text>
-        </TouchableOpacity>
-        <Text style={styles.totalCaloriesText}>Total Calories: {totalCalories}</Text>
-      </Section>
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.calorieImageContainer}>
+        <Image source={require('./assets/heart.png')} style={styles.heartImage} />
+      </View>
+    <TextInput
+      style={styles.calorieInput}
+      placeholder="Enter calories"
+      value={calories}
+      onChangeText={setCalories}
+      keyboardType="numeric"
+    />
+    <TextInput
+      style={styles.calorieInput}
+      placeholder="Enter fat (g)"
+      value={fat}
+      onChangeText={setFat}
+      keyboardType="numeric"
+    />
+    <TextInput
+      style={styles.calorieInput}
+      placeholder="Enter sugar (g)"
+      value={sugar}
+      onChangeText={setSugar}
+      keyboardType="numeric"
+    />
+    <TextInput
+      style={styles.calorieInput}
+      placeholder="Enter protein (g)"
+      value={protein}
+      onChangeText={setProtein}
+      keyboardType="numeric"
+    />
+    <TouchableOpacity style={styles.calorieSaveButton} onPress={addValues}>
+      <Text style={styles.calorieSaveButtonText}>Add</Text>
+    </TouchableOpacity>
+    <View style={styles.totalValuesContainer}>
+      <Text style={styles.totalValuesText}>Total Calories: {dailyValues.calories} g</Text>
+      <Text style={styles.totalValuesText}>Total Protein: {dailyValues.protein} g</Text>
+      <Text style={styles.totalValuesText}>Total Sugar: {dailyValues.sugar} g</Text>
+      <Text style={styles.totalValuesText}>Total Fat: {dailyValues.fat} g</Text>
     </View>
+  </ScrollView>
   );
 }
+
+function ProfileScreen(): React.JSX.Element {
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUserName = async () => {
+      const storedName = await AsyncStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+      }
+    };
+    loadUserName();
+  }, []);
+
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.profileImageContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileImage} />
+      </View>
+      <View style={styles.profileDetailsContainer}>
+        <Text style={styles.profileUserName}>{userName}</Text>
+        <Text style={styles.profileDetail}>Email: example@example.com</Text>
+        <Text style={styles.profileDetail}>Joined: January 2024</Text>
+        {/* Add more details as needed */}
+      </View>
+    </ScrollView>
+  );
+}
+
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -178,11 +276,7 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <View style={{ ...backgroundStyle, padding: 16 }}>
-            <Section title="Profile">
-              This is your profile. View and edit your personal information and track your progress.
-            </Section>
-          </View>
+          <ProfileScreen />
         );
       case 'Calories':
         return (
@@ -393,11 +487,82 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#4CAF50',
   },
-  totalCaloriesText: {
-    fontSize: 18,
+  calorieInput: {
+    width: '80%',
+    height: 40,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 16,
+    alignSelf: 'center', // Center the input fields
+  },
+  calorieSaveButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 16,
+    width: '80%',
+    backgroundColor: '#ffffff',
+    alignSelf: 'center', // Center the button
+  },
+  calorieSaveButtonText: {
+    color: "#4CAF50",
+    fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
-    marginTop: 10,
+    textAlign: 'center', // Center the text within the button
+  },
+  totalValuesContainer: {
+    marginTop: 16,
+    alignItems: 'center', // Center the text
+  },
+  totalValuesText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  calorieImageContainer: {
+    alignItems: 'center', // Center the image horizontally
+    marginBottom: 20, // Add some margin below the image
+  },
+  heartImage: {
+    width: '70%', // Reduce the width of the image
+    height: undefined,
+    aspectRatio: 1, // Maintain aspect ratio
+    resizeMode: 'contain', // Contain within the container
+  },
+  profileImageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: '60%', // Reduce the width of the image
+    height: undefined,
+    aspectRatio: 1, // Maintain aspect ratio
+    resizeMode: 'contain', // Contain within the container
+  },
+  profileDetailsContainer: {
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginHorizontal: 20,
+  },
+  profileUserName: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  profileDetail: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#666666',
+    marginBottom: 8,
   },
 });
 
