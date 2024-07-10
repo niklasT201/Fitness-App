@@ -54,7 +54,7 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
           <Image source={require('./assets/workoutW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Workouts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Calories')}>
           <Image source={require('./assets/fireW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Calories</Text>
         </TouchableOpacity>
@@ -78,7 +78,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   };
 
   return (
-    <View style={[styles.welcomeContainer, { height: screenHeight}]}>
+    <View style={[styles.welcomeContainer, { height: screenHeight }]}>
       <View style={styles.welcomeContent}>
         <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
         <TextInput
@@ -94,6 +94,39 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
       <View style={styles.welcomeImageContainer}>
         <Image source={require('./assets/start.png')} style={styles.welcomeImage} />
       </View>
+    </View>
+  );
+}
+
+function CaloriesScreen(): React.JSX.Element {
+  const [calories, setCalories] = useState('');
+  const [dailyCalories, setDailyCalories] = useState<number[]>([]);
+
+  const addCalories = () => {
+    const cal = parseInt(calories, 10);
+    if (!isNaN(cal)) {
+      setDailyCalories([...dailyCalories, cal]);
+      setCalories('');
+    }
+  };
+
+  const totalCalories = dailyCalories.reduce((acc, cur) => acc + cur, 0);
+
+  return (
+    <View style={{ ...styles.screenContainer, padding: 16 }}>
+      <Section title="Calories Tracker">
+        <TextInput
+          style={styles.input}
+          placeholder="Enter calories"
+          value={calories}
+          onChangeText={setCalories}
+          keyboardType="numeric"
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={addCalories}>
+          <Text style={styles.saveButtonText}>Add</Text>
+        </TouchableOpacity>
+        <Text style={styles.totalCaloriesText}>Total Calories: {totalCalories}</Text>
+      </Section>
     </View>
   );
 }
@@ -151,6 +184,10 @@ function App(): React.JSX.Element {
             </Section>
           </View>
         );
+      case 'Calories':
+        return (
+          <CaloriesScreen />
+        );
       case 'Home':
       default:
         return (
@@ -160,7 +197,9 @@ function App(): React.JSX.Element {
                 <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
+              <TouchableWithoutFeedback onPress={() => navigateTo('Profile')}>
               <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
+              </TouchableWithoutFeedback>
             </View>
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
@@ -349,6 +388,16 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignSelf: 'center',
     transform: [{ scale: 0.8 }], // Scale down to zoom out
+  },
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#4CAF50',
+  },
+  totalCaloriesText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000000',
+    marginTop: 10,
   },
 });
 
