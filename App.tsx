@@ -209,6 +209,19 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
   );
 }
 
+function RunningScreen(): React.JSX.Element {
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.profileDetailsContainer}>
+        <Text style={styles.profileUserName}></Text>
+        <Text style={styles.profileDetail}>Email: example@example.com</Text>
+        <Text style={styles.profileDetail}>Joined: January 2024</Text>
+        {/* Add more details as needed */}
+      </View>
+    </ScrollView>
+  );
+}
+
 function ProfileScreen(): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -278,9 +291,18 @@ function App(): React.JSX.Element {
       case 'Workouts':
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
-            <Section title="Workouts">
-              Here you can find various workouts tailored to your fitness goals.
-            </Section>
+            <View style={styles.textContainer}>
+                <Text style={styles.greetingText}>Workouts!!!</Text>
+              </View>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
+              <Image source={require('./assets/running.png')} style={styles.workoutImage} />
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
+              <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
+              <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
+            </TouchableWithoutFeedback>
           </View>
         );
       case 'Profile':
@@ -294,6 +316,10 @@ function App(): React.JSX.Element {
       case 'TotalValues':
         return (
           <TotalValuesScreen dailyValues={dailyValues} />
+        );
+        case 'Running':
+        return (
+          <RunningScreen />
         );
       case 'Home':
       default:
