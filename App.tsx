@@ -98,12 +98,11 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   );
 }
 
-function CaloriesScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateTo: (screen: string) => void, dailyValues: { calories: number; fat: number; sugar: number; protein: number }, setDailyValues: React.Dispatch<React.SetStateAction<{ calories: number; fat: number; sugar: number; protein: number }>> }): React.JSX.Element {
   const [calories, setCalories] = useState('');
   const [fat, setFat] = useState('');
   const [sugar, setSugar] = useState('');
   const [protein, setProtein] = useState('');
-  const [dailyValues, setDailyValues] = useState<{ calories: number; fat: number; sugar: number; protein: number }>({ calories: 0, fat: 0, sugar: 0, protein: 0 });
 
   useEffect(() => {
     const resetDailyValues = async () => {
@@ -130,7 +129,7 @@ function CaloriesScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
     resetDailyValues();
     loadDailyValues();
-  }, []);
+  }, [setDailyValues]);
 
   const addValues = async () => {
     const cal = parseInt(calories, 10) || 0;
@@ -243,7 +242,7 @@ function App(): React.JSX.Element {
   const [currentScreen, setCurrentScreen] = useState('Home');
   const [userName, setUserName] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
-  const [dailyValues, setDailyValues] = useState<{ calories: number; fat: number; sugar: number; protein: number }>({ calories: 0, fat: 0, sugar: 0, protein: 0 });
+  const [dailyValues, setDailyValues] = useState({ calories: 0, fat: 0, sugar: 0, protein: 0 });
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -290,7 +289,7 @@ function App(): React.JSX.Element {
         );
       case 'Calories':
         return (
-          <CaloriesScreen navigateTo={navigateTo} />
+          <CaloriesScreen navigateTo={navigateTo} dailyValues={dailyValues} setDailyValues={setDailyValues} />
         );
       case 'TotalValues':
         return (
@@ -542,7 +541,6 @@ const styles = StyleSheet.create({
   },
   totalValuesContainer: {
     padding: 20,
-    backgroundColor: '#fff',
     borderRadius: 10,
     margin: 10,
   },
