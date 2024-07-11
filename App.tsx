@@ -98,7 +98,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   );
 }
 
-function CaloriesScreen(): React.JSX.Element {
+function CaloriesScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   const [calories, setCalories] = useState('');
   const [fat, setFat] = useState('');
   const [sugar, setSugar] = useState('');
@@ -120,18 +120,17 @@ function CaloriesScreen(): React.JSX.Element {
         await AsyncStorage.setItem('lastReset', now.toISOString());
       }
     };
-  
+
     const loadDailyValues = async () => {
       const storedValues = await AsyncStorage.getItem('dailyValues');
       if (storedValues) {
         setDailyValues(JSON.parse(storedValues));
       }
     };
-  
+
     resetDailyValues();
     loadDailyValues();
   }, []);
-  
 
   const addValues = async () => {
     const cal = parseInt(calories, 10) || 0;
@@ -159,44 +158,55 @@ function CaloriesScreen(): React.JSX.Element {
       <View style={styles.calorieImageContainer}>
         <Image source={require('./assets/heart.png')} style={styles.heartImage} />
       </View>
-    <TextInput
-      style={styles.calorieInput}
-      placeholder="Enter calories"
-      value={calories}
-      onChangeText={setCalories}
-      keyboardType="numeric"
-    />
-    <TextInput
-      style={styles.calorieInput}
-      placeholder="Enter fat (g)"
-      value={fat}
-      onChangeText={setFat}
-      keyboardType="numeric"
-    />
-    <TextInput
-      style={styles.calorieInput}
-      placeholder="Enter sugar (g)"
-      value={sugar}
-      onChangeText={setSugar}
-      keyboardType="numeric"
-    />
-    <TextInput
-      style={styles.calorieInput}
-      placeholder="Enter protein (g)"
-      value={protein}
-      onChangeText={setProtein}
-      keyboardType="numeric"
-    />
-    <TouchableOpacity style={styles.calorieSaveButton} onPress={addValues}>
-      <Text style={styles.calorieSaveButtonText}>Add</Text>
-    </TouchableOpacity>
-    <View style={styles.totalValuesContainer}>
-      <Text style={styles.totalValuesText}>Total Calories: {dailyValues.calories} g</Text>
-      <Text style={styles.totalValuesText}>Total Protein: {dailyValues.protein} g</Text>
-      <Text style={styles.totalValuesText}>Total Sugar: {dailyValues.sugar} g</Text>
-      <Text style={styles.totalValuesText}>Total Fat: {dailyValues.fat} g</Text>
-    </View>
-  </ScrollView>
+      <TextInput
+        style={styles.calorieInput}
+        placeholder="Enter calories"
+        value={calories}
+        onChangeText={setCalories}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.calorieInput}
+        placeholder="Enter fat (g)"
+        value={fat}
+        onChangeText={setFat}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.calorieInput}
+        placeholder="Enter sugar (g)"
+        value={sugar}
+        onChangeText={setSugar}
+        keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.calorieInput}
+        placeholder="Enter protein (g)"
+        value={protein}
+        onChangeText={setProtein}
+        keyboardType="numeric"
+      />
+      <TouchableOpacity style={styles.calorieSaveButton} onPress={addValues}>
+        <Text style={styles.calorieSaveButtonText}>Add</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.viewTotalButton} onPress={() => navigateTo('TotalValues')}>
+        <Text style={styles.viewTotalButtonText}>View Total Values</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
+
+function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; fat: number; sugar: number; protein: number } }): React.JSX.Element {
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.totalValuesContainer}>
+        <Text style={styles.totalValuesText}>Total Calories: {dailyValues.calories} g</Text>
+        <Text style={styles.totalValuesText}>Total Protein: {dailyValues.protein} g</Text>
+        <Text style={styles.totalValuesText}>Total Sugar: {dailyValues.sugar} g</Text>
+        <Text style={styles.totalValuesText}>Total Fat: {dailyValues.fat} g</Text>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -228,12 +238,12 @@ function ProfileScreen(): React.JSX.Element {
   );
 }
 
-
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [currentScreen, setCurrentScreen] = useState('Home');
   const [userName, setUserName] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [dailyValues, setDailyValues] = useState<{ calories: number; fat: number; sugar: number; protein: number }>({ calories: 0, fat: 0, sugar: 0, protein: 0 });
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -280,7 +290,11 @@ function App(): React.JSX.Element {
         );
       case 'Calories':
         return (
-          <CaloriesScreen />
+          <CaloriesScreen navigateTo={navigateTo} />
+        );
+      case 'TotalValues':
+        return (
+          <TotalValuesScreen dailyValues={dailyValues} />
         );
       case 'Home':
       default:
@@ -292,7 +306,7 @@ function App(): React.JSX.Element {
                 <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
               <TouchableWithoutFeedback onPress={() => navigateTo('Profile')}>
-              <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
+                <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
               </TouchableWithoutFeedback>
             </View>
             <View style={styles.chooseTrainingContainer}>
@@ -501,7 +515,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 16,
+    marginBottom: 5,
     width: '80%',
     backgroundColor: '#ffffff',
     alignSelf: 'center', // Center the button
@@ -512,15 +526,30 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center', // Center the text within the button
   },
+  viewTotalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFA500', // Different color for the view total button
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '80%',
+    alignSelf: 'center', // Center the button
+  },
+  viewTotalButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
   totalValuesContainer: {
-    marginTop: 16,
-    alignItems: 'center', // Center the text
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    margin: 10,
   },
   totalValuesText: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#333333',
-    marginBottom: 8,
+    marginBottom: 10,
+    fontWeight: 'bold',
   },
   calorieImageContainer: {
     alignItems: 'center', // Center the image horizontally
