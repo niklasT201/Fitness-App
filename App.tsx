@@ -199,11 +199,26 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
 function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; fat: number; sugar: number; protein: number } }): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
+      <View style={styles.totalheader}>
+        <Text style={styles.totalheaderText}>Total Values</Text>
+      </View>
       <View style={styles.totalValuesContainer}>
-        <Text style={styles.totalValuesText}>Total Calories: {dailyValues.calories} g</Text>
-        <Text style={styles.totalValuesText}>Total Protein: {dailyValues.protein} g</Text>
-        <Text style={styles.totalValuesText}>Total Sugar: {dailyValues.sugar} g</Text>
-        <Text style={styles.totalValuesText}>Total Fat: {dailyValues.fat} g</Text>
+        <View style={styles.valueContainer}>
+          <Text style={styles.valueLabel}>Consumed Calories:</Text>
+          <Text style={styles.totalValuesText}>{dailyValues.calories} g</Text>
+        </View>
+        <View style={styles.valueContainer}>
+          <Text style={styles.valueLabel}>Consumed Protein:</Text>
+          <Text style={styles.totalValuesText}>{dailyValues.protein} g</Text>
+        </View>
+        <View style={styles.valueContainer}>
+          <Text style={styles.valueLabel}>Consumed Sugar:</Text>
+          <Text style={styles.totalValuesText}>{dailyValues.sugar} g</Text>
+        </View>
+        <View style={styles.valueContainer}>
+          <Text style={styles.valueLabel}>Consumed Fat:</Text>
+          <Text style={styles.totalValuesText}>{dailyValues.fat} g</Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -240,6 +255,7 @@ function RunningScreen(): React.JSX.Element {
 
   return (
     <View style={styles.runningContainer}>
+        <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
       <Text style={styles.timerText}>{formatTime(seconds)}</Text>
       {!isRunning && (
         <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
@@ -599,9 +615,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   totalValuesText: {
-    fontSize: 18,
+    fontSize: 22,
     marginBottom: 10,
     fontWeight: 'bold',
+    color: '#333',
+    marginTop: 5,
   },
   calorieImageContainer: {
     alignItems: 'center', // Center the image horizontally
@@ -651,6 +669,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   timerText: {
+    marginTop: 180,
     fontSize: 48,
     fontWeight: 'bold',
     color: '#ffffff',
@@ -666,6 +685,38 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  totalheader: {
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  totalheaderText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  valueContainer: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    elevation: 3,
+  },
+  valueLabel: {
+    fontSize: 18,
+    color: '#777',
+  },
+  runningImage:{
+      marginTop: 50,
+      width: '90%',
+      height: 180,
+      borderRadius: 15,
+      alignSelf: 'center',
+  },
+  runtimerContainer:{
+    alignItems: 'center', // Center the image horizontally
+    marginBottom: 20, // Add some margin below the image
   },
 });
 
