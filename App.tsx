@@ -5,8 +5,8 @@
  * @format
  */
 
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height: screenHeight } = Dimensions.get('window');
@@ -210,15 +210,33 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 }
 
 function RunningScreen(): React.JSX.Element {
+  const [seconds, setSeconds] = useState(1500); // 25 minutes in seconds
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (seconds > 0) {
+      timerRef.current = setTimeout(() => {
+        setSeconds(seconds - 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [seconds]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
   return (
-    <ScrollView style={styles.screenContainer}>
-      <View style={styles.profileDetailsContainer}>
-        <Text style={styles.profileUserName}></Text>
-        <Text style={styles.profileDetail}>Email: example@example.com</Text>
-        <Text style={styles.profileDetail}>Joined: January 2024</Text>
-        {/* Add more details as needed */}
-      </View>
-    </ScrollView>
+    <View style={styles.runningContainer}>
+      <Text style={styles.timerText}>{formatTime(seconds)}</Text>
+    </View>
   );
 }
 
@@ -292,7 +310,7 @@ function App(): React.JSX.Element {
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.textContainer}>
-                <Text style={styles.greetingText}>Workouts!!!</Text>
+                <Text style={styles.greetingText}>Workouts</Text>
               </View>
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
@@ -616,6 +634,15 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#666666',
     marginBottom: 8,
+  },
+  runningContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: 'bold',
   },
 });
 
