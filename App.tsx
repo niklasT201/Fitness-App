@@ -210,11 +210,12 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 }
 
 function RunningScreen(): React.JSX.Element {
-  const [seconds, setSeconds] = useState(1500); // 25 minutes in seconds
+  const [seconds, setSeconds] = useState(3600); // 25 minutes in seconds
+  const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (seconds > 0) {
+    if (isRunning && seconds > 0) {
       timerRef.current = setTimeout(() => {
         setSeconds(seconds - 1);
       }, 1000);
@@ -225,7 +226,7 @@ function RunningScreen(): React.JSX.Element {
         clearTimeout(timerRef.current);
       }
     };
-  }, [seconds]);
+  }, [seconds, isRunning]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -233,9 +234,18 @@ function RunningScreen(): React.JSX.Element {
     return `${m}:${s}`;
   };
 
+  const handleStartPress = () => {
+    setIsRunning(true);
+  };
+
   return (
     <View style={styles.runningContainer}>
       <Text style={styles.timerText}>{formatTime(seconds)}</Text>
+      {!isRunning && (
+        <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
+          <Text style={styles.startButtonText}>Start</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -642,6 +652,19 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 48,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  startButton: {
+    marginTop: 20,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  startButtonText: {
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });
