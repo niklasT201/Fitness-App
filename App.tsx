@@ -273,7 +273,7 @@ function RunningScreen(): React.JSX.Element {
             },
           ]}
         />
-        <Text style={styles.progressText}>{progress.toFixed(0)}%</Text>
+        <Text style={styles.progressText}>Progress: {progress.toFixed(0)}%</Text>
       </View>
       <Text style={styles.timerText}>{formatTime(seconds)}</Text>
       {!isRunning && (
@@ -689,7 +689,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   timerText: {
-    marginTop: 150,
+    marginTop: 100,
     fontSize: 48,
     fontWeight: 'bold',
     color: '#ffffff',
@@ -740,9 +740,9 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     width: '85%',
-    height: 30,
+    height: 32,
     backgroundColor: '#cccccc',
-    borderRadius: 10,
+    borderRadius: 15,
     overflow: 'hidden',
     marginTop: 40,
   },
@@ -751,6 +751,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#44c94a',
   },
   progressText: {
+    marginLeft: 10,
     position: 'absolute',
     color: '#ffffff',
     fontWeight: 'bold',
