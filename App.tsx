@@ -225,7 +225,8 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 }
 
 function RunningScreen(): React.JSX.Element {
-  const [seconds, setSeconds] = useState(3600); // 25 minutes in seconds
+  const totalTime = 3600; // Total time in seconds (60 minutes)
+  const [seconds, setSeconds] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -234,6 +235,9 @@ function RunningScreen(): React.JSX.Element {
       timerRef.current = setTimeout(() => {
         setSeconds(seconds - 1);
       }, 1000);
+    } else if (seconds === 0) {
+      setIsRunning(false); // Stop the timer when it reaches zero
+      setSeconds(totalTime); // Reset the timer to the initial value
     }
 
     return () => {
@@ -250,12 +254,27 @@ function RunningScreen(): React.JSX.Element {
   };
 
   const handleStartPress = () => {
-    setIsRunning(true);
+    if (!isRunning) {
+      setIsRunning(true);
+    }
   };
+
+  const progress = (1 - seconds / totalTime) * 100;
 
   return (
     <View style={styles.runningContainer}>
-        <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
+      <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
+      <View style={styles.progressBarContainer}>
+        <Animated.View
+          style={[
+            styles.progressBar,
+            {
+              width: `${progress}%`,
+            },
+          ]}
+        />
+        <Text style={styles.progressText}>{progress.toFixed(0)}%</Text>
+      </View>
       <Text style={styles.timerText}>{formatTime(seconds)}</Text>
       {!isRunning && (
         <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
@@ -265,6 +284,7 @@ function RunningScreen(): React.JSX.Element {
     </View>
   );
 }
+
 
 function ProfileScreen(): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
@@ -669,7 +689,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   timerText: {
-    marginTop: 180,
+    marginTop: 150,
     fontSize: 48,
     fontWeight: 'bold',
     color: '#ffffff',
@@ -717,6 +737,24 @@ const styles = StyleSheet.create({
   runtimerContainer:{
     alignItems: 'center', // Center the image horizontally
     marginBottom: 20, // Add some margin below the image
+  },
+  progressBarContainer: {
+    width: '85%',
+    height: 30,
+    backgroundColor: '#cccccc',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginTop: 40,
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#44c94a',
+  },
+  progressText: {
+    position: 'absolute',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 17,
   },
 });
 
