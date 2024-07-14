@@ -319,6 +319,11 @@ function RunningScreen(): React.JSX.Element {
           </TouchableOpacity>
         </View>
       )}
+      {isRunning && (
+         <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+         <Text style={styles.cancelButtonText}>Cancel</Text>
+       </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -423,6 +428,14 @@ function App(): React.JSX.Element {
         return (
           <RunningScreen />
         );
+        case 'Lifting':
+          return (
+            <RunningScreen />
+          );
+          case 'Biking':
+            return (
+              <RunningScreen />
+            );
       case 'Home':
       default:
         return (
@@ -727,7 +740,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   timerText: {
-    marginTop: 100,
+    marginTop: 50,
     fontSize: 48,
     fontWeight: 'bold',
     color: '#ffffff',
@@ -797,29 +810,30 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 20,
+    marginTop: 50,
   },
   stopButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   stopButtonImage: {
-    width: 51,
-    height: 51,
+    width: 61,
+    height: 61,
   },
   cancelButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
   cancelButtonImage: {
-    width: 50,
-    height: 50,
-    marginLeft: -15,
+    width: 60,
+    height: 60,
+    marginLeft: 5,
   },
   cancelButtonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 23,
     fontWeight: 'bold',
+    marginTop: 20,
   },
 });
 
