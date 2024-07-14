@@ -312,10 +312,10 @@ function RunningScreen(): React.JSX.Element {
       {isRunning && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
-            <Text style={styles.stopButtonText}>Stop</Text>
+            <Image source={require('./assets/Pause-Button.png')} style={styles.stopButtonImage} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Image source={require('./assets/Cancel-Button.png')} style={styles.cancelButtonImage} />
           </TouchableOpacity>
         </View>
       )}
@@ -800,22 +800,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   stopButton: {
-    backgroundColor: '#FFA500',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
-    marginRight: 10,
   },
-  stopButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  stopButtonImage: {
+    width: 51,
+    height: 51,
   },
   cancelButton: {
-    backgroundColor: '#f44336',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+  },
+  cancelButtonImage: {
+    width: 50,
+    height: 50,
+    marginLeft: -15,
   },
   cancelButtonText: {
     color: '#fff',
