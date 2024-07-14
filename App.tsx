@@ -872,6 +872,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: 16,
+    backgroundColor: '#4CAF50',
   },
   editProfileButton: {
     backgroundColor: '#4CAF50',
