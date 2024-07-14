@@ -344,18 +344,43 @@ function ProfileScreen(): React.JSX.Element {
 
   return (
     <ScrollView style={styles.screenContainer}>
-      <View style={styles.profileImageContainer}>
-        <Image source={require('./assets/profile.png')} style={styles.profileImage} />
-      </View>
-      <View style={styles.profileDetailsContainer}>
+      <View style={styles.profileHeaderContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
         <Text style={styles.profileUserName}>{userName}</Text>
         <Text style={styles.profileDetail}>Email: example@example.com</Text>
         <Text style={styles.profileDetail}>Joined: January 2024</Text>
-        {/* Add more details as needed */}
+        <TouchableOpacity style={styles.editProfileButton}>
+          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.profileStatsContainer}>
+        <Text style={styles.statsTitle}>Your Statistics</Text>
+        <View style={styles.statRow}>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>120</Text>
+            <Text style={styles.statLabel}>Workouts</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>45</Text>
+            <Text style={styles.statLabel}>Calories</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>20</Text>
+            <Text style={styles.statLabel}>Hours</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.profileSettingsContainer}>
+        <TouchableOpacity style={styles.settingsButton}>
+          <Text style={styles.settingsButtonText}>Settings</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -834,6 +859,77 @@ const styles = StyleSheet.create({
     fontSize: 23,
     fontWeight: 'bold',
     marginTop: 20,
+  },
+  profileHeaderContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+  },
+  profileHeaderImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
+  },
+  editProfileButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  editProfileButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  profileStatsContainer: {
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  statsTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  statBox: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginBottom: 8,
+  },
+  statLabel: {
+    fontSize: 16,
+    color: '#555555',
+  },
+  profileSettingsContainer: {
+    alignItems: 'center',
+  },
+  settingsButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  settingsButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
