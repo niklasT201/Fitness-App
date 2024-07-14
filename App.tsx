@@ -231,9 +231,24 @@ function RunningScreen(): React.JSX.Element {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    const loadTimerState = async () => {
+      const savedSeconds = await AsyncStorage.getItem('runningTimerSeconds');
+      const savedIsRunning = await AsyncStorage.getItem('runningTimerIsRunning');
+      if (savedSeconds !== null) setSeconds(parseInt(savedSeconds, 10));
+      if (savedIsRunning !== null) setIsRunning(savedIsRunning === 'true');
+    };
+
+    loadTimerState();
+  }, []);
+
+  useEffect(() => {
     if (isRunning && seconds > 0) {
       timerRef.current = setTimeout(() => {
-        setSeconds(seconds - 1);
+        setSeconds(prevSeconds => {
+          const newSeconds = prevSeconds - 1;
+          AsyncStorage.setItem('runningTimerSeconds', newSeconds.toString());
+          return newSeconds;
+        });
       }, 1000);
     } else if (seconds === 0) {
       setIsRunning(false); // Stop the timer when it reaches zero
@@ -256,7 +271,20 @@ function RunningScreen(): React.JSX.Element {
   const handleStartPress = () => {
     if (!isRunning) {
       setIsRunning(true);
+      AsyncStorage.setItem('runningTimerIsRunning', 'true');
     }
+  };
+
+  const handleStopPress = () => {
+    setIsRunning(false);
+    AsyncStorage.setItem('runningTimerIsRunning', 'false');
+  };
+
+  const handleCancelPress = () => {
+    setIsRunning(false);
+    setSeconds(totalTime);
+    AsyncStorage.setItem('runningTimerIsRunning', 'false');
+    AsyncStorage.setItem('runningTimerSeconds', totalTime.toString());
   };
 
   const progress = (1 - seconds / totalTime) * 100;
@@ -280,6 +308,16 @@ function RunningScreen(): React.JSX.Element {
         <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
           <Text style={styles.startButtonText}>Start</Text>
         </TouchableOpacity>
+      )}
+      {isRunning && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
+            <Text style={styles.stopButtonText}>Stop</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -756,6 +794,33 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 17,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  stopButton: {
+    backgroundColor: '#FFA500',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  stopButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
