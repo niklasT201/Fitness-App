@@ -344,8 +344,8 @@ function ProfileScreen(): React.JSX.Element {
 
   return (
     <ScrollView style={styles.screenContainer}>
-      <View style={styles.profileHeaderContainer}>
         <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+      <View style={styles.profileHeaderContainer}>
         <Text style={styles.profileUserName}>{userName}</Text>
         <Text style={styles.profileDetail}>Email: example@example.com</Text>
         <Text style={styles.profileDetail}>Joined: January 2024</Text>
