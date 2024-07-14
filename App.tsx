@@ -897,6 +897,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 16,
+    color: '#333333',
   },
   statRow: {
     flexDirection: 'row',
