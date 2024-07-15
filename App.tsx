@@ -344,40 +344,43 @@ function ProfileScreen(): React.JSX.Element {
 
   return (
     <ScrollView style={styles.screenContainer}>
-        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
-      <View style={styles.profileHeaderContainer}>
-        <Text style={styles.profileUserName}>{userName}</Text>
-        <Text style={styles.profileDetail}>Email: example@example.com</Text>
-        <Text style={styles.profileDetail}>Joined: January 2024</Text>
-        <TouchableOpacity style={styles.editProfileButton}>
-          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.profileHeaderContainer}>
+      <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+      <Text style={styles.profileText}>Your Profile</Text>
+    </View>
+    <View style={styles.profileDetailsContainer}>
+      <Text style={styles.profileUserName}>{userName}</Text>
+      <Text style={styles.profileDetail}>Email: example@example.com</Text>
+      <Text style={styles.profileDetail}>Joined: January 2024</Text>
+      <TouchableOpacity style={styles.editProfileButton}>
+        <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+      </TouchableOpacity>
+    </View>
 
-      <View style={styles.profileStatsContainer}>
-        <Text style={styles.statsTitle}>Your Statistics</Text>
-        <View style={styles.statRow}>
-          <View style={styles.statBox}>
-            <Text style={styles.statValue}>120</Text>
-            <Text style={styles.statLabel}>Workouts</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statValue}>45</Text>
-            <Text style={styles.statLabel}>Calories</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statValue}>20</Text>
-            <Text style={styles.statLabel}>Hours</Text>
-          </View>
+    <View style={styles.profileStatsContainer}>
+      <Text style={styles.statsTitle}>Your Statistics</Text>
+      <View style={styles.statRow}>
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>120</Text>
+          <Text style={styles.statLabel}>Workouts</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>45</Text>
+          <Text style={styles.statLabel}>Calories</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>20</Text>
+          <Text style={styles.statLabel}>Hours</Text>
         </View>
       </View>
+    </View>
 
-      <View style={styles.profileSettingsContainer}>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Text style={styles.settingsButtonText}>Settings</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <View style={styles.profileSettingsContainer}>
+      <TouchableOpacity style={styles.settingsButton}>
+        <Text style={styles.settingsButtonText}>Settings</Text>
+      </TouchableOpacity>
+    </View>
+  </ScrollView>
   );
 }
 
@@ -861,78 +864,82 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   profileHeaderContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
   },
   profileHeaderImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-    backgroundColor: '#4CAF50',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 10,
   },
   editProfileButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    marginTop: 10,
+    marginTop: 16,
   },
   editProfileButtonText: {
-    color: '#ffffff',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
   profileStatsContainer: {
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    marginBottom: 20,
-    alignItems: 'center',
   },
   statsTitle: {
     fontSize: 20,
     fontWeight: '600',
+    color: '#000',
     marginBottom: 16,
-    color: '#333333',
+    marginTop: 10,
   },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
   statBox: {
     alignItems: 'center',
-    flex: 1,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    width: '31%',
   },
   statValue: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#4CAF50',
-    marginBottom: 8,
+    color: '#000',
   },
   statLabel: {
     fontSize: 16,
-    color: '#555555',
+    color: '#333',
   },
   profileSettingsContainer: {
-    alignItems: 'center',
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
   },
   settingsButton: {
     backgroundColor: '#FFA500',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginTop: 10,
   },
   settingsButtonText: {
-    color: '#ffffff',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
+  profileText: {
+    fontSize: 24,
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  }
 });
 
 export default App;
