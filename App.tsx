@@ -328,62 +328,101 @@ function RunningScreen(): React.JSX.Element {
   );
 }
 
+function SettingsScreen(): React.JSX.Element {
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.settingsContainer}>
+        <Text style={styles.settingsHeader}>App in Progress</Text>
+        <Text style={styles.settingsText}>
+          This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
+        </Text>
+        <Text style={styles.settingsHeader}>Feedback</Text>
+        <Text style={styles.settingsText}>
+          We value your feedback. Please send any suggestions or issues to:
+        </Text>
+        <Text style={styles.settingsEmail}>feedback@example.com</Text>
+      </View>
+    </ScrollView>
+  );
+}
 
-function ProfileScreen(): React.JSX.Element {
+function ProfileScreen({ onNameChange, navigateTo }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void }): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState('');
 
   useEffect(() => {
     const loadUserName = async () => {
       const storedName = await AsyncStorage.getItem('userName');
       if (storedName) {
         setUserName(storedName);
+        setNewName(storedName);
       }
     };
     loadUserName();
   }, []);
 
+  const handleSave = async () => {
+    await AsyncStorage.setItem('userName', newName);
+    setUserName(newName);
+    setIsEditing(false);
+    onNameChange(newName); // Update the app state
+  };
+
   return (
     <ScrollView style={styles.screenContainer}>
-    <View style={styles.profileHeaderContainer}>
-      <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
-      <Text style={styles.profileText}>Your Profile</Text>
-    </View>
-    <View style={styles.profileDetailsContainer}>
-      <Text style={styles.profileUserName}>{userName}</Text>
-      <Text style={styles.profileDetail}>Email: example@example.com</Text>
-      <Text style={styles.profileDetail}>Joined: January 2024</Text>
-      <TouchableOpacity style={styles.editProfileButton}>
-        <Text style={styles.editProfileButtonText}>Edit Profile</Text>
-      </TouchableOpacity>
-    </View>
-
-    <View style={styles.profileStatsContainer}>
-      <Text style={styles.statsTitle}>Your Statistics</Text>
-      <View style={styles.statRow}>
-        <View style={styles.statBox}>
-          <Text style={styles.statValue}>120</Text>
-          <Text style={styles.statLabel}>Workouts</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statValue}>45</Text>
-          <Text style={styles.statLabel}>Calories</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statValue}>20</Text>
-          <Text style={styles.statLabel}>Hours</Text>
+      <View style={styles.profileHeaderContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+        <Text style={styles.profileText}>Your Profile</Text>
+      </View>
+      <View style={styles.profileDetailsContainer}>
+        {isEditing ? (
+          <TextInput
+            style={styles.Profileinput}
+            placeholder="Enter new name"
+            value={newName}
+            onChangeText={setNewName}
+          />
+        ) : (
+          <Text style={styles.profileUserName}>{userName}</Text>
+        )}
+        <Text style={styles.profileDetail}>Email: example@example.com</Text>
+        <Text style={styles.profileDetail}>Joined: January 2024</Text>
+        {isEditing ? (
+          <TouchableOpacity style={styles.editProfileButton} onPress={handleSave}>
+            <Text style={styles.editProfileButtonText}>Save</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.editProfileButton} onPress={() => setIsEditing(true)}>
+            <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <View style={styles.profileStatsContainer}>
+        <Text style={styles.statsTitle}>Your Statistics</Text>
+        <View style={styles.statRow}>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>120</Text>
+            <Text style={styles.statLabel}>Workouts</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>45</Text>
+            <Text style={styles.statLabel}>Calories</Text>
+          </View>
+          <View style={styles.statBox}>
+            <Text style={styles.statValue}>20</Text>
+            <Text style={styles.statLabel}>Hours</Text>
+          </View>
         </View>
       </View>
-    </View>
-
-    <View style={styles.profileSettingsContainer}>
-      <TouchableOpacity style={styles.settingsButton}>
-        <Text style={styles.settingsButtonText}>Settings</Text>
-      </TouchableOpacity>
-    </View>
-  </ScrollView>
+      <View style={styles.profileSettingsContainer}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('SettingsScreen')}>
+          <Text style={styles.settingsButtonText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
-
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -421,6 +460,10 @@ function App(): React.JSX.Element {
     setIsFirstTime(false);
   };
 
+  const handleNameChange = (name: string) => {
+    setUserName(name);
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Workouts':
@@ -442,7 +485,11 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <ProfileScreen />
+          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} />
+        );
+        case 'SettingsScreen':
+        return (
+          <SettingsScreen />
         );
       case 'Calories':
         return (
@@ -921,6 +968,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopWidth: 1,
     borderColor: '#ccc',
+    marginTop: 20,
   },
   settingsButton: {
     backgroundColor: '#FFA500',
@@ -935,11 +983,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   profileText: {
-    fontSize: 24,
+    fontSize: 30,
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
-  }
+  },
+  Profileinput:{
+      width: '100%',
+      height: 40,
+      borderColor: '#cccccc',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      marginBottom: 16,
+      color: '#000',
+  },
+  settingsContainer: {
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  settingsHeader: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginBottom: 8,
+  },
+  settingsText: {
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 16,
+  },
+  settingsEmail: {
+    fontSize: 16,
+    color: '#4CAF50',
+    fontWeight: '700',
+  },
 });
 
 export default App;
