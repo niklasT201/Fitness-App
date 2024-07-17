@@ -226,6 +226,7 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 
 function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
   const totalTime = 3600; // Total time in seconds (60 minutes)
+  const totalCalories = 1000; // Total calories burned in one hour
   const [seconds, setSeconds] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -289,6 +290,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   };
 
   const progress = (1 - seconds / totalTime) * 100;
+  const calorieProgress = ((totalTime - seconds) / totalTime) * totalCalories;
 
   return (
     <View style={styles.runningContainer}>
@@ -303,6 +305,18 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
           ]}
         />
         <Text style={styles.progressText}>Progress: {progress.toFixed(0)}%</Text>
+      </View>
+      <View style={styles.progressCBarContainer}>
+        <Animated.View
+          style={[
+            styles.progressBar,
+            {
+              width: `${(calorieProgress / totalCalories) * 100}%`,
+              backgroundColor: 'red', // Different color for the calorie bar
+            },
+          ]}
+        />
+        <Text style={styles.progressText}>Calories Burned: {calorieProgress.toFixed(0)}</Text>
       </View>
       <Text style={styles.timerText}>{formatTime(seconds)}</Text>
       {!isRunning && (
@@ -321,7 +335,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
         </View>
       )}
       {isRunning && (
-         <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+         <TouchableOpacity style={styles.cancelTButton} onPress={handleCancelPress}>
          <Text style={styles.cancelButtonText}>Cancel</Text>
        </TouchableOpacity>
       )}
@@ -359,7 +373,7 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 }
 
 
-function ProfileScreen({ onNameChange, navigateTo, completedHours }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedHours: number }): React.JSX.Element {
+function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedHours }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedWorkouts: number, completedHours: number }): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
@@ -415,7 +429,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedHours }: { onNameCha
         <Text style={styles.statsTitle}>Your Statistics</Text>
         <View style={styles.statRow}>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>120</Text>
+          <Text style={styles.statValue}>{completedWorkouts}</Text>
             <Text style={styles.statLabel}>Workouts</Text>
           </View>
           <View style={styles.statBox}>
@@ -444,6 +458,7 @@ function App(): React.JSX.Element {
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [dailyValues, setDailyValues] = useState({ calories: 0, fat: 0, sugar: 0, protein: 0 });
   const [completedHours, setCompletedHours] = useState(20);
+  const [completedWorkouts, setCompletedWorkouts] = useState(120);
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -482,17 +497,23 @@ function App(): React.JSX.Element {
     const updatedHours = completedHours + 1; // Increment the completed hours by 1
     setCompletedHours(updatedHours);
     await AsyncStorage.setItem('completedHours', updatedHours.toString());
+    const updatedWorkouts = completedWorkouts + 1; // Increment the completed workouts by 1
+    setCompletedWorkouts(updatedWorkouts);
+    await AsyncStorage.setItem('completedWorkouts', updatedWorkouts.toString());
   };
 
   useEffect(() => {
-    const loadCompletedHours = async () => {
+    const loadCompletedData = async () => {
       const storedHours = await AsyncStorage.getItem('completedHours');
+      const storedWorkouts = await AsyncStorage.getItem('completedWorkouts');
       if (storedHours) {
         setCompletedHours(parseInt(storedHours, 10));
       }
+      if (storedWorkouts) {
+        setCompletedWorkouts(parseInt(storedWorkouts, 10));
+      }
     };
-
-    loadCompletedHours();
+    loadCompletedData();
   }, []);
 
   if (isFirstTime) {
@@ -520,7 +541,7 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} />
+          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} completedWorkouts={completedWorkouts}/>
         );
         case 'SettingsScreen':
         return (
@@ -907,12 +928,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginTop: 40,
   },
+  progressCBarContainer: {
+    width: '85%',
+    height: 32,
+    backgroundColor: '#cccccc',
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginTop: 20,
+  },
   progressBar: {
     height: '100%',
     backgroundColor: '#44c94a',
   },
   progressText: {
     marginLeft: 10,
+    marginTop: 1,
     position: 'absolute',
     color: '#ffffff',
     fontWeight: 'bold',
@@ -920,7 +950,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 50,
+    marginTop: 20,
   },
   stopButton: {
     paddingVertical: 10,
@@ -938,6 +968,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginLeft: 5,
+  },
+  cancelTButton: {
+    marginTop: -10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   cancelButtonText: {
     color: '#fff',
