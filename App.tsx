@@ -373,7 +373,7 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 }
 
 
-function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedHours }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedWorkouts: number, completedHours: number }): React.JSX.Element {
+function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedHours, completeCalories }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedWorkouts: number, completedHours: number, completeCalories: number, }): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
@@ -433,7 +433,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
             <Text style={styles.statLabel}>Workouts</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>45</Text>
+            <Text style={styles.statValue}>{completeCalories}</Text>
             <Text style={styles.statLabel}>Calories</Text>
           </View>
           <View style={styles.statBox}>
@@ -457,8 +457,9 @@ function App(): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [dailyValues, setDailyValues] = useState({ calories: 0, fat: 0, sugar: 0, protein: 0 });
-  const [completedHours, setCompletedHours] = useState(20);
-  const [completedWorkouts, setCompletedWorkouts] = useState(120);
+  const [completedHours, setCompletedHours] = useState(0);
+  const [completedWorkouts, setCompletedWorkouts] = useState(0);
+  const [completeCalories, setCompletedCalories] = useState(0);
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -500,17 +501,24 @@ function App(): React.JSX.Element {
     const updatedWorkouts = completedWorkouts + 1; // Increment the completed workouts by 1
     setCompletedWorkouts(updatedWorkouts);
     await AsyncStorage.setItem('completedWorkouts', updatedWorkouts.toString());
+    const updatedCalories = completeCalories + 1000; // Increment the completed workouts by 1
+    setCompletedCalories(updatedCalories);
+    await AsyncStorage.setItem('completeCalories', updatedCalories.toString());
   };
 
   useEffect(() => {
     const loadCompletedData = async () => {
       const storedHours = await AsyncStorage.getItem('completedHours');
       const storedWorkouts = await AsyncStorage.getItem('completedWorkouts');
+      const storedCalories = await AsyncStorage.getItem('completeCalories');
       if (storedHours) {
         setCompletedHours(parseInt(storedHours, 10));
       }
       if (storedWorkouts) {
         setCompletedWorkouts(parseInt(storedWorkouts, 10));
+      }
+      if (storedCalories) {
+        setCompletedCalories(parseInt(storedCalories, 10));
       }
     };
     loadCompletedData();
@@ -541,7 +549,7 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} completedWorkouts={completedWorkouts}/>
+          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} completedWorkouts={completedWorkouts} completeCalories={completeCalories}/>
         );
         case 'SettingsScreen':
         return (
