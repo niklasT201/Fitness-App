@@ -224,7 +224,7 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
   );
 }
 
-function RunningScreen(): React.JSX.Element {
+function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
   const totalTime = 3600; // Total time in seconds (60 minutes)
   const [seconds, setSeconds] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
@@ -252,6 +252,7 @@ function RunningScreen(): React.JSX.Element {
       }, 1000);
     } else if (seconds === 0) {
       setIsRunning(false); // Stop the timer when it reaches zero
+      onRunningComplete(); // Notify that running is complete
       setSeconds(totalTime); // Reset the timer to the initial value
     }
 
@@ -328,25 +329,37 @@ function RunningScreen(): React.JSX.Element {
   );
 }
 
-function SettingsScreen(): React.JSX.Element {
+function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
-      <View style={styles.settingsContainer}>
+      <View style={styles.profileHeaderContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+        <Text style={styles.profileText}>Feedback</Text>
+      </View>
+      <View style={styles.settingsCard}>
         <Text style={styles.settingsHeader}>App in Progress</Text>
         <Text style={styles.settingsText}>
           This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
         </Text>
+      </View>
+      <View style={styles.settingsCard}>
         <Text style={styles.settingsHeader}>Feedback</Text>
         <Text style={styles.settingsText}>
           We value your feedback. Please send any suggestions or issues to:
         </Text>
         <Text style={styles.settingsEmail}>feedback@example.com</Text>
       </View>
+      <View style={styles.profileSettingsContainer}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
+          <Text style={styles.settingsButtonText}>Back</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
-function ProfileScreen({ onNameChange, navigateTo }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void }): React.JSX.Element {
+
+function ProfileScreen({ onNameChange, navigateTo, completedHours }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedHours: number }): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
@@ -410,14 +423,14 @@ function ProfileScreen({ onNameChange, navigateTo }: { onNameChange: (name: stri
             <Text style={styles.statLabel}>Calories</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>20</Text>
+            <Text style={styles.statValue}>{completedHours}</Text>
             <Text style={styles.statLabel}>Hours</Text>
           </View>
         </View>
       </View>
       <View style={styles.profileSettingsContainer}>
         <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('SettingsScreen')}>
-          <Text style={styles.settingsButtonText}>Settings</Text>
+          <Text style={styles.settingsButtonText}>Feedback</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -430,6 +443,7 @@ function App(): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [dailyValues, setDailyValues] = useState({ calories: 0, fat: 0, sugar: 0, protein: 0 });
+  const [completedHours, setCompletedHours] = useState(20);
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -464,6 +478,27 @@ function App(): React.JSX.Element {
     setUserName(name);
   };
 
+  const handleRunningComplete = async () => {
+    const updatedHours = completedHours + 1; // Increment the completed hours by 1
+    setCompletedHours(updatedHours);
+    await AsyncStorage.setItem('completedHours', updatedHours.toString());
+  };
+
+  useEffect(() => {
+    const loadCompletedHours = async () => {
+      const storedHours = await AsyncStorage.getItem('completedHours');
+      if (storedHours) {
+        setCompletedHours(parseInt(storedHours, 10));
+      }
+    };
+
+    loadCompletedHours();
+  }, []);
+
+  if (isFirstTime) {
+    return <WelcomeScreen onFinish={handleWelcomeFinish} />;
+  }
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Workouts':
@@ -485,11 +520,11 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} />
+          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} />
         );
         case 'SettingsScreen':
         return (
-          <SettingsScreen />
+          <SettingsScreen navigateTo={navigateTo} />
         );
       case 'Calories':
         return (
@@ -501,15 +536,15 @@ function App(): React.JSX.Element {
         );
         case 'Running':
         return (
-          <RunningScreen />
+          <RunningScreen onRunningComplete={handleRunningComplete} />
         );
         case 'Lifting':
           return (
-            <RunningScreen />
+            <RunningScreen onRunningComplete={handleRunningComplete} />
           );
           case 'Biking':
             return (
-              <RunningScreen />
+              <RunningScreen onRunningComplete={handleRunningComplete} />
             );
       case 'Home':
       default:
@@ -998,11 +1033,19 @@ const styles = StyleSheet.create({
       marginBottom: 16,
       color: '#000',
   },
-  settingsContainer: {
+ settingsContainer: {
     padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
+  },
+  settingsCard: {
+    width: '90%',
+    marginBottom: 3,
     marginTop: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    marginLeft: 15,
   },
   settingsHeader: {
     fontSize: 20,
@@ -1012,13 +1055,14 @@ const styles = StyleSheet.create({
   },
   settingsText: {
     fontSize: 16,
+    fontWeight: '400',
     color: '#333333',
     marginBottom: 16,
   },
   settingsEmail: {
     fontSize: 16,
-    color: '#4CAF50',
     fontWeight: '700',
+    color: '#4CAF50',
   },
 });
 
