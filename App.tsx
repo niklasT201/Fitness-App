@@ -1083,14 +1083,17 @@ const styles = StyleSheet.create({
   profileSettingsContainer: {
     padding: 16,
     borderTopWidth: 1,
-    borderColor: '#ccc',
-    marginTop: 20,
+    borderColor: '#fff',
+    marginTop: 25,
   },
   settingsButton: {
-    backgroundColor: '#FFA500',
+    borderColor: '#fff',
+    borderWidth: 1,
+    backgroundColor: '#4CAF50',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginTop: 20,
   },
   settingsButtonText: {
     color: '#fff',
