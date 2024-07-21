@@ -155,7 +155,7 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.calorieImageContainer}>
-        <Image source={require('./assets/heart.png')} style={styles.heartImage} />
+        <Image source={require('./assets/hearts.png')} style={styles.heartImage} />
       </View>
       <TextInput
         style={styles.calorieInput}
@@ -588,6 +588,29 @@ function App(): React.JSX.Element {
                 <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
               </TouchableWithoutFeedback>
             </View>
+            <View style={styles.homeStat}>
+              {completedWorkouts > 0 && (
+                <View style={styles.statBox}>
+                  <Image source={require('./assets/run-man.png')} style={styles.statImage1} />
+                  <Text style={styles.statValue}>{completedWorkouts}</Text>
+                  <Text style={styles.statLabel}>Workouts</Text>
+                </View>
+              )}
+              {completeCalories > 0 && (
+                <View style={styles.statBox}>
+                  <Image source={require('./assets/heartw.png')} style={styles.statImage1} />
+                  <Text style={styles.statValue}>{completeCalories}</Text>
+                  <Text style={styles.statLabel}>Calories</Text>
+                </View>
+              )}
+              {completedHours > 0 && (
+                <View style={styles.statBox}>
+                  <Image source={require('./assets/flame.png')} style={styles.statImage} />
+                  <Text style={styles.statValue}>{completedHours}</Text>
+                  <Text style={styles.statLabel}>Hours</Text>
+                </View>
+              )}
+            </View>
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
@@ -728,7 +751,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
   },
   textContainer: {
     flexDirection: 'column',
@@ -749,7 +772,17 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     marginBottom: 19,
-    marginRight: -25,
+    marginRight: -15,
+  },
+  statImage: {
+    width: 35,
+    height: 35,
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  statImage1: {
+    width: 50,
+    height: 50,
   },
   chooseTrainingContainer: {
     marginTop: 16,
@@ -1025,6 +1058,11 @@ const styles = StyleSheet.create({
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  homeStat: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
   },
   statBox: {
     alignItems: 'center',
