@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height: screenHeight } = Dimensions.get('window');
 
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 type SectionProps = {
   title: string;
   children: React.ReactNode;
@@ -69,10 +71,17 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
 
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
+  const [month, setMonth] = useState('');
+
+  useEffect(() => {
+    const currentMonth = new Date().getMonth();
+    setMonth(months[currentMonth]);
+  }, []);
 
   const handlePress = async () => {
     if (name) {
       await AsyncStorage.setItem('userName', name);
+      await AsyncStorage.setItem('joinMonth', month);
       onFinish();
     }
   };
@@ -80,7 +89,8 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   return (
     <View style={[styles.welcomeContainer, { height: screenHeight }]}>
       <View style={styles.welcomeContent}>
-        <Text style={styles.welcomeText}>Welcome! Please enter your name:</Text>
+        <Text style={styles.welcomeText}>Welcome to Stay Strong Fitness!</Text>
+        <Text style={styles.welcomeText}>It's {month}. Please enter your name:</Text>
         <TextInput
           style={styles.input}
           placeholder="Your Name"
@@ -375,6 +385,7 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
 function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedHours, completeCalories }: { onNameChange: (name: string) => void, navigateTo: (screen: string) => void, completedWorkouts: number, completedHours: number, completeCalories: number, }): React.JSX.Element {
   const [userName, setUserName] = useState<string | null>(null);
+  const [joinMonth, setJoinMonth] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
 
@@ -387,6 +398,16 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
       }
     };
     loadUserName();
+  }, []);
+
+  useEffect(() => {
+    const loadJoinMonth = async () => {
+      const storedMonth = await AsyncStorage.getItem('joinMonth');
+      if (storedMonth) {
+        setJoinMonth(storedMonth);
+      }
+    };
+    loadJoinMonth();
   }, []);
 
   const handleSave = async () => {
@@ -414,7 +435,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
           <Text style={styles.profileUserName}>{userName}</Text>
         )}
         <Text style={styles.profileDetail}>Email: example@example.com</Text>
-        <Text style={styles.profileDetail}>Joined: January 2024</Text>
+        <Text style={styles.profileDetail}>Joined: {joinMonth} 2024</Text>
         {isEditing ? (
           <TouchableOpacity style={styles.editProfileButton} onPress={handleSave}>
             <Text style={styles.editProfileButtonText}>Save</Text>
@@ -455,6 +476,7 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [currentScreen, setCurrentScreen] = useState('Home');
   const [userName, setUserName] = useState<string | null>(null);
+  const [joinMonth, setJoinMonth] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [dailyValues, setDailyValues] = useState({ calories: 0, fat: 0, sugar: 0, protein: 0 });
   const [completedHours, setCompletedHours] = useState(0);
@@ -464,8 +486,10 @@ function App(): React.JSX.Element {
   useEffect(() => {
     const checkUserName = async () => {
       const storedName = await AsyncStorage.getItem('userName');
+      const storedMonth = await AsyncStorage.getItem('joinMonth');
       if (storedName) {
         setUserName(storedName);
+        setJoinMonth(storedMonth);
         setIsFirstTime(false);
       }
     };
@@ -484,7 +508,9 @@ function App(): React.JSX.Element {
   const handleWelcomeFinish = () => {
     const getUserName = async () => {
       const storedName = await AsyncStorage.getItem('userName');
+      const storedMonth = await AsyncStorage.getItem('joinMonth');
       setUserName(storedName);
+      setJoinMonth(storedMonth);
     };
     getUserName();
     setIsFirstTime(false);
