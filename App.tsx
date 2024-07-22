@@ -353,6 +353,125 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   );
 }
 
+function BikingScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
+  const totalTime = 3600; // Total time in seconds (60 minutes)
+  const totalCalories = 300; // Total calories burned in one hour
+  const [seconds, setSeconds] = useState(totalTime);
+  const [isBiking, setIsBiking] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const loadTimerState = async () => {
+      const savedSeconds = await AsyncStorage.getItem('bikingTimerSeconds');
+      const savedIsRunning = await AsyncStorage.getItem('bikingTimerIsRunning');
+      if (savedSeconds !== null) setSeconds(parseInt(savedSeconds, 10));
+      if (savedIsRunning !== null) setIsBiking(savedIsRunning === 'true');
+    };
+
+    loadTimerState();
+  }, []);
+
+  useEffect(() => {
+    if (isBiking && seconds > 0) {
+      timerRef.current = setTimeout(() => {
+        setSeconds(prevSeconds => {
+          const newSeconds = prevSeconds - 1;
+          AsyncStorage.setItem('bikingTimerSeconds', newSeconds.toString());
+          return newSeconds;
+        });
+      }, 1000);
+    } else if (seconds === 0) {
+      setIsBiking(false); // Stop the timer when it reaches zero
+      onRunningComplete(); // Notify that running is complete
+      setSeconds(totalTime); // Reset the timer to the initial value
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [seconds, isBiking]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const handleStartPress = () => {
+    if (!isBiking) {
+      setIsBiking(true);
+      AsyncStorage.setItem('bikingTimerIsRunning', 'true');
+    }
+  };
+
+  const handleStopPress = () => {
+    setIsBiking(false);
+    AsyncStorage.setItem('bikingTimerIsRunning', 'false');
+  };
+
+  const handleCancelPress = () => {
+    setIsBiking(false);
+    setSeconds(totalTime);
+    AsyncStorage.setItem('bikingTimerIsRunning', 'false');
+    AsyncStorage.setItem('bikingTimerSeconds', totalTime.toString());
+  };
+
+  const progress = (1 - seconds / totalTime) * 100;
+  const calorieProgress = ((totalTime - seconds) / totalTime) * totalCalories;
+
+  return (
+    <View style={styles.runningContainer}>
+      <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
+      <View style={styles.progressBarContainer}>
+        <Animated.View
+          style={[
+            styles.progressBar,
+            {
+              width: `${progress}%`,
+            },
+          ]}
+        />
+        <Text style={styles.progressText}>Progress: {progress.toFixed(0)}%</Text>
+      </View>
+      <View style={styles.progressCBarContainer}>
+        <Animated.View
+          style={[
+            styles.progressBar,
+            {
+              width: `${(calorieProgress / totalCalories) * 100}%`,
+              backgroundColor: 'red', // Different color for the calorie bar
+            },
+          ]}
+        />
+        <Text style={styles.progressText}>Calories Burned: {calorieProgress.toFixed(0)}</Text>
+      </View>
+      <Text style={styles.timerText}>{formatTime(seconds)}</Text>
+      {!isBiking && (
+        <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
+          <Text style={styles.startButtonText}>Start</Text>
+        </TouchableOpacity>
+      )}
+      {isBiking && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
+            <Image source={require('./assets/Pause-Button.png')} style={styles.stopButtonImage} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+            <Image source={require('./assets/Cancel-Button.png')} style={styles.cancelButtonImage} />
+          </TouchableOpacity>
+        </View>
+      )}
+      {isBiking && (
+         <TouchableOpacity style={styles.cancelTButton} onPress={handleCancelPress}>
+         <Text style={styles.cancelButtonText}>Cancel</Text>
+       </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
 function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
@@ -496,12 +615,18 @@ function App(): React.JSX.Element {
     checkUserName();
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (currentScreen !== 'Home') {
-        setCurrentScreen('Home');
-        return true; // Prevent default behavior of closing the app
-      }
-      return false; // Allow default behavior to happen if already on the home screen
-    });
+       if (currentScreen === 'TotalValues') {
+      setCurrentScreen('Calories');
+      return true; // Prevent default behavior of closing the app
+    } else if (currentScreen === 'SettingsScreen') {
+      setCurrentScreen('Profile');
+      return true; // Prevent default behavior of closing the app
+    } else if (currentScreen !== 'Home') {
+      setCurrentScreen('Home');
+      return true; // Prevent default behavior of closing the app
+    }
+    return false; // Allow default behavior to happen if already on the home screen
+  });
 
     return () => backHandler.remove(); // Cleanup the event listener on unmount
   }, [currentScreen]);
@@ -605,11 +730,11 @@ function App(): React.JSX.Element {
         );
         case 'Lifting':
           return (
-            <RunningScreen onRunningComplete={handleRunningComplete} />
+            <BikingScreen onRunningComplete={handleRunningComplete} />
           );
           case 'Biking':
             return (
-              <RunningScreen onRunningComplete={handleRunningComplete} />
+              <BikingScreen onRunningComplete={handleRunningComplete} />
             );
       case 'Home':
       default:
