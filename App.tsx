@@ -494,7 +494,17 @@ function App(): React.JSX.Element {
       }
     };
     checkUserName();
-  }, []);
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (currentScreen !== 'Home') {
+        setCurrentScreen('Home');
+        return true; // Prevent default behavior of closing the app
+      }
+      return false; // Allow default behavior to happen if already on the home screen
+    });
+
+    return () => backHandler.remove(); // Cleanup the event listener on unmount
+  }, [currentScreen]);
 
   const backgroundStyle = {
     backgroundColor: '#4CAF50', // Changed to green color
