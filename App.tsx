@@ -90,7 +90,6 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
     <View style={[styles.welcomeContainer, { height: screenHeight }]}>
       <View style={styles.welcomeContent}>
         <Text style={styles.welcomeText}>Welcome to Stay Strong Fitness!</Text>
-        <Text style={styles.welcomeText}>It's {month}. Please enter your name:</Text>
         <TextInput
           style={styles.input}
           placeholder="Your Name"
@@ -240,7 +239,6 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   const [seconds, setSeconds] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     const loadTimerState = async () => {
@@ -254,10 +252,6 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   }, []);
 
   useEffect(() => { 
-    if (isComplete) {
-      onRunningComplete(); // Notify that running is complete 
-    };
-
     if (isRunning && seconds > 0) {
       timerRef.current = setTimeout(() => {
         setSeconds(prevSeconds => {
@@ -267,10 +261,8 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
         });
       }, 1000);
     } else if (seconds === 0) {
-      setIsComplete(true);
       setIsRunning(false); // Stop the timer when it reaches zero
       setSeconds(totalTime); // Reset the timer to the initial value
-      setIsComplete(false);
     }
 
     return () => {
@@ -878,16 +870,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   welcomeContent: {
+    marginTop: 110,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   welcomeText: {
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: 'bold',
     marginBottom: 16,
     color: '#ffffff',
     textAlign: 'center',
-    marginTop: 50,
   },
   input: {
     width: '100%',
@@ -897,13 +890,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     marginBottom: 16,
+    marginTop: 20,
   },
   saveButton: {
     backgroundColor: '#ffffff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 45,
+    marginTop: 20,
+    marginBottom: 25,
   },
   saveButtonText: {
     color: '#4CAF50',
@@ -911,13 +906,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   welcomeImageContainer: {
+    marginTop: 65,
     width: '100%',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   welcomeImage: {
+    borderRadius: 30,
+    backgroundColor: '#ffffff',
     width: '110%',
-    height: 450, // Adjust height as needed
+    height: 300, // Adjust height as needed
   },
   headerContainer: {
     flexDirection: 'row',
@@ -1039,10 +1037,10 @@ const styles = StyleSheet.create({
   },
   calorieImageContainer: {
     alignItems: 'center', // Center the image horizontally
-    marginBottom: 20, // Add some margin below the image
+    marginBottom: 10, // Add some margin below the image
   },
   heartImage: {
-    width: '70%', // Reduce the width of the image
+    width: '80%', // Reduce the width of the image
     height: undefined,
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: 'contain', // Contain within the container
