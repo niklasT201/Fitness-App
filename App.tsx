@@ -240,6 +240,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   const [seconds, setSeconds] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     const loadTimerState = async () => {
@@ -252,7 +253,11 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
     loadTimerState();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { 
+    if (isComplete) {
+      onRunningComplete(); // Notify that running is complete 
+    };
+
     if (isRunning && seconds > 0) {
       timerRef.current = setTimeout(() => {
         setSeconds(prevSeconds => {
@@ -262,9 +267,10 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
         });
       }, 1000);
     } else if (seconds === 0) {
+      setIsComplete(true);
       setIsRunning(false); // Stop the timer when it reaches zero
-      onRunningComplete(); // Notify that running is complete
       setSeconds(totalTime); // Reset the timer to the initial value
+      setIsComplete(false);
     }
 
     return () => {
@@ -667,6 +673,12 @@ function App(): React.JSX.Element {
     await AsyncStorage.setItem('completeCalories', updatedCalories.toString());
   };
 
+  const handleBikingComplete = () => {
+    setCompletedWorkouts(prev => prev + 1);
+    setCompletedHours(prev => prev + 1);
+    setCompletedCalories(prev => prev + 300); // Add the calories burned in biking
+  };
+
   useEffect(() => {
     const loadCompletedData = async () => {
       const storedHours = await AsyncStorage.getItem('completedHours');
@@ -730,11 +742,11 @@ function App(): React.JSX.Element {
         );
         case 'Lifting':
           return (
-            <BikingScreen onRunningComplete={handleRunningComplete} />
+            <BikingScreen onRunningComplete={handleBikingComplete} />
           );
           case 'Biking':
             return (
-              <BikingScreen onRunningComplete={handleRunningComplete} />
+              <BikingScreen onRunningComplete={handleBikingComplete} />
             );
       case 'Home':
       default:
