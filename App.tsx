@@ -72,9 +72,8 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
 function LoadingScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
-      <View style={styles.profileHeaderContainer}>
-        <Image source={require('./assets/logo.png')} style={styles.profileHeaderImage} />
-        <Text style={styles.profileText}>Feedback</Text>
+      <View style={styles.loading}>
+        <Image source={require('./assets/logo.png')} style={styles.loadingImage} />
       </View>
     </ScrollView>
   );
@@ -603,7 +602,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         ) : (
           <Text style={styles.profileUserName}>{userName}</Text>
         )}
-        <Text style={styles.profileDetail}>Email: example@example.com</Text>
+        {/* <Text style={styles.profileDetail}>Email: example@example.com</Text> */}
         <Text style={styles.profileDetail}>Joined: {joinMonth} 2024</Text>
         {isEditing ? (
           <TouchableOpacity style={styles.editProfileButton} onPress={handleSave}>
@@ -913,6 +912,13 @@ const styles = StyleSheet.create({
   footerIcon: {
     width: 24,
     height: 24,
+  },
+  loading: {
+    backgroundColor: '#4CAF50',
+  },
+  loadingImage: {
+    width: 100,
+    height: 100,
   },
   welcomeContainer: {
     flex: 1,
