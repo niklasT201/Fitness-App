@@ -233,7 +233,7 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
   );
 }
 
-function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
+function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: boolean) => void }): React.JSX.Element {
   const totalTime = 3600; // Total time in seconds (60 minutes)
   const totalCalories = 1000; // Total calories burned in one hour
   const [seconds, setSeconds] = useState(totalTime);
@@ -251,7 +251,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
     loadTimerState();
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (isRunning && seconds > 0) {
       timerRef.current = setTimeout(() => {
         setSeconds(prevSeconds => {
@@ -263,6 +263,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
     } else if (seconds === 0) {
       setIsRunning(false); // Stop the timer when it reaches zero
       setSeconds(totalTime); // Reset the timer to the initial value
+      onRunningComplete(true); // Notify parent that the run is complete
     }
 
     return () => {
@@ -288,6 +289,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
   const handleStopPress = () => {
     setIsRunning(false);
     AsyncStorage.setItem('runningTimerIsRunning', 'false');
+    onRunningComplete(false); // Notify parent that the run was stopped
   };
 
   const handleCancelPress = () => {
@@ -295,6 +297,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
     setSeconds(totalTime);
     AsyncStorage.setItem('runningTimerIsRunning', 'false');
     AsyncStorage.setItem('runningTimerSeconds', totalTime.toString());
+    onRunningComplete(false); // Notify parent that the run was canceled
   };
 
   const progress = (1 - seconds / totalTime) * 100;
