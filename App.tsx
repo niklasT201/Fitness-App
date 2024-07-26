@@ -69,30 +69,12 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
   );
 }
 
-function LoadingScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+function LoadingScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.profileHeaderContainer}>
-        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+        <Image source={require('./assets/logo.png')} style={styles.profileHeaderImage} />
         <Text style={styles.profileText}>Feedback</Text>
-      </View>
-      <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>App in Progress</Text>
-        <Text style={styles.settingsText}>
-          This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
-        </Text>
-      </View>
-      <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Feedback</Text>
-        <Text style={styles.settingsText}>
-          We value your feedback. Please send any suggestions or issues to:
-        </Text>
-        <Text style={styles.settingsEmail}>feedback@example.com</Text>
-      </View>
-      <View style={styles.profileSettingsContainer}>
-        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
-          <Text style={styles.settingsButtonText}>Back</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
