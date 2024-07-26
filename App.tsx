@@ -69,6 +69,64 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
   );
 }
 
+function LoadingScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.profileHeaderContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+        <Text style={styles.profileText}>Feedback</Text>
+      </View>
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>App in Progress</Text>
+        <Text style={styles.settingsText}>
+          This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
+        </Text>
+      </View>
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>Feedback</Text>
+        <Text style={styles.settingsText}>
+          We value your feedback. Please send any suggestions or issues to:
+        </Text>
+        <Text style={styles.settingsEmail}>feedback@example.com</Text>
+      </View>
+      <View style={styles.profileSettingsContainer}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
+          <Text style={styles.settingsButtonText}>Back</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
+
+function ActivityScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+  return (
+    <ScrollView style={styles.screenContainer}>
+      <View style={styles.profileHeaderContainer}>
+        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+        <Text style={styles.profileText}>Feedback</Text>
+      </View>
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>App in Progress</Text>
+        <Text style={styles.settingsText}>
+          This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
+        </Text>
+      </View>
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>Feedback</Text>
+        <Text style={styles.settingsText}>
+          We value your feedback. Please send any suggestions or issues to:
+        </Text>
+        <Text style={styles.settingsEmail}>feedback@example.com</Text>
+      </View>
+      <View style={styles.profileSettingsContainer}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
+          <Text style={styles.settingsButtonText}>Back</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
+
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
   const [month, setMonth] = useState('');
@@ -264,6 +322,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
       setIsRunning(false); // Stop the timer when it reaches zero
       setSeconds(totalTime); // Reset the timer to the initial value
       onRunningComplete(true); // Notify parent that the run is complete
+      onRunningComplete(false);
     }
 
     return () => {
@@ -272,6 +331,13 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
       }
     };
   }, [seconds, isRunning]);
+
+  // Reset the completion status when the component mounts or timer is reset
+  useEffect(() => {
+    return () => {
+      onRunningComplete(false);
+    };
+  }, []);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -283,6 +349,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
     if (!isRunning) {
       setIsRunning(true);
       AsyncStorage.setItem('runningTimerIsRunning', 'true');
+      onRunningComplete(false); // Reset the completion status when the timer starts
     }
   };
 
@@ -1246,7 +1313,7 @@ const styles = StyleSheet.create({
     width: '31%',
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: '600',
     color: '#000',
   },
