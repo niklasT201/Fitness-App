@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert, Animated  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RunningScreen from './RunningScreen';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -127,6 +128,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
 
   return (
     <View style={[styles.welcomeContainer, { height: screenHeight }]}>
+      <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
       <View style={styles.welcomeContent}>
         <Text style={styles.welcomeText}>Welcome to Stay Strong Fitness!</Text>
         <TextInput
@@ -243,7 +245,6 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
   );
 }
 
-
 function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; fat: number; sugar: number; protein: number } }): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
@@ -269,136 +270,6 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
         </View>
       </View>
     </ScrollView>
-  );
-}
-
-function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: boolean) => void }): React.JSX.Element {
-  const totalTime = 3600; // Total time in seconds (60 minutes)
-  const totalCalories = 1000; // Total calories burned in one hour
-  const [seconds, setSeconds] = useState(totalTime);
-  const [isRunning, setIsRunning] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const loadTimerState = async () => {
-      const savedSeconds = await AsyncStorage.getItem('runningTimerSeconds');
-      const savedIsRunning = await AsyncStorage.getItem('runningTimerIsRunning');
-      if (savedSeconds !== null) setSeconds(parseInt(savedSeconds, 10));
-      if (savedIsRunning !== null) setIsRunning(savedIsRunning === 'true');
-    };
-
-    loadTimerState();
-  }, []);
-
-  useEffect(() => {
-    if (isRunning && seconds > 0) {
-      timerRef.current = setTimeout(() => {
-        setSeconds(prevSeconds => {
-          const newSeconds = prevSeconds - 1;
-          AsyncStorage.setItem('runningTimerSeconds', newSeconds.toString());
-          return newSeconds;
-        });
-      }, 1000);
-    } else if (seconds === 0) {
-      setIsRunning(false); // Stop the timer when it reaches zero
-      setSeconds(totalTime); // Reset the timer to the initial value
-      onRunningComplete(true); // Notify parent that the run is complete
-      onRunningComplete(false);
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, [seconds, isRunning]);
-
-  // Reset the completion status when the component mounts or timer is reset
-  useEffect(() => {
-    return () => {
-      onRunningComplete(false);
-    };
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  };
-
-  const handleStartPress = () => {
-    if (!isRunning) {
-      setIsRunning(true);
-      AsyncStorage.setItem('runningTimerIsRunning', 'true');
-      onRunningComplete(false); // Reset the completion status when the timer starts
-    }
-  };
-
-  const handleStopPress = () => {
-    setIsRunning(false);
-    AsyncStorage.setItem('runningTimerIsRunning', 'false');
-    onRunningComplete(false); // Notify parent that the run was stopped
-  };
-
-  const handleCancelPress = () => {
-    setIsRunning(false);
-    setSeconds(totalTime);
-    AsyncStorage.setItem('runningTimerIsRunning', 'false');
-    AsyncStorage.setItem('runningTimerSeconds', totalTime.toString());
-    onRunningComplete(false); // Notify parent that the run was canceled
-  };
-
-  const progress = (1 - seconds / totalTime) * 100;
-  const calorieProgress = ((totalTime - seconds) / totalTime) * totalCalories;
-
-  return (
-    <View style={styles.runningContainer}>
-      <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
-      <View style={styles.progressBarContainer}>
-        <Animated.View
-          style={[
-            styles.progressBar,
-            {
-              width: `${progress}%`,
-            },
-          ]}
-        />
-        <Text style={styles.progressText}>Progress: {progress.toFixed(0)}%</Text>
-      </View>
-      <View style={styles.progressCBarContainer}>
-        <Animated.View
-          style={[
-            styles.progressBar,
-            {
-              width: `${(calorieProgress / totalCalories) * 100}%`,
-              backgroundColor: 'red', // Different color for the calorie bar
-            },
-          ]}
-        />
-        <Text style={styles.progressText}>Calories Burned: {calorieProgress.toFixed(0)}</Text>
-      </View>
-      <Text style={styles.timerText}>{formatTime(seconds)}</Text>
-      {!isRunning && (
-        <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
-          <Text style={styles.startButtonText}>Start</Text>
-        </TouchableOpacity>
-      )}
-      {isRunning && (
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
-            <Image source={require('./assets/Pause-Button.png')} style={styles.stopButtonImage} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
-            <Image source={require('./assets/Cancel-Button.png')} style={styles.cancelButtonImage} />
-          </TouchableOpacity>
-        </View>
-      )}
-      {isRunning && (
-         <TouchableOpacity style={styles.cancelTButton} onPress={handleCancelPress}>
-         <Text style={styles.cancelButtonText}>Cancel</Text>
-       </TouchableOpacity>
-      )}
-    </View>
   );
 }
 
@@ -928,15 +799,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   welcomeContent: {
-    marginTop: 110,
+    marginTop: 80,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   welcomeText: {
-    fontSize: 28,
+    fontSize: 35,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 36,
     color: '#ffffff',
     textAlign: 'center',
   },
@@ -948,14 +819,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     marginBottom: 16,
-    marginTop: 20,
+    marginTop: 30,
   },
   saveButton: {
     backgroundColor: '#ffffff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 25,
   },
   saveButtonText: {
