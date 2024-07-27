@@ -82,30 +82,23 @@ function LoadingScreen(): React.JSX.Element {
 }
 
 function ActivityScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+  const activities = [
+    { name: 'Cardio', image: require('./assets/running.png') },
+    { name: 'Strength Training', image: require('./assets/lifting.png') },
+    { name: 'Cycling', image: require('./assets/biking.png') },
+    // Add more activities as needed
+  ];
+
   return (
     <ScrollView style={styles.screenContainer}>
-      <View style={styles.profileHeaderContainer}>
-        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
-        <Text style={styles.profileText}>Feedback</Text>
-      </View>
-      <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>App in Progress</Text>
-        <Text style={styles.settingsText}>
-          This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
-        </Text>
-      </View>
-      <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Feedback</Text>
-        <Text style={styles.settingsText}>
-          We value your feedback. Please send any suggestions or issues to:
-        </Text>
-        <Text style={styles.settingsEmail}>feedback@example.com</Text>
-      </View>
-      <View style={styles.profileSettingsContainer}>
-        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
-          <Text style={styles.settingsButtonText}>Back</Text>
-        </TouchableOpacity>
-      </View>
+      {activities.map((activity, index) => (
+        <TouchableWithoutFeedback key={index} onPress={() => navigateTo(activity.name)}>
+          <View style={styles.activityCard}>
+            <Image source={activity.image} style={styles.activityImage} />
+            <Text style={styles.activityText}>{activity.name}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      ))}
     </ScrollView>
   );
 }
@@ -396,6 +389,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [currentScreen, setCurrentScreen] = useState('Home');
+  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [joinMonth, setJoinMonth] = useState<string | null>(null);
   const [isFirstTime, setIsFirstTime] = useState(true);
@@ -413,22 +407,26 @@ function App(): React.JSX.Element {
         setJoinMonth(storedMonth);
         setIsFirstTime(false);
       }
+      setShowSplash(false);
     };
-    checkUserName();
+
+    setTimeout(() => {
+      checkUserName();
+    }, 2000);
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-       if (currentScreen === 'TotalValues') {
-      setCurrentScreen('Calories');
-      return true; // Prevent default behavior of closing the app
-    } else if (currentScreen === 'SettingsScreen') {
-      setCurrentScreen('Profile');
-      return true; // Prevent default behavior of closing the app
-    } else if (currentScreen !== 'Home') {
-      setCurrentScreen('Home');
-      return true; // Prevent default behavior of closing the app
-    }
-    return false; // Allow default behavior to happen if already on the home screen
-  });
+      if (currentScreen === 'TotalValues') {
+        setCurrentScreen('Calories');
+        return true; // Prevent default behavior of closing the app
+      } else if (currentScreen === 'SettingsScreen') {
+        setCurrentScreen('Profile');
+        return true; // Prevent default behavior of closing the app
+      } else if (currentScreen !== 'Home') {
+        setCurrentScreen('Home');
+        return true; // Prevent default behavior of closing the app
+      }
+      return false; // Allow default behavior to happen if already on the home screen
+    });
 
     return () => backHandler.remove(); // Cleanup the event listener on unmount
   }, [currentScreen]);
@@ -442,14 +440,12 @@ function App(): React.JSX.Element {
     setCurrentScreen(screen);
   };
 
-  const handleWelcomeFinish = () => {
-    const getUserName = async () => {
-      const storedName = await AsyncStorage.getItem('userName');
-      const storedMonth = await AsyncStorage.getItem('joinMonth');
-      setUserName(storedName);
-      setJoinMonth(storedMonth);
-    };
-    getUserName();
+  const handleWelcomeFinish = async () => {
+    await AsyncStorage.setItem('hasLaunched', 'true');
+    const storedName = await AsyncStorage.getItem('userName');
+    const storedMonth = await AsyncStorage.getItem('joinMonth');
+    setUserName(storedName);
+    setJoinMonth(storedMonth);
     setIsFirstTime(false);
   };
 
@@ -493,8 +489,8 @@ function App(): React.JSX.Element {
     loadCompletedData();
   }, []);
 
-  if (isFirstTime) {
-    return <WelcomeScreen onFinish={handleWelcomeFinish} />;
+  if (showSplash) {
+    return <LoadingScreen />;
   }
 
   const renderScreen = () => {
@@ -503,8 +499,8 @@ function App(): React.JSX.Element {
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.textContainer}>
-                <Text style={styles.greetingText}>Workouts</Text>
-              </View>
+              <Text style={styles.greetingText}>Workouts</Text>
+            </View>
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
@@ -518,9 +514,9 @@ function App(): React.JSX.Element {
         );
       case 'Profile':
         return (
-          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} completedWorkouts={completedWorkouts} completeCalories={completeCalories}/>
+          <ProfileScreen onNameChange={handleNameChange} navigateTo={navigateTo} completedHours={completedHours} completedWorkouts={completedWorkouts} completeCalories={completeCalories} />
         );
-        case 'SettingsScreen':
+      case 'SettingsScreen':
         return (
           <SettingsScreen navigateTo={navigateTo} />
         );
@@ -532,18 +528,18 @@ function App(): React.JSX.Element {
         return (
           <TotalValuesScreen dailyValues={dailyValues} />
         );
-        case 'Running':
+      case 'Running':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
         );
-        case 'Lifting':
-          return (
-            <BikingScreen onRunningComplete={handleBikingComplete} />
-          );
-          case 'Biking':
-            return (
-              <BikingScreen onRunningComplete={handleBikingComplete} />
-            );
+      case 'Lifting':
+        return (
+          <BikingScreen onRunningComplete={handleBikingComplete} />
+        );
+      case 'Biking':
+        return (
+          <BikingScreen onRunningComplete={handleBikingComplete} />
+        );
       case 'Home':
       default:
         return (
@@ -608,10 +604,10 @@ function App(): React.JSX.Element {
         style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      {!isFirstTime && <Footer navigateTo={navigateTo} />}
+      {!isFirstTime && !showSplash && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -667,11 +663,15 @@ const styles = StyleSheet.create({
     height: 24,
   },
   loading: {
-    backgroundColor: '#4CAF50',
+    alignItems: 'center', // Center the image horizontally
   },
   loadingImage: {
-    width: 100,
-    height: 100,
+    backgroundColor: '#4CAF50',
+    width: '100%',
+    height: '100%',
+    aspectRatio: 1, // Maintain aspect ratio
+    resizeMode: 'contain', // Contain within the container
+    marginBottom: 90, // Add some margin below the image
   },
   welcomeContainer: {
     flex: 1,
@@ -1129,6 +1129,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#4CAF50',
+  },
+  activityCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#4CAF50',
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  activityImage: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+  },
+  activityText: {
+    fontSize: 18,
+    color: '#FFFFFF',
   },
 });
 
