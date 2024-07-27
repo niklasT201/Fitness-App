@@ -2,36 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: boolean) => void }): React.JSX.Element {
+function BikingScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
     const totalTime = 3600; // Total time in seconds (60 minutes)
-    const totalCalories = 1000; // Total calories burned in one hour
+    const totalCalories = 300; // Total calories burned in one hour
     const [seconds, setSeconds] = useState(totalTime);
-    const [isRunning, setIsRunning] = useState(false);
+    const [isBiking, setIsBiking] = useState(false);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
   
     useEffect(() => {
       const loadTimerState = async () => {
-        const savedSeconds = await AsyncStorage.getItem('runningTimerSeconds');
-        const savedIsRunning = await AsyncStorage.getItem('runningTimerIsRunning');
+        const savedSeconds = await AsyncStorage.getItem('bikingTimerSeconds');
+        const savedIsRunning = await AsyncStorage.getItem('bikingTimerIsRunning');
         if (savedSeconds !== null) setSeconds(parseInt(savedSeconds, 10));
-        if (savedIsRunning !== null) setIsRunning(savedIsRunning === 'true');
+        if (savedIsRunning !== null) setIsBiking(savedIsRunning === 'true');
       };
   
       loadTimerState();
     }, []);
   
     useEffect(() => {
-      if (isRunning && seconds > 0) {
+      if (isBiking && seconds > 0) {
         timerRef.current = setTimeout(() => {
           setSeconds(prevSeconds => {
             const newSeconds = prevSeconds - 1;
-            AsyncStorage.setItem('runningTimerSeconds', newSeconds.toString());
+            AsyncStorage.setItem('bikingTimerSeconds', newSeconds.toString());
             return newSeconds;
           });
         }, 1000);
       } else if (seconds === 0) {
-        setIsRunning(false); // Stop the timer when it reaches zero
-        onRunningComplete(true); // Notify that running is complete
+        setIsBiking(false); // Stop the timer when it reaches zero
+        onRunningComplete(); // Notify that running is complete
         setSeconds(totalTime); // Reset the timer to the initial value
       }
   
@@ -40,14 +40,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
           clearTimeout(timerRef.current);
         }
       };
-    }, [seconds, isRunning]);
-  
-    // Reset the completion status when the component mounts or timer is reset
-    useEffect(() => {
-      return () => {
-        onRunningComplete(false);
-      };
-    }, []);
+    }, [seconds, isBiking]);
   
     const formatTime = (seconds: number) => {
       const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -56,25 +49,22 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
     };
   
     const handleStartPress = () => {
-      if (!isRunning) {
-        setIsRunning(true);
-        AsyncStorage.setItem('runningTimerIsRunning', 'true');
-        onRunningComplete(false); // Reset the completion status when the timer starts
+      if (!isBiking) {
+        setIsBiking(true);
+        AsyncStorage.setItem('bikingTimerIsRunning', 'true');
       }
     };
   
     const handleStopPress = () => {
-      setIsRunning(false);
-      AsyncStorage.setItem('runningTimerIsRunning', 'false');
-      onRunningComplete(false); // Notify parent that the run was stopped
+      setIsBiking(false);
+      AsyncStorage.setItem('bikingTimerIsRunning', 'false');
     };
   
     const handleCancelPress = () => {
-      setIsRunning(false);
+      setIsBiking(false);
       setSeconds(totalTime);
-      AsyncStorage.setItem('runningTimerIsRunning', 'false');
-      AsyncStorage.setItem('runningTimerSeconds', totalTime.toString());
-      onRunningComplete(false); // Notify parent that the run was canceled
+      AsyncStorage.setItem('bikingTimerIsRunning', 'false');
+      AsyncStorage.setItem('bikingTimerSeconds', totalTime.toString());
     };
   
     const progress = (1 - seconds / totalTime) * 100;
@@ -82,7 +72,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
   
     return (
       <View style={styles.runningContainer}>
-        <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
+        <Image source={require('./assets/biketimer.png')} style={styles.runningImage} />
         <View style={styles.progressBarContainer}>
           <Animated.View
             style={[
@@ -107,12 +97,12 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
           <Text style={styles.progressText}>Calories Burned: {calorieProgress.toFixed(0)}</Text>
         </View>
         <Text style={styles.timerText}>{formatTime(seconds)}</Text>
-        {!isRunning && (
+        {!isBiking && (
           <TouchableOpacity style={styles.startButton} onPress={handleStartPress}>
             <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         )}
-        {isRunning && (
+        {isBiking && (
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.stopButton} onPress={handleStopPress}>
               <Image source={require('./assets/Pause-Button.png')} style={styles.stopButtonImage} />
@@ -122,7 +112,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
             </TouchableOpacity>
           </View>
         )}
-        {isRunning && (
+        {isBiking && (
            <TouchableOpacity style={styles.cancelTButton} onPress={handleCancelPress}>
            <Text style={styles.cancelButtonText}>Cancel</Text>
          </TouchableOpacity>
@@ -228,5 +218,5 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
       },
   });
   
-  export default RunningScreen;
+  export default BikingScreen;
   
