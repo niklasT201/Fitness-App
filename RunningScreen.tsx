@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: boolean) => void }): React.JSX.Element {
+function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void }): React.JSX.Element {
     const totalTime = 3600; // Total time in seconds (60 minutes)
     const totalCalories = 1000; // Total calories burned in one hour
     const [seconds, setSeconds] = useState(totalTime);
@@ -31,7 +31,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
         }, 1000);
       } else if (seconds === 0) {
         setIsRunning(false); // Stop the timer when it reaches zero
-        onRunningComplete(true); // Notify that running is complete
+        onRunningComplete(); // Notify that running is complete
         setSeconds(totalTime); // Reset the timer to the initial value
       }
   
@@ -41,13 +41,6 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
         }
       };
     }, [seconds, isRunning]);
-  
-    // Reset the completion status when the component mounts or timer is reset
-    useEffect(() => {
-      return () => {
-        onRunningComplete(false);
-      };
-    }, []);
   
     const formatTime = (seconds: number) => {
       const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -59,14 +52,12 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
       if (!isRunning) {
         setIsRunning(true);
         AsyncStorage.setItem('runningTimerIsRunning', 'true');
-        onRunningComplete(false); // Reset the completion status when the timer starts
       }
     };
   
     const handleStopPress = () => {
       setIsRunning(false);
       AsyncStorage.setItem('runningTimerIsRunning', 'false');
-      onRunningComplete(false); // Notify parent that the run was stopped
     };
   
     const handleCancelPress = () => {
@@ -74,7 +65,6 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: (isComplete: 
       setSeconds(totalTime);
       AsyncStorage.setItem('runningTimerIsRunning', 'false');
       AsyncStorage.setItem('runningTimerSeconds', totalTime.toString());
-      onRunningComplete(false); // Notify parent that the run was canceled
     };
   
     const progress = (1 - seconds / totalTime) * 100;
