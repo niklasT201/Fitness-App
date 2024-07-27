@@ -74,6 +74,7 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
 function LoadingScreen(): React.JSX.Element {
   return (
     <ScrollView style={styles.screenContainer}>
+       <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
       <View style={styles.loading}>
         <Image source={require('./assets/logo.png')} style={styles.loadingImage} />
       </View>
@@ -102,6 +103,53 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string) => void }
     </ScrollView>
   );
 }
+
+/* return (
+  <ScrollView style={styles.screenContainer}>
+    <View style={styles.sectionContainer}>
+      <Section title="Upper Body">
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Chest</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Shoulders</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Arms</Text>
+        </TouchableOpacity>
+      </Section>
+      <Section title="Lower Body">
+        <TouchableOpacity onPress={() => navigateTo('Biking')}>
+          <Text style={styles.link}>Legs</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Biking')}>
+          <Text style={styles.link}>Glutes</Text>
+        </TouchableOpacity>
+      </Section>
+      <Section title="Cardio">
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Running</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Biking')}>
+          <Text style={styles.link}>Biking</Text>
+        </TouchableOpacity>
+      </Section>
+      <Section title="Flexibility">
+        <TouchableOpacity onPress={() => navigateTo('Running')}>
+          <Text style={styles.link}>Yoga</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo('Biking')}>
+          <Text style={styles.link}>Stretching</Text>
+        </TouchableOpacity>
+      </Section>
+    </View>
+    <View style={styles.footerSpacer} />
+  </ScrollView>
+);
+} */
 
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
@@ -528,13 +576,32 @@ function App(): React.JSX.Element {
         return (
           <TotalValuesScreen dailyValues={dailyValues} />
         );
+      case 'Activity':
+        return (
+          <ActivityScreen navigateTo={navigateTo} />
+        );
+      case 'Cardio':
+        return (
+          <RunningScreen onRunningComplete={handleRunningComplete} />
+        );
+      case 'Strength Training':
+        return (
+          <View style={styles.screenContainer}>
+            <Text style={styles.statValue}>Strength Training</Text>
+            <Text style={styles.statValue}>Strength Training workouts coming soon!</Text>
+          </View>
+        );
+      case 'Cycling':
+        return (
+          <BikingScreen onRunningComplete={handleBikingComplete} />
+        );
       case 'Running':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
         );
       case 'Lifting':
         return (
-          <BikingScreen onRunningComplete={handleBikingComplete} />
+          <ActivityScreen navigateTo={navigateTo} />
         );
       case 'Biking':
         return (
@@ -1139,8 +1206,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   activityImage: {
-    width: 50,
-    height: 50,
+    width: 300,
+    height: 150,
     marginRight: 10,
   },
   activityText: {
