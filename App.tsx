@@ -174,7 +174,7 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
   return (
     <View style={styles.timerContainer}>
       <Text style={styles.exerciseTitle}>{exercise}</Text>
-      <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+      <Text style={styles.WorktimerText}>{formatTime(timeLeft)}</Text>
       <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
         <Text style={styles.timerButtonText}>{isActive ? 'Pause' : 'Start'}</Text>
       </TouchableOpacity>
@@ -506,10 +506,13 @@ function App(): React.JSX.Element {
         return true; // Prevent default behavior of closing the app
       } else if (currentScreen === 'SettingsScreen') {
         setCurrentScreen('Profile');
-        return true; // Prevent default behavior of closing the app
+        return true; 
+      } else if (currentScreen === 'Running'|| "Biking") {
+        setCurrentScreen('Workouts');
+        return true; 
       } else if (currentScreen !== 'Home') {
         setCurrentScreen('Home');
-        return true; // Prevent default behavior of closing the app
+        return true; 
       }
       return false; // Allow default behavior to happen if already on the home screen
     });
@@ -623,21 +626,6 @@ function App(): React.JSX.Element {
         return (
         <WorkoutTimerScreen route={{ params: currentScreenParams }} navigateTo={navigateTo} />
       );
-      case 'Cardio':
-        return (
-          <RunningScreen onRunningComplete={handleRunningComplete} />
-        );
-      case 'Strength Training':
-        return (
-          <View style={styles.screenContainer}>
-            <Text style={styles.statValue}>Strength Training</Text>
-            <Text style={styles.statValue}>Strength Training workouts coming soon!</Text>
-          </View>
-        );
-      case 'Cycling':
-        return (
-          <BikingScreen onRunningComplete={handleBikingComplete} />
-        );
       case 'Running':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
@@ -1273,6 +1261,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  WorktimerText: {
+    marginTop: 50,
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#000',
   },
   exerciseTitle: {
     fontSize: 24,
