@@ -433,7 +433,6 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         ) : (
           <Text style={styles.profileUserName}>{userName}</Text>
         )}
-        {/* <Text style={styles.profileDetail}>Email: example@example.com</Text> */}
         <Text style={styles.profileDetail}>Joined: {joinMonth} 2024</Text>
         {isEditing ? (
           <TouchableOpacity style={styles.editProfileButton} onPress={handleSave}>
@@ -449,7 +448,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         <Text style={styles.statsTitle}>Your Statistics</Text>
         <View style={styles.statRow}>
           <View style={styles.statBox}>
-          <Text style={styles.statValue}>{completedWorkouts}</Text>
+            <Text style={styles.statValue}>{completedWorkouts}</Text>
             <Text style={styles.statLabel}>Workouts</Text>
           </View>
           <View style={styles.statBox}>
@@ -697,6 +696,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff', // Changed to beige
   },
   sectionTitle: {
+    marginBottom: 20,
     fontSize: 20,
     fontWeight: '600',
     color: '#000',
@@ -948,10 +948,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderRadius: 20,
     marginHorizontal: 20,
   },
   profileUserName: {
@@ -1167,15 +1164,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  Profileinput:{
-      width: '100%',
-      height: 40,
-      borderColor: '#cccccc',
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 8,
-      marginBottom: 16,
-      color: '#000',
+  Profileinput: {
+    width: '100%',
+    height: 40,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 16,
+    color: '#000',
   },
  settingsContainer: {
     padding: 16,
