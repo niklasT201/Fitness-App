@@ -181,7 +181,7 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
       <TouchableOpacity style={styles.timerButton} onPress={resetTimer}>
         <Text style={styles.timerButtonText}>Reset</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigateTo('Activity')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigateTo('Workouts')}>
         <Text style={styles.backButtonText}>Back to Activities</Text>
       </TouchableOpacity>
     </View>
@@ -587,20 +587,7 @@ function App(): React.JSX.Element {
     switch (currentScreen) {
       case 'Workouts':
         return (
-          <View style={{ ...backgroundStyle, padding: 16 }}>
-            <View style={styles.textContainer}>
-              <Text style={styles.greetingText}>Workouts</Text>
-            </View>
-            <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
-              <Image source={require('./assets/running.png')} style={styles.workoutImage} />
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
-              <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
-              <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
-            </TouchableWithoutFeedback>
-          </View>
+          <ActivityScreen navigateTo={navigateTo} />
         );
       case 'Profile':
         return (
@@ -618,10 +605,6 @@ function App(): React.JSX.Element {
         return (
           <TotalValuesScreen dailyValues={dailyValues} />
         );
-      case 'Activity':
-        return (
-          <ActivityScreen navigateTo={navigateTo} />
-        );
       case 'WorkoutTimer':
         return (
         <WorkoutTimerScreen route={{ params: currentScreenParams }} navigateTo={navigateTo} />
@@ -629,10 +612,6 @@ function App(): React.JSX.Element {
       case 'Running':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
-        );
-      case 'Lifting':
-        return (
-          <ActivityScreen navigateTo={navigateTo} />
         );
       case 'Biking':
         return (
@@ -720,6 +699,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
+    color: '#000',
   },
   sectionDescription: {
     marginTop: 8,
