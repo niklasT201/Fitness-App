@@ -82,74 +82,111 @@ function LoadingScreen(): React.JSX.Element {
   );
 }
 
-function ActivityScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: any) => void }): React.JSX.Element {
   const activities = [
-    { name: 'Cardio', image: require('./assets/running.png') },
-    { name: 'Strength Training', image: require('./assets/lifting.png') },
-    { name: 'Cycling', image: require('./assets/biking.png') },
-    // Add more activities as needed
+    {
+      title: "Upper Body",
+      exercises: [
+        { name: "Chest", duration: 15 },
+        { name: "Back", duration: 20 },
+        { name: "Shoulders", duration: 15 },
+        { name: "Arms", duration: 10 },
+      ]
+    },
+    {
+      title: "Lower Body",
+      exercises: [
+        { name: "Legs", duration: 25 },
+        { name: "Glutes", duration: 20 },
+      ]
+    },
+    {
+      title: "Cardio",
+      exercises: [
+        { name: "Running", duration: 30 },
+        { name: "Biking", duration: 25 },
+      ]
+    },
+    {
+      title: "Flexibility",
+      exercises: [
+        { name: "Yoga", duration: 20 },
+        { name: "Stretching", duration: 15 },
+      ]
+    }
   ];
 
   return (
     <ScrollView style={styles.screenContainer}>
-      {activities.map((activity, index) => (
-        <TouchableWithoutFeedback key={index} onPress={() => navigateTo(activity.name)}>
-          <View style={styles.activityCard}>
-            <Image source={activity.image} style={styles.activityImage} />
-            <Text style={styles.activityText}>{activity.name}</Text>
-          </View>
-        </TouchableWithoutFeedback>
+      {activities.map((section, index) => (
+        <View key={index} style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>{section.title}</Text>
+          {section.exercises.map((exercise, exerciseIndex) => (
+            <TouchableOpacity 
+              key={exerciseIndex} 
+              style={styles.exerciseCard}
+              onPress={() => navigateTo('WorkoutTimer', { exercise: exercise.name, duration: exercise.duration })}
+            >
+              <Text style={styles.exerciseText}>{exercise.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       ))}
     </ScrollView>
   );
 }
 
-/* return (
-  <ScrollView style={styles.screenContainer}>
-    <View style={styles.sectionContainer}>
-      <Section title="Upper Body">
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Chest</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Back</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Shoulders</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Arms</Text>
-        </TouchableOpacity>
-      </Section>
-      <Section title="Lower Body">
-        <TouchableOpacity onPress={() => navigateTo('Biking')}>
-          <Text style={styles.link}>Legs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Biking')}>
-          <Text style={styles.link}>Glutes</Text>
-        </TouchableOpacity>
-      </Section>
-      <Section title="Cardio">
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Running</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Biking')}>
-          <Text style={styles.link}>Biking</Text>
-        </TouchableOpacity>
-      </Section>
-      <Section title="Flexibility">
-        <TouchableOpacity onPress={() => navigateTo('Running')}>
-          <Text style={styles.link}>Yoga</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateTo('Biking')}>
-          <Text style={styles.link}>Stretching</Text>
-        </TouchableOpacity>
-      </Section>
+function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise: string, duration: number } }, navigateTo: (screen: string) => void }): React.JSX.Element {
+  const { exercise, duration } = route.params;
+  const [timeLeft, setTimeLeft] = useState(duration * 60); // Convert minutes to seconds
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((time) => time - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+      if (interval) clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, timeLeft]);
+
+  const toggleTimer = () => {
+    setIsActive(!isActive);
+  };
+
+  const resetTimer = () => {
+    setIsActive(false);
+    setTimeLeft(duration * 60);
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <View style={styles.timerContainer}>
+      <Text style={styles.exerciseTitle}>{exercise}</Text>
+      <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+      <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
+        <Text style={styles.timerButtonText}>{isActive ? 'Pause' : 'Start'}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.timerButton} onPress={resetTimer}>
+        <Text style={styles.timerButtonText}>Reset</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigateTo('Activity')}>
+        <Text style={styles.backButtonText}>Back to Activities</Text>
+      </TouchableOpacity>
     </View>
-    <View style={styles.footerSpacer} />
-  </ScrollView>
-);
-} */
+  );
+}
 
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
@@ -437,6 +474,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [currentScreen, setCurrentScreen] = useState('Home');
+  const [currentScreenParams, setCurrentScreenParams] = useState<any>(null);
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [userName, setUserName] = useState<string | null>(null);
   const [joinMonth, setJoinMonth] = useState<string | null>(null);
@@ -484,8 +522,9 @@ function App(): React.JSX.Element {
     flex: 1,
   };
 
-  const navigateTo = (screen: string) => {
+  const navigateTo = (screen: string, params?: any) => {
     setCurrentScreen(screen);
+    setCurrentScreenParams(params);
   };
 
   const handleWelcomeFinish = async () => {
@@ -580,6 +619,10 @@ function App(): React.JSX.Element {
         return (
           <ActivityScreen navigateTo={navigateTo} />
         );
+      case 'WorkoutTimer':
+        return (
+        <WorkoutTimerScreen route={{ params: currentScreenParams }} navigateTo={navigateTo} />
+      );
       case 'Cardio':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
@@ -1213,6 +1256,46 @@ const styles = StyleSheet.create({
   activityText: {
     fontSize: 18,
     color: '#FFFFFF',
+  },
+
+  exerciseCard: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  exerciseText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  timerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  exerciseTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#000',
+  },
+  timerButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  timerButtonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  backButton: {
+    marginTop: 20,
+  },
+  backButtonText: {
+    color: '#4CAF50',
+    fontSize: 16,
   },
 });
 
