@@ -706,6 +706,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
+
+//Footer
   footerContainer: {
     position: 'absolute',
     bottom: 10,
@@ -740,6 +742,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+
+//Loading
   loading: {
     alignItems: 'center', // Center the image horizontally
   },
@@ -751,6 +755,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // Contain within the container
     marginBottom: 90, // Add some margin below the image
   },
+
+//Welcome 
   welcomeContainer: {
     flex: 1,
     justifyContent: 'space-between',
@@ -806,6 +812,8 @@ const styles = StyleSheet.create({
     width: '110%',
     height: 300, // Adjust height as needed
   },
+
+//Home
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -869,6 +877,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     transform: [{ scale: 0.8 }], // Scale down to zoom out
   },
+
+//Calories
   screenContainer: {
     flex: 1,
     backgroundColor: '#4CAF50',
@@ -912,18 +922,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  totalValuesContainer: {
-    padding: 20,
-    borderRadius: 10,
-    margin: 10,
-  },
-  totalValuesText: {
-    fontSize: 22,
-    marginBottom: 10,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 5,
-  },
   calorieImageContainer: {
     alignItems: 'center', // Center the image horizontally
     marginBottom: 10, // Add some margin below the image
@@ -934,40 +932,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: 'contain', // Contain within the container
   },
-  profileImageContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  profileImage: {
-    width: '60%', // Reduce the width of the image
-    height: undefined,
-    aspectRatio: 1, // Maintain aspect ratio
-    resizeMode: 'contain', // Contain within the container
-  },
-  profileDetailsContainer: {
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    marginHorizontal: 20,
-  },
-  profileUserName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  profileDetail: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#666666',
-    marginBottom: 8,
-  },
-  runningContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
+//Use later
   timerText: {
     marginTop: 50,
     fontSize: 48,
@@ -985,6 +951,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+
+//Total Values
+  totalValuesContainer: {
+    padding: 20,
+    borderRadius: 10,
+    margin: 10,
+  },
+  totalValuesText: {
+    fontSize: 22,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 5,
   },
   totalheader: {
     alignItems: 'center',
@@ -1006,6 +986,13 @@ const styles = StyleSheet.create({
   valueLabel: {
     fontSize: 18,
     color: '#777',
+  },
+
+//Running
+  runningContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   runningImage:{
       marginTop: 50,
@@ -1077,6 +1064,27 @@ const styles = StyleSheet.create({
     fontSize: 23,
     fontWeight: 'bold',
     marginTop: 20,
+  },
+
+// Profile 
+  profileDetailsContainer: {
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    marginHorizontal: 20,
+  },
+  profileUserName: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  profileDetail: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#666666',
+    marginBottom: 8,
   },
   profileHeaderContainer: {
     flexDirection: 'row',
@@ -1174,6 +1182,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: '#000',
   },
+
+  //Settings
  settingsContainer: {
     padding: 16,
   },
@@ -1205,6 +1215,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#4CAF50',
   },
+
+//Activities
   activityCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1223,6 +1235,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
+//Exercises
   exerciseCard: {
     backgroundColor: '#f0f0f0',
     padding: 15,
