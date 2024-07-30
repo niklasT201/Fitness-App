@@ -131,7 +131,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
   };
 
   return (
-    <ScrollView style={styles.screenContainer}>
+    <ScrollView style={styles.AscreenContainer}>
       {activities.map((section, index) => (
         <View key={index} style={styles.AsectionContainer}>
           <View style={styles.activityContent}>
@@ -198,12 +198,14 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
     <View style={styles.timerContainer}>
       <Text style={styles.exerciseTitle}>{exercise}</Text>
       <Text style={styles.WorktimerText}>{formatTime(timeLeft)}</Text>
+      <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
         <Text style={styles.timerButtonText}>{isActive ? 'Pause' : 'Start'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.timerButton} onPress={resetTimer}>
+      <TouchableOpacity style={styles.resetButton} onPress={resetTimer}>
         <Text style={styles.timerButtonText}>Reset</Text>
       </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.backButton} onPress={() => navigateTo('Workouts')}>
         <Text style={styles.backButtonText}>Back to Activities</Text>
       </TouchableOpacity>
@@ -1244,7 +1246,8 @@ const styles = StyleSheet.create({
 //Activities
   AscreenContainer: {
     flex: 1,
-    backgroundColor: '#f7f7f7', // Light background color for contrast
+    backgroundColor: '#4CAF50',
+    marginTop: 20,
   },
   AsectionContainer: {
     marginVertical: 10,
@@ -1339,6 +1342,13 @@ const styles = StyleSheet.create({
   timerButtonText: {
     color: '#fff',
     fontSize: 18,
+  },
+  resetButton: {
+    backgroundColor: '#F44336',
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+    marginLeft: 10,
   },
   backButton: {
     marginTop: 20,
