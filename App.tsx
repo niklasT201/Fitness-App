@@ -154,6 +154,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
           ))}
         </View>
       ))}
+      <View style={styles.placeholder}></View>
     </ScrollView>
   );
 }
@@ -686,6 +687,7 @@ function App(): React.JSX.Element {
             <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
               <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
+            <View style={styles.placeholder}></View>
           </View>
         );
     }
@@ -1294,6 +1296,9 @@ const styles = StyleSheet.create({
   activitySummary: {
     fontSize: 14,
     color: '#666666',
+  },
+  placeholder: {
+    marginTop: 70,
   },
 
 //Exercises
