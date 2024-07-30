@@ -86,6 +86,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
   const activities = [
     {
       title: "Upper Body",
+      icon: '🏋️‍♂️',
       exercises: [
         { name: "Chest", duration: 15 },
         { name: "Back", duration: 20 },
@@ -95,6 +96,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     },
     {
       title: "Lower Body",
+      icon: '🏋️‍♀️',
       exercises: [
         { name: "Legs", duration: 25 },
         { name: "Glutes", duration: 20 },
@@ -102,6 +104,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     },
     {
       title: "Cardio",
+      icon: '🏃‍♂️',
       exercises: [
         { name: "Running", duration: 30 },
         { name: "Biking", duration: 25 },
@@ -109,6 +112,7 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     },
     {
       title: "Flexibility",
+      icon: '🧘‍♀️',
       exercises: [
         { name: "Yoga", duration: 20 },
         { name: "Stretching", duration: 15 },
@@ -116,16 +120,34 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     }
   ];
 
+  const handleExercisePress = (exerciseName: string, duration: number) => {
+    if (exerciseName === "Running") {
+      navigateTo('Running');
+    } else if (exerciseName === "Biking") {
+      navigateTo('Biking');
+    }else {
+      navigateTo('WorkoutTimer', { exercise: exerciseName, duration });
+    }
+  };
+
   return (
     <ScrollView style={styles.screenContainer}>
       {activities.map((section, index) => (
-        <View key={index} style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
+        <View key={index} style={styles.AsectionContainer}>
+          <View style={styles.activityContent}>
+            <Text style={styles.activityIcon}>{section.icon}</Text>
+           <View style={styles.activityTextContainer}>
+            <Text style={styles.activityTitle}>{section.title}</Text>
+            <Text style={styles.activitySummary}>
+              {section.exercises.length} Exercises · {section.exercises.reduce((acc, exercise) => acc + exercise.duration, 0)} mins
+            </Text>
+          </View>
+          </View>
           {section.exercises.map((exercise, exerciseIndex) => (
             <TouchableOpacity 
               key={exerciseIndex} 
               style={styles.exerciseCard}
-              onPress={() => navigateTo('WorkoutTimer', { exercise: exercise.name, duration: exercise.duration })}
+              onPress={() => handleExercisePress(exercise.name, exercise.duration)}
             >
               <Text style={styles.exerciseText}>{exercise.name}</Text>
             </TouchableOpacity>
@@ -1073,6 +1095,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 20,
     marginHorizontal: 20,
+    marginBottom: 20,
   },
   profileUserName: {
     fontSize: 24,
@@ -1217,22 +1240,60 @@ const styles = StyleSheet.create({
   },
 
 //Activities
+  AscreenContainer: {
+    flex: 1,
+    backgroundColor: '#f7f7f7', // Light background color for contrast
+  },
+  AsectionContainer: {
+    marginVertical: 10,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: '#ffffff', // Card-like appearance
+    padding: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+  },
   activityCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
-    marginVertical: 5,
+    marginVertical: 10,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
   },
   activityImage: {
-    width: 300,
-    height: 150,
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+  },
+  activityContent: {
+    flexDirection: 'row', // Arrange icon and text in a row
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  activityIcon: {
+    fontSize: 30,
     marginRight: 10,
   },
-  activityText: {
-    fontSize: 18,
-    color: '#FFFFFF',
+  activityTextContainer: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  activitySummary: {
+    fontSize: 14,
+    color: '#666666',
   },
 
 //Exercises
