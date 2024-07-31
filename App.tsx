@@ -1482,3 +1482,4 @@ export default App;
 // Add Bar Code Scanner
 // Redesign the Profile Screen to more white cards
 // Add Calorie daily statistics
+// Maybe add a month/day show up to Home Screen
