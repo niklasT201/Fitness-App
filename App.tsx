@@ -94,6 +94,8 @@ function LoadingScreen(): React.JSX.Element {
 }
 
 function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: any) => void }): React.JSX.Element {
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   
   const activities = [
@@ -161,13 +163,26 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
 
   return (
     <View style={styles.AscreenContainer}>
-      <View style={styles.searchBarContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search exercises..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+       <View style={styles.activityHeader}>
+        {showSearch ? (
+          <View style={styles.searchBarContainer}>
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search activities..."
+              placeholderTextColor="#666"
+              value={searchText}
+              onChangeText={(text) => {
+                setSearchText(text);
+                setSearchQuery(text);
+              }}
+            />
+          </View>
+        ) : (
+          <View style={styles.Aplaceholder} />
+        )}
+        <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
+          <Image source={require('./assets/search.png')} style={styles.searchIcon} />
+        </TouchableOpacity>
       </View>
       <ScrollView>
         {filteredActivities.map((section, index) => (
@@ -1318,16 +1333,32 @@ const styles = StyleSheet.create({
   },
 
 //Activities
+  activityHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
+  searchIcon: {
+    width: 24,
+    height: 24,
+  },
+  Aplaceholder: {
+    flex: 1,
+  },
   searchBarContainer: {
-    padding: 10,
-    backgroundColor: '#4CAF50',
+    flex: 1,
+    marginRight: 10,
   },
   searchBar: {
-    height: 40,
     backgroundColor: '#ffffff',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    fontSize: 16,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    color: '#333', // This sets the text color for both placeholder and typed text
   },
   AscreenContainer: {
     flex: 1,
