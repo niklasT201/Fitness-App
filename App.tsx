@@ -1476,3 +1476,9 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
+// Remove Total Screen
+// Add Report Screen and move the total Values to it
+// Add Bar Code Scanner
+// Redesign the Profile Screen to more white cards
+// Add Calorie daily statistics
