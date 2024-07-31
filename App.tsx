@@ -15,6 +15,17 @@ const { height: screenHeight } = Dimensions.get('window');
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+interface DayCardProps {
+  day: string;
+  isCurrentDay: boolean;
+}
+
+const DayCard: React.FC<DayCardProps> = ({ day, isCurrentDay }) => (
+  <View style={[styles.dayCard, isCurrentDay && styles.currentDayCard]}>
+    <Text style={[styles.dayText, isCurrentDay && styles.currentDayText]}>{day}</Text>
+  </View>
+);
+
 type SectionProps = {
   title: string;
   children: React.ReactNode;
@@ -83,6 +94,8 @@ function LoadingScreen(): React.JSX.Element {
 }
 
 function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: any) => void }): React.JSX.Element {
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const activities = [
     {
       title: "Upper Body",
@@ -120,6 +133,22 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     }
   ];
 
+  const [filteredActivities, setFilteredActivities] = useState(activities);
+
+  useEffect(() => {
+    if (searchQuery === '') {
+      setFilteredActivities(activities);
+    } else {
+      const filtered = activities.map(section => ({
+        ...section,
+        exercises: section.exercises.filter(exercise => 
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      })).filter(section => section.exercises.length > 0);
+      setFilteredActivities(filtered);
+    }
+  }, [searchQuery]);
+
   const handleExercisePress = (exerciseName: string, duration: number) => {
     if (exerciseName === "Running") {
       navigateTo('Running');
@@ -131,31 +160,41 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
   };
 
   return (
-    <ScrollView style={styles.AscreenContainer}>
-      {activities.map((section, index) => (
-        <View key={index} style={styles.AsectionContainer}>
-          <View style={styles.activityContent}>
-            <Text style={styles.activityIcon}>{section.icon}</Text>
-           <View style={styles.activityTextContainer}>
-            <Text style={styles.activityTitle}>{section.title}</Text>
-            <Text style={styles.activitySummary}>
-              {section.exercises.length} Exercises · {section.exercises.reduce((acc, exercise) => acc + exercise.duration, 0)} mins
-            </Text>
+    <View style={styles.AscreenContainer}>
+      <View style={styles.searchBarContainer}>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search exercises..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+      <ScrollView>
+        {filteredActivities.map((section, index) => (
+          <View key={index} style={styles.AsectionContainer}>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityIcon}>{section.icon}</Text>
+              <View style={styles.activityTextContainer}>
+                <Text style={styles.activityTitle}>{section.title}</Text>
+                <Text style={styles.activitySummary}>
+                  {section.exercises.length} Exercises · {section.exercises.reduce((acc, exercise) => acc + exercise.duration, 0)} mins
+                </Text>
+              </View>
+            </View>
+            {section.exercises.map((exercise, exerciseIndex) => (
+              <TouchableOpacity 
+                key={exerciseIndex} 
+                style={styles.exerciseCard}
+                onPress={() => handleExercisePress(exercise.name, exercise.duration)}
+              >
+                <Text style={styles.exerciseText}>{exercise.name}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
-          </View>
-          {section.exercises.map((exercise, exerciseIndex) => (
-            <TouchableOpacity 
-              key={exerciseIndex} 
-              style={styles.exerciseCard}
-              onPress={() => handleExercisePress(exercise.name, exercise.duration)}
-            >
-              <Text style={styles.exerciseText}>{exercise.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ))}
-      <View style={styles.placeholder}></View>
-    </ScrollView>
+        ))}
+        <View style={styles.placeholder}></View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -643,6 +682,10 @@ function App(): React.JSX.Element {
         );
       case 'Home':
       default:
+        const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const currentDay: number = new Date().getDay();
+        // Adjusting for Sunday being 0 in getDay()
+        const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
@@ -677,6 +720,11 @@ function App(): React.JSX.Element {
                 </View>
               )}
             </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScrollView}>
+              {days.map((day, index) => (
+                <DayCard key={day} day={day} isCurrentDay={index === adjustedCurrentDay} />
+              ))}
+            </ScrollView>
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
@@ -877,6 +925,32 @@ const styles = StyleSheet.create({
   statImage1: {
     width: 50,
     height: 50,
+  },
+  daysScrollView: {
+    flexDirection: 'row',
+    marginVertical: 10,
+  },
+  dayCard: {
+    width: 70,
+    height: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  currentDayCard: {
+    backgroundColor: '#4CAF50', // or any color that matches your app's theme
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  dayText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  currentDayText: {
+    color: '#ffffff',
   },
   chooseTrainingContainer: {
     marginTop: 16,
@@ -1244,6 +1318,17 @@ const styles = StyleSheet.create({
   },
 
 //Activities
+  searchBarContainer: {
+    padding: 10,
+    backgroundColor: '#4CAF50',
+  },
+  searchBar: {
+    height: 40,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    fontSize: 16,
+  },
   AscreenContainer: {
     flex: 1,
     backgroundColor: '#4CAF50',
