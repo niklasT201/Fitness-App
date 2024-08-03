@@ -18,13 +18,17 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 interface DayCardProps {
   day: string;
   isCurrentDay: boolean;
+  dayNumber: number;
 }
 
-const DayCard: React.FC<DayCardProps> = ({ day, isCurrentDay }) => (
-  <View style={[styles.dayCard, isCurrentDay && styles.currentDayCard]}>
-    <Text style={[styles.dayText, isCurrentDay && styles.currentDayText]}>{day}</Text>
-  </View>
-);
+function DayCard({ day, dayNumber, isCurrentDay }: DayCardProps): React.JSX.Element {
+  return (
+    <View style={[styles.dayCard, isCurrentDay && styles.currentDayCard]}>
+      <Text style={[styles.dayText, isCurrentDay && styles.currentDayText]}>{day}</Text>
+      <Text style={[styles.dayNumberText, isCurrentDay && styles.currentDayText]}>{dayNumber}</Text>
+    </View>
+  );
+}
 
 type SectionProps = {
   title: string;
@@ -161,6 +165,27 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     }
   };
 
+  const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const currentDate = new Date();
+  const currentDay: number = currentDate.getDay();
+  // Adjusting for Sunday being 0 in getDay()
+  const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
+
+    // Calculate the day numbers for the week
+    const dayNumbers: number[] = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(currentDate);
+      date.setDate(currentDate.getDate() - adjustedCurrentDay + i);
+      return date.getDate();
+    });
+
+   // Format the date string
+    const options: Intl.DateTimeFormatOptions = { 
+      month: 'long', 
+      day: 'numeric', 
+      weekday: 'long' 
+    };
+    const formattedDate = currentDate.toLocaleDateString('en-US', options);
+
   return (
     <View style={styles.AscreenContainer}>
        <View style={styles.activityHeader}>
@@ -183,6 +208,18 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
         <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
           <Image source={require('./assets/search.png')} style={styles.searchIcon} />
         </TouchableOpacity>
+      </View>
+      <View style={styles.activecards}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScrollView}>
+          {days.map((day, index) => (
+            <DayCard 
+              key={day} 
+              day={day} 
+              dayNumber={dayNumbers[index]}
+              isCurrentDay={index === adjustedCurrentDay} 
+            />
+          ))}
+        </ScrollView>
       </View>
       <ScrollView>
         {filteredActivities.map((section, index) => (
@@ -725,20 +762,6 @@ function App(): React.JSX.Element {
         );
       case 'Home':
       default:
-        const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const currentDate = new Date();
-        const currentDay: number = currentDate.getDay();
-        // Adjusting for Sunday being 0 in getDay()
-        const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
-
-         // Format the date string
-          const options: Intl.DateTimeFormatOptions = { 
-            month: 'long', 
-            day: 'numeric', 
-            weekday: 'long' 
-          };
-          const formattedDate = currentDate.toLocaleDateString('en-US', options);
-
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
@@ -774,11 +797,6 @@ function App(): React.JSX.Element {
                 </View>
               )}
             </View>
-            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScrollView}>
-              {days.map((day, index) => (
-                <DayCard key={day} day={day} isCurrentDay={index === adjustedCurrentDay} />
-              ))}
-            </ScrollView> */}
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
@@ -1003,26 +1021,28 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   dayCard: {
-    width: 70,
-    height: 90,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
+    justifyContent: 'center',
+    padding: 16,
     marginRight: 10,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5', // Light gray background for non-current days
   },
   currentDayCard: {
-    backgroundColor: '#4CAF50', // or any color that matches your app's theme
-    borderWidth: 2,
-    borderColor: '#fff',
+    backgroundColor: '#4CAF50', // Your theme green for the current day
   },
   dayText: {
     fontSize: 14,
+    color: '#333333', // Dark gray for non-current day text
+  },
+  dayNumberText: {
+    fontSize: 19,
     fontWeight: 'bold',
-    color: '#333',
+    marginTop: 4,
+    color: '#333333', // Dark gray for non-current day number
   },
   currentDayText: {
-    color: '#ffffff',
+    color: 'white', // White text for the current day
   },
   chooseTrainingContainer: {
     marginTop: 16,
@@ -1342,7 +1362,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   profileText: {
-    fontSize: 30,
+    fontSize: 25,
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
@@ -1493,6 +1513,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  activecards: {
+    padding: 16,
+  },
   activityCard: {
     flexDirection: 'row',
     marginVertical: 10,
@@ -1597,4 +1620,3 @@ export default App;
 // Add Report Screen and move the total Values to it
 // Add Bar Code Scanner
 // Add Calorie daily statistics
-// Maybe add a month/day show up to Home Screen
