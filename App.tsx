@@ -285,17 +285,22 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  const progress = 1 - timeLeft / (duration * 60);
+
   return (
-    <View style={styles.timerContainer}>
+    <View style={styles.container}>
       <Text style={styles.exerciseTitle}>{exercise}</Text>
-      <Text style={styles.WorktimerText}>{formatTime(timeLeft)}</Text>
-      <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
-        <Text style={styles.timerButtonText}>{isActive ? 'Pause' : 'Start'}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.resetButton} onPress={resetTimer}>
-        <Text style={styles.timerButtonText}>Reset</Text>
-      </TouchableOpacity>
+      <View style={styles.timerCircle}>
+        <View style={[styles.timerProgress, { width: `${progress * 100}%` }]} />
+        <Text style={styles.wtimerText}>{formatTime(timeLeft)}</Text>
+      </View>
+      <View style={styles.wbuttonContainer}>
+        <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
+          <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.resetButton} onPress={resetTimer}>
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.backButton} onPress={() => navigateTo('Workouts')}>
         <Text style={styles.backButtonText}>Back to Activities</Text>
@@ -1582,35 +1587,86 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
-  exerciseTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#000',
-  },
-  timerButton: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
   timerButtonText: {
     color: '#fff',
     fontSize: 18,
   },
+   container: {
+    marginTop: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+    margin: 0,
+    borderRadius: 16,
+  },
+  exerciseTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  timerCircle: {
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    backgroundColor: '#e0e0e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+    overflow: 'hidden',
+  },
+  timerProgress: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#4CAF50',
+    height: '100%',
+  },
+  wtimerText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#333',
+    zIndex: 1,
+  },
+  wbuttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 30,
+    marginTop: 70,
+  },
+  timerButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginHorizontal: 10,
+  },
   resetButton: {
     backgroundColor: '#F44336',
-    padding: 15,
-    borderRadius: 5,
-    marginBottom: 10,
-    marginLeft: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   backButton: {
-    marginTop: 20,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
   },
   backButtonText: {
-    color: '#4CAF50',
+    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
