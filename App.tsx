@@ -97,7 +97,7 @@ function LoadingScreen(): React.JSX.Element {
   );
 }
 
-function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: any) => void }): React.JSX.Element {
+function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen: string, params?: any) => void, updateFavorites: (newFavorites: string[]) => void }): React.JSX.Element {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -214,6 +214,8 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
       setFavorites(newFavorites);
       try {
         await AsyncStorage.setItem('favoriteExercises', JSON.stringify(newFavorites));
+        // Use updateFavorites directly, not props.updateFavorites
+        updateFavorites(newFavorites);
       } catch (error) {
         console.error('Error saving favorites:', error);
       }
@@ -752,6 +754,26 @@ function App(): React.JSX.Element {
     setCompletedCalories(prev => prev + 300); // Add the calories burned in biking
   };
 
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+    const updateFavorites = (newFavorites: string[]) => {
+      setFavorites(newFavorites);
+    };
+
+    useEffect(() => {
+      const loadFavorites = async () => {
+        try {
+          const storedFavorites = await AsyncStorage.getItem('favoriteExercises');
+          if (storedFavorites) {
+            setFavorites(JSON.parse(storedFavorites));
+          }
+        } catch (error) {
+          console.error('Error loading favorites:', error);
+        }
+      };
+      loadFavorites();
+    }, []);
+
   useEffect(() => {
     const loadCompletedData = async () => {
       const storedHours = await AsyncStorage.getItem('completedHours');
@@ -778,7 +800,10 @@ function App(): React.JSX.Element {
     switch (currentScreen) {
       case 'Workouts':
         return (
-          <ActivityScreen navigateTo={navigateTo} />
+          <ActivityScreen 
+          navigateTo={navigateTo} 
+          updateFavorites={updateFavorites}
+        />
         );
       case 'Profile':
         return (
@@ -848,6 +873,22 @@ function App(): React.JSX.Element {
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
+
+            {favorites.length > 0 && (
+        <View style={styles.favoritesContainer}>
+          <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
+          {favorites.map((favorite, index) => (
+            <TouchableOpacity 
+              key={index} 
+              style={styles.favoriteItem}
+              onPress={() => navigateTo('WorkoutTimer', { exercise: favorite, duration: 30 })}
+            >
+              <Text style={styles.favoriteText}>{favorite}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
@@ -1605,10 +1646,11 @@ const styles = StyleSheet.create({
   },
   wexerciseCard: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: '#f0f0f0',
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
     padding: 15,
-    borderRadius: 5,
-    marginRight: 10,
   },
   exerciseRow: {
     flexDirection: 'row',
@@ -1616,12 +1658,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   favoriteButton: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 51,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4CAF50',
-    borderRadius: 20,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
   },
   favoriteIcon: {
     fontSize: 24,
@@ -1734,6 +1777,28 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+
+
+
+  favoritesContainer: {
+    marginTop: 20,
+  },
+  favoritesTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  favoriteItem: {
+    backgroundColor: '#6ABF69',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  favoriteText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
