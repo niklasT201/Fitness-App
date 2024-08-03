@@ -498,10 +498,11 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.profileHeaderContainer}>
-  {/* <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} /> */}
-        <Text style={styles.profileText}>Your Profile</Text>
-      </View> 
-      <View style={styles.profileDetailsContainer}>
+        <Text style={styles.profileText}>My Profile</Text>
+      </View>
+      
+      {/* Profile Details Card */}
+      <View style={styles.card}>
         {isEditing ? (
           <TextInput
             style={styles.profileinput}
@@ -524,8 +525,10 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         )}
       </View>
       
-      <View style={styles.profileStatsContainer}>
-        <Text style={styles.statsTitle}>Your Statistics</Text>
+      {/* Statistics Card */}
+      <View style={styles.card}>
+        <Text style={styles.cardSectionTitle}>Your Statistics</Text>
+        <View style={styles.separator} />
         <View style={styles.statRow}>
           <View style={styles.statBox}>
             <Text style={styles.statValue}>{completedWorkouts}</Text>
@@ -542,29 +545,34 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         </View>
       </View>
       
-      <View style={styles.cardContainer}>
-        <Text style={styles.sectionTitle}>Settings</Text>
-        <TouchableOpacity style={styles.card} onPress={() => navigateTo('GeneralSettings')}>
-          <Text style={styles.cardTitle}>General Settings</Text>
-          <Text style={styles.cardDescription}>Customize app preferences</Text>
+      {/* Settings Card */}
+      <View style={styles.card}>
+        <Text style={styles.cardSectionTitle}>Settings</Text>
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('GeneralSettings')}>
+          <Text style={styles.cardItemTitle}>General Settings</Text>
+          <Text style={styles.cardItemDescription}>Customize app preferences</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.card} onPress={() => navigateTo('Feedback')}>
-          <Text style={styles.cardTitle}>Feedback</Text>
-          <Text style={styles.cardDescription}>Share your thoughts with us</Text>
+        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('Feedback')}>
+          <Text style={styles.cardItemTitle}>Feedback</Text>
+          <Text style={styles.cardItemDescription}>Share your thoughts with us</Text>
         </TouchableOpacity>
       </View>
       
-      <View style={styles.cardContainer}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <TouchableOpacity style={styles.card} onPress={() => navigateTo('AboutUs')}>
-          <Text style={styles.cardTitle}>About Us</Text>
-          <Text style={styles.cardDescription}>Learn more about our app and team</Text>
+      {/* About Card */}
+      <View style={styles.card}>
+        <Text style={styles.cardSectionTitle}>About</Text>
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('AboutUs')}>
+          <Text style={styles.cardItemTitle}>About Us</Text>
+          <Text style={styles.cardItemDescription}>Learn more about our app and team</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.card} onPress={() => navigateTo('PrivacyPolicy')}>
-          <Text style={styles.cardTitle}>Privacy Policy</Text>
-          <Text style={styles.cardDescription}>Read our privacy policy</Text>
+        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('PrivacyPolicy')}>
+          <Text style={styles.cardItemTitle}>Privacy Policy</Text>
+          <Text style={styles.cardItemDescription}>Read our privacy policy</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.Pplaceholder}></View>
     </ScrollView>
   );
 }
@@ -745,24 +753,24 @@ function App(): React.JSX.Element {
             </View>
             <View style={styles.homeStat}>
               {completedWorkouts > 0 && (
-                <View style={styles.statBox}>
+                <View style={styles.statBoxH}>
                   <Image source={require('./assets/run-man.png')} style={styles.statImage1} />
                   <Text style={styles.statValue}>{completedWorkouts}</Text>
-                  <Text style={styles.statLabel}>Workouts</Text>
+                  <Text style={styles.statLabelH}>Workouts</Text>
                 </View>
               )}
               {completeCalories > 0 && (
-                <View style={styles.statBox}>
+                <View style={styles.statBoxH}>
                   <Image source={require('./assets/heartw.png')} style={styles.statImage1} />
                   <Text style={styles.statValue}>{completeCalories}</Text>
-                  <Text style={styles.statLabel}>Calories</Text>
+                  <Text style={styles.statLabelH}>Calories</Text>
                 </View>
               )}
               {completedHours > 0 && (
-                <View style={styles.statBox}>
+                <View style={styles.statBoxH}>
                   <Image source={require('./assets/flame.png')} style={styles.statImage} />
                   <Text style={styles.statValue}>{completedHours}</Text>
-                  <Text style={styles.statLabel}>Hours</Text>
+                  <Text style={styles.statLabelH}>Hours</Text>
                 </View>
               )}
             </View>
@@ -961,6 +969,17 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     marginBottom: 19,
     marginRight: -15,
+  },
+  statBoxH: {
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    width: '31%',
+  },
+  statLabelH: {
+    fontSize: 16,
+    color: '#333',
   },
   statImage: {
     width: 35,
@@ -1228,6 +1247,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 20,
   },
+  profileHeaderImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 10,
+  },
   profileUserName: {
     fontSize: 24,
     fontWeight: '700',
@@ -1245,25 +1270,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
-  profileHeaderImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 10,
-  },
-  editProfileButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 16,
-  },
-  editProfileButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
   profileStatsContainer: {
     padding: 16,
   },
@@ -1274,21 +1280,36 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 10,
   },
-  statRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   homeStat: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 15,
   },
+  editProfileButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 16,
+    alignSelf: 'center',
+    width: '85%',
+  },
+  editProfileButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   statBox: {
     alignItems: 'center',
     padding: 16,
     borderRadius: 8,
-    backgroundColor: '#fff',
-    width: '31%',
+    backgroundColor: '#f9f9f9',
+    width: '30%',
   },
   statValue: {
     fontSize: 23,
@@ -1296,7 +1317,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   statLabel: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#333',
   },
   profileSettingsContainer: {
@@ -1321,7 +1342,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   profileText: {
-    fontSize: 25,
+    fontSize: 30,
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
@@ -1344,7 +1365,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: 16,
-    marginBottom: 12,
+    margin: 16,
+    marginBottom: 1,
     elevation: 2,
   },
   cardTitle: {
@@ -1356,6 +1378,41 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: '#666666',
+  }, 
+  cardSectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginBottom: 16,
+  },
+  cardItem: {
+    marginBottom: 16,
+  },
+  cardItemTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  cardItemDescription: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  profileInput: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#333333',
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+  Pplaceholder: {
+    marginTop: 80,
   },
 
   //Settings
@@ -1539,6 +1596,5 @@ export default App;
 // Remove Total Screen
 // Add Report Screen and move the total Values to it
 // Add Bar Code Scanner
-// Redesign the Profile Screen to more white cards
 // Add Calorie daily statistics
 // Maybe add a month/day show up to Home Screen
