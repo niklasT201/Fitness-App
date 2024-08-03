@@ -186,6 +186,40 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
     };
     const formattedDate = currentDate.toLocaleDateString('en-US', options);
 
+    const [favorites, setFavorites] = useState<string[]>([]);
+
+    useEffect(() => {
+      // Load favorites when component mounts
+      loadFavorites();
+    }, []);
+  
+    const loadFavorites = async () => {
+      try {
+        const storedFavorites = await AsyncStorage.getItem('favoriteExercises');
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
+        }
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      }
+    };
+  
+    const toggleFavorite = async (exerciseName: string) => {
+      let newFavorites;
+      if (favorites.includes(exerciseName)) {
+        newFavorites = favorites.filter(name => name !== exerciseName);
+      } else {
+        newFavorites = [...favorites, exerciseName];
+      }
+      setFavorites(newFavorites);
+      try {
+        await AsyncStorage.setItem('favoriteExercises', JSON.stringify(newFavorites));
+      } catch (error) {
+        console.error('Error saving favorites:', error);
+      }
+    };
+  
+
   return (
     <View style={styles.AscreenContainer}>
        <View style={styles.activityHeader}>
@@ -234,13 +268,22 @@ function ActivityScreen({ navigateTo }: { navigateTo: (screen: string, params?: 
               </View>
             </View>
             {section.exercises.map((exercise, exerciseIndex) => (
-              <TouchableOpacity 
-                key={exerciseIndex} 
-                style={styles.exerciseCard}
-                onPress={() => handleExercisePress(exercise.name, exercise.duration)}
-              >
-                <Text style={styles.exerciseText}>{exercise.name}</Text>
-              </TouchableOpacity>
+              <View key={exerciseIndex} style={styles.exerciseRow}>
+                <TouchableOpacity 
+                  style={styles.wexerciseCard}
+                  onPress={() => handleExercisePress(exercise.name, exercise.duration)}
+                >
+                  <Text style={styles.exerciseText}>{exercise.name}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.favoriteButton}
+                  onPress={() => toggleFavorite(exercise.name)}
+                >
+                  <Text style={styles.favoriteIcon}>
+                    {favorites.includes(exercise.name) ? '★' : '☆'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         ))}
@@ -1559,6 +1602,30 @@ const styles = StyleSheet.create({
   activitySummary: {
     fontSize: 14,
     color: '#666666',
+  },
+  wexerciseCard: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  exerciseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  favoriteButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    borderRadius: 20,
+  },
+  favoriteIcon: {
+    fontSize: 24,
+    color: '#FFFFFF',
   },
   placeholder: {
     marginTop: 70,
