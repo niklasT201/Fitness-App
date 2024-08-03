@@ -71,7 +71,7 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Calories')}>
           <Image source={require('./assets/fireW.png')} style={styles.footerIcon} />
-          <Text style={styles.footerButtonText}>Calories</Text>
+          <Text style={styles.footerButtonText}>Report</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
           <Image source={require('./assets/userW.png')} style={styles.footerIcon} />
@@ -498,13 +498,13 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.profileHeaderContainer}>
-        <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
+  {/* <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} /> */}
         <Text style={styles.profileText}>Your Profile</Text>
-      </View>
+      </View> 
       <View style={styles.profileDetailsContainer}>
         {isEditing ? (
           <TextInput
-            style={styles.Profileinput}
+            style={styles.profileinput}
             placeholder="Enter new name"
             value={newName}
             onChangeText={setNewName}
@@ -523,6 +523,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
           </TouchableOpacity>
         )}
       </View>
+      
       <View style={styles.profileStatsContainer}>
         <Text style={styles.statsTitle}>Your Statistics</Text>
         <View style={styles.statRow}>
@@ -540,9 +541,28 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
           </View>
         </View>
       </View>
-      <View style={styles.profileSettingsContainer}>
-        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('SettingsScreen')}>
-          <Text style={styles.settingsButtonText}>Feedback</Text>
+      
+      <View style={styles.cardContainer}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+        <TouchableOpacity style={styles.card} onPress={() => navigateTo('GeneralSettings')}>
+          <Text style={styles.cardTitle}>General Settings</Text>
+          <Text style={styles.cardDescription}>Customize app preferences</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={() => navigateTo('Feedback')}>
+          <Text style={styles.cardTitle}>Feedback</Text>
+          <Text style={styles.cardDescription}>Share your thoughts with us</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <View style={styles.cardContainer}>
+        <Text style={styles.sectionTitle}>About</Text>
+        <TouchableOpacity style={styles.card} onPress={() => navigateTo('AboutUs')}>
+          <Text style={styles.cardTitle}>About Us</Text>
+          <Text style={styles.cardDescription}>Learn more about our app and team</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} onPress={() => navigateTo('PrivacyPolicy')}>
+          <Text style={styles.cardTitle}>Privacy Policy</Text>
+          <Text style={styles.cardDescription}>Read our privacy policy</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -698,15 +718,26 @@ function App(): React.JSX.Element {
       case 'Home':
       default:
         const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const currentDay: number = new Date().getDay();
+        const currentDate = new Date();
+        const currentDay: number = currentDate.getDay();
         // Adjusting for Sunday being 0 in getDay()
         const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
+
+         // Format the date string
+          const options: Intl.DateTimeFormatOptions = { 
+            month: 'long', 
+            day: 'numeric', 
+            weekday: 'long' 
+          };
+          const formattedDate = currentDate.toLocaleDateString('en-US', options);
+
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
             <View style={styles.headerContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
+                {/* <Text style={styles.dateText}>{formattedDate}</Text> */}
               </View>
               <TouchableWithoutFeedback onPress={() => navigateTo('Profile')}>
                 <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
@@ -735,11 +766,11 @@ function App(): React.JSX.Element {
                 </View>
               )}
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScrollView}>
+            {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.daysScrollView}>
               {days.map((day, index) => (
                 <DayCard key={day} day={day} isCurrentDay={index === adjustedCurrentDay} />
               ))}
-            </ScrollView>
+            </ScrollView> */}
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
@@ -940,6 +971,13 @@ const styles = StyleSheet.create({
   statImage1: {
     width: 50,
     height: 50,
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
   },
   daysScrollView: {
     flexDirection: 'row',
@@ -1184,10 +1222,10 @@ const styles = StyleSheet.create({
 // Profile 
   profileDetailsContainer: {
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
     backgroundColor: '#ffffff',
     borderRadius: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 16,
     marginBottom: 20,
   },
   profileUserName: {
@@ -1283,12 +1321,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   profileText: {
-    fontSize: 30,
+    fontSize: 25,
     color: '#ffffff',
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  Profileinput: {
+  profileinput: {
     width: '100%',
     height: 40,
     borderColor: '#cccccc',
@@ -1297,6 +1335,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 16,
     color: '#000',
+  },
+  cardContainer: {
+    padding: 16,
+    marginBottom: 20,
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#666666',
   },
 
   //Settings
