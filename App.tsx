@@ -1841,3 +1841,4 @@ export default App;
 // Add Bar Code Scanner
 // Add Calorie daily statistics
 // Add Day Plan system (Monday = curls, leg press/ Tuesday = dead lift, shoulder press etc...)
+// Button to create this day plan
