@@ -425,11 +425,20 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   );
 }
 
+interface FoodEntry {
+  name: string;
+  calories: number;
+  fat: number;
+  sugar: number;
+  protein: number;
+}
+
 function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateTo: (screen: string) => void, dailyValues: { calories: number; fat: number; sugar: number; protein: number }, setDailyValues: React.Dispatch<React.SetStateAction<{ calories: number; fat: number; sugar: number; protein: number }>> }): React.JSX.Element {
   const [calories, setCalories] = useState('');
   const [fat, setFat] = useState('');
   const [sugar, setSugar] = useState('');
   const [protein, setProtein] = useState('');
+  const [productName, setProductName] = useState('');
 
   useEffect(() => {
     const resetDailyValues = async () => {
@@ -464,6 +473,14 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
     const sugarVal = parseInt(sugar, 10) || 0;
     const proteinVal = parseInt(protein, 10) || 0;
 
+    const newEntry: FoodEntry = {
+      name: productName,
+      calories: cal,
+      fat: fatVal,
+      sugar: sugarVal,
+      protein: proteinVal,
+    };
+
     const updatedValues = {
       calories: dailyValues.calories + cal,
       fat: dailyValues.fat + fatVal,
@@ -472,7 +489,14 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
     };
 
     setDailyValues(updatedValues);
+
+    // Store the new entry in AsyncStorage
+    const entries: FoodEntry[] = JSON.parse(await AsyncStorage.getItem('foodEntries') || '[]');
+    entries.push(newEntry);
+    await AsyncStorage.setItem('foodEntries', JSON.stringify(entries));
+
     await AsyncStorage.setItem('dailyValues', JSON.stringify(updatedValues));
+    setProductName('');
     setCalories('');
     setFat('');
     setSugar('');
@@ -484,6 +508,12 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
       <View style={styles.calorieImageContainer}>
         <Image source={require('./assets/hearts.png')} style={styles.heartImage} />
       </View>
+      <TextInput
+        style={styles.calorieInput}
+        placeholder="Enter product name"
+        value={productName}
+        onChangeText={setProductName}
+      />
       <TextInput
         style={styles.calorieInput}
         placeholder="Enter calories"
@@ -523,6 +553,16 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
 }
 
 function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; fat: number; sugar: number; protein: number } }): React.JSX.Element {
+  const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
+
+  useEffect(() => {
+    const loadFoodEntries = async () => {
+      const entries: FoodEntry[] = JSON.parse(await AsyncStorage.getItem('foodEntries') || '[]');
+      setFoodEntries(entries);
+    };
+    loadFoodEntries();
+  }, []);
+
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.totalheader}>
@@ -546,6 +586,18 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
           <Text style={styles.totalValuesText}>{dailyValues.fat} g</Text>
         </View>
       </View>
+      <View style={styles.foodEntriesContainer}>
+        <Text style={styles.foodEntriesHeader}>Added Products:</Text>
+        {foodEntries.map((entry: FoodEntry, index: number) => (
+         <View key={index} style={styles.foodEntry}>
+             <Text style={styles.foodEntryName}>{entry.name}</Text>
+             <Text style={styles.foodEntryDetails}>
+             Calories: {entry.calories}, Fat: {entry.fat}g, Sugar: {entry.sugar}g, Protein: {entry.protein}g
+             </Text>
+          </View>
+        ))}
+      </View>
+      <View style={styles.Pplaceholder}></View>
     </ScrollView>
   );
 }
@@ -1190,6 +1242,25 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     transform: [{ scale: 0.8 }], // Scale down to zoom out
   },
+  favoritesContainer: {
+    marginTop: 20,
+  },
+  favoritesTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  favoriteItem: {
+    backgroundColor: '#6ABF69',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  favoriteText: {
+    color: '#fff',
+    fontSize: 16,
+  },
 
 //Calories
   screenContainer: {
@@ -1244,6 +1315,28 @@ const styles = StyleSheet.create({
     height: undefined,
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: 'contain', // Contain within the container
+  },
+  foodEntriesContainer: {
+    marginTop: 20,
+    padding: 10,
+  },
+  foodEntriesHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  foodEntry: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+  },
+  foodEntryName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  foodEntryDetails: {
+    fontSize: 14,
   },
 
 //Use later
@@ -1809,28 +1902,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-
-
-
-  favoritesContainer: {
-    marginTop: 20,
-  },
-  favoritesTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#fff',
-  },
-  favoriteItem: {
-    backgroundColor: '#6ABF69',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  favoriteText: {
-    color: '#fff',
-    fontSize: 16,
   },
 });
 
