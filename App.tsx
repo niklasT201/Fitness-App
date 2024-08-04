@@ -10,6 +10,7 @@ import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Butto
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RunningScreen from './RunningScreen';
 import BikingScreen from './BikingScreen';
+import BarcodeScannerScreen from './BarcodeScannerScreen';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -440,6 +441,8 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
   const [protein, setProtein] = useState('');
   const [productName, setProductName] = useState('');
 
+  const [showScanner, setShowScanner] = useState(false);
+
   useEffect(() => {
     const resetDailyValues = async () => {
       const lastReset = await AsyncStorage.getItem('lastReset');
@@ -503,11 +506,30 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
     setProtein('');
   };
 
+  const handleBarCodeScanned = (data: string) => {
+    // Here you would typically make an API call to get product information
+    // For this example, we'll just set a placeholder product name
+    setProductName(`Scanned Product (${data})`);
+    setShowScanner(false);
+  };
+
+  if (showScanner) {
+    return (
+      <BarcodeScannerScreen
+        onBarCodeScanned={handleBarCodeScanned}
+        onClose={() => setShowScanner(false)}
+      />
+    );
+  }
+
   return (
     <ScrollView style={styles.screenContainer}>
       <View style={styles.calorieImageContainer}>
         <Image source={require('./assets/hearts.png')} style={styles.heartImage} />
       </View>
+      <TouchableOpacity style={styles.scanButton} onPress={() => setShowScanner(true)}>
+        <Text style={styles.scanButtonText}>Scan Barcode</Text>
+      </TouchableOpacity>
       <TextInput
         style={styles.calorieInput}
         placeholder="Enter product name"
@@ -1337,6 +1359,17 @@ const styles = StyleSheet.create({
   },
   foodEntryDetails: {
     fontSize: 14,
+  },
+  scanButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  scanButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
   },
 
 //Use later

@@ -18,4 +18,12 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://www.jitpack.io" } // Add this line
+    }
+}
+
 apply plugin: "com.facebook.react.rootproject"
