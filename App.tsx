@@ -523,22 +523,23 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
   }
 
   return (
-    <ScrollView style={styles.screenContainer}>
-      <View style={styles.calorieImageContainer}>
+    <ScrollView style={styles.CscreenContainer}>
+        <View style={styles.wheaderContainer}>
         <Image source={require('./assets/hearts.png')} style={styles.heartImage} />
+        <Text style={styles.headerText}>Track Your Daily Intake</Text>
       </View>
-      <TouchableOpacity style={styles.scanButton} onPress={() => setShowScanner(true)}>
-        <Text style={styles.scanButtonText}>Scan Barcode</Text>
-      </TouchableOpacity>
+      <View style={styles.inputContainer}>
       <TextInput
         style={styles.calorieInput}
-        placeholder="Enter product name"
+        placeholder="Enter Product Name"
+        placeholderTextColor="#666" 
         value={productName}
         onChangeText={setProductName}
       />
       <TextInput
         style={styles.calorieInput}
-        placeholder="Enter calories"
+        placeholder="Enter Calories"
+        placeholderTextColor="#666"
         value={calories}
         onChangeText={setCalories}
         keyboardType="numeric"
@@ -546,6 +547,7 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
       <TextInput
         style={styles.calorieInput}
         placeholder="Enter fat (g)"
+        placeholderTextColor="#666"
         value={fat}
         onChangeText={setFat}
         keyboardType="numeric"
@@ -553,23 +555,30 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
       <TextInput
         style={styles.calorieInput}
         placeholder="Enter sugar (g)"
+        placeholderTextColor="#666"
         value={sugar}
         onChangeText={setSugar}
         keyboardType="numeric"
       />
       <TextInput
         style={styles.calorieInput}
-        placeholder="Enter protein (g)"
+        placeholder="Protein (g)"
+        placeholderTextColor="#666"
         value={protein}
         onChangeText={setProtein}
         keyboardType="numeric"
       />
+      <TouchableOpacity style={styles.scanButton} onPress={() => setShowScanner(true)}>
+        <Text style={styles.scanButtonText}>Scan Barcode</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.calorieSaveButton} onPress={addValues}>
         <Text style={styles.calorieSaveButtonText}>Add</Text>
       </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.viewTotalButton} onPress={() => navigateTo('TotalValues')}>
         <Text style={styles.viewTotalButtonText}>View Total Values</Text>
       </TouchableOpacity>
+      <View style={styles.placeholder}></View>
     </ScrollView>
   );
 }
@@ -586,43 +595,44 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
   }, []);
 
   return (
-    <ScrollView style={styles.screenContainer}>
-      <View style={styles.totalheader}>
-        <Text style={styles.totalheaderText}>Total Values</Text>
+    <ScrollView style={styles.TscreenContainer}>
+    <View style={styles.TheaderContainer}>
+      <Text style={styles.TheaderText}>Total Values</Text>
+    </View>
+    <View style={styles.totalValuesContainer}>
+      <View style={styles.valueContainer}>
+        <Text style={styles.valueLabel}>Consumed Calories:</Text>
+        <Text style={styles.totalValuesText}>{dailyValues.calories} kcal</Text>
       </View>
-      <View style={styles.totalValuesContainer}>
-        <View style={styles.valueContainer}>
-          <Text style={styles.valueLabel}>Consumed Calories:</Text>
-          <Text style={styles.totalValuesText}>{dailyValues.calories} g</Text>
-        </View>
-        <View style={styles.valueContainer}>
-          <Text style={styles.valueLabel}>Consumed Protein:</Text>
-          <Text style={styles.totalValuesText}>{dailyValues.protein} g</Text>
-        </View>
-        <View style={styles.valueContainer}>
-          <Text style={styles.valueLabel}>Consumed Sugar:</Text>
-          <Text style={styles.totalValuesText}>{dailyValues.sugar} g</Text>
-        </View>
-        <View style={styles.valueContainer}>
-          <Text style={styles.valueLabel}>Consumed Fat:</Text>
-          <Text style={styles.totalValuesText}>{dailyValues.fat} g</Text>
-        </View>
+      <View style={styles.valueContainer}>
+        <Text style={styles.valueLabel}>Consumed Protein:</Text>
+        <Text style={styles.totalValuesText}>{dailyValues.protein} g</Text>
       </View>
-      <View style={styles.foodEntriesContainer}>
-        <Text style={styles.foodEntriesHeader}>Added Products:</Text>
-        {foodEntries.map((entry: FoodEntry, index: number) => (
-         <View key={index} style={styles.foodEntry}>
-             <Text style={styles.foodEntryName}>{entry.name}</Text>
-             <Text style={styles.foodEntryDetails}>
-             Calories: {entry.calories}, Fat: {entry.fat}g, Sugar: {entry.sugar}g, Protein: {entry.protein}g
-             </Text>
-          </View>
-        ))}
+      <View style={styles.valueContainer}>
+        <Text style={styles.valueLabel}>Consumed Sugar:</Text>
+        <Text style={styles.totalValuesText}>{dailyValues.sugar} g</Text>
       </View>
-      <View style={styles.Pplaceholder}></View>
-    </ScrollView>
-  );
+      <View style={styles.valueContainer}>
+        <Text style={styles.valueLabel}>Consumed Fat:</Text>
+        <Text style={styles.totalValuesText}>{dailyValues.fat} g</Text>
+      </View>
+    </View>
+    <View style={styles.foodEntriesContainer}>
+      <Text style={styles.foodEntriesHeader}>Added Products:</Text>
+      {foodEntries.map((entry, index) => (
+        <View key={index} style={styles.foodEntry}>
+          <Text style={styles.foodEntryName}>{entry.name}</Text>
+          <Text style={styles.foodEntryDetails}>
+            Calories: {entry.calories}, Fat: {entry.fat}g, Sugar: {entry.sugar}g, Protein: {entry.protein}g
+          </Text>
+        </View>
+      ))}
+    </View>
+    <View style={styles.Pplaceholder}></View>
+  </ScrollView>
+);
 }
+
 
 function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
@@ -1047,6 +1057,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#4CAF50',
+  },
 
 //Footer
   footerContainer: {
@@ -1285,52 +1299,14 @@ const styles = StyleSheet.create({
   },
 
 //Calories
-  screenContainer: {
+  CscreenContainer: {
     flex: 1,
     backgroundColor: '#4CAF50',
+    padding: 16,
   },
-  calorieInput: {
-    width: '80%',
-    height: 40,
-    borderColor: '#cccccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-    alignSelf: 'center', // Center the input fields
-  },
-  calorieSaveButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 5,
-    width: '80%',
-    backgroundColor: '#ffffff',
-    alignSelf: 'center', // Center the button
-  },
-  calorieSaveButtonText: {
-    color: "#4CAF50",
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center', // Center the text within the button
-  },
-  viewTotalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#FFA500', // Different color for the view total button
-    borderRadius: 5,
+  wheaderContainer: {
     alignItems: 'center',
-    width: '80%',
-    alignSelf: 'center', // Center the button
-  },
-  viewTotalButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  calorieImageContainer: {
-    alignItems: 'center', // Center the image horizontally
-    marginBottom: 10, // Add some margin below the image
+    marginBottom: 24,
   },
   heartImage: {
     width: '80%', // Reduce the width of the image
@@ -1338,38 +1314,100 @@ const styles = StyleSheet.create({
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: 'contain', // Contain within the container
   },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+   inputContainer: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: 20,
+  },
+  calorieInput: {
+    height: 50,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: '#f9f9f9',
+    color: '#000',
+  },
+  scanButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  scanButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  calorieSaveButton: {
+    backgroundColor: '#ffa726',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  calorieSaveButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  viewTotalButton: {
+    backgroundColor: '#ff7043',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  viewTotalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   foodEntriesContainer: {
-    marginTop: 20,
-    padding: 10,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: 20,
   },
   foodEntriesHeader: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 10,
   },
   foodEntry: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 8,
     marginBottom: 10,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
+    elevation: 1,
   },
   foodEntryName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
   },
   foodEntryDetails: {
     fontSize: 14,
-  },
-  scanButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  scanButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 16,
+    color: '#777',
   },
 
 //Use later
@@ -1393,14 +1431,44 @@ const styles = StyleSheet.create({
   },
 
 //Total Values
+  TscreenContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  TheaderContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  TheaderText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
   totalValuesContainer: {
+    backgroundColor: '#ffffff',
     padding: 20,
-    borderRadius: 10,
-    margin: 10,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: 20,
+  },
+  valueContainer: {
+    backgroundColor: '#e8f5e9',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    elevation: 2,
+  },
+  valueLabel: {
+    fontSize: 18,
+    color: '#4CAF50',
+    fontWeight: '500',
   },
   totalValuesText: {
     fontSize: 22,
-    marginBottom: 10,
     fontWeight: 'bold',
     color: '#333',
     marginTop: 5,
@@ -1414,17 +1482,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-  },
-  valueContainer: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    elevation: 3,
-  },
-  valueLabel: {
-    fontSize: 18,
-    color: '#777',
   },
 
 //Running
@@ -1559,7 +1616,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 16,
     alignSelf: 'center',
-    width: '85%',
+    width: '100%',
   },
   editProfileButtonText: {
     color: '#fff',
