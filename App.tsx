@@ -813,10 +813,16 @@ function App(): React.JSX.Element {
       if (currentScreen === 'TotalValues') {
         setCurrentScreen('Calories');
         return true; // Prevent default behavior of closing the app
-      } else if (currentScreen === 'SettingsScreen') {
+      } else if (currentScreen === 'BarcodeScanner') {
+        setCurrentScreen('Calories');
+        return true; 
+      }else if (currentScreen === 'SettingsScreen') {
         setCurrentScreen('Profile');
         return true; 
-      } else if (currentScreen === 'Running'|| "Biking") {
+      } else if (currentScreen === 'Workouts') {
+        setCurrentScreen('Home');
+        return true; 
+      }else if (currentScreen === 'Running'|| "Biking") {
         setCurrentScreen('Workouts');
         return true; 
       } else if (currentScreen !== 'Home') {
@@ -830,7 +836,7 @@ function App(): React.JSX.Element {
   }, [currentScreen]);
 
   const backgroundStyle = {
-    backgroundColor: '#4CAF50', // Changed to green color
+    backgroundColor: currentScreen === 'BarcodeScanner' ? 'black' : '#4CAF50', // Use black background for BarcodeScanner
     flex: 1,
   };
 
@@ -872,23 +878,23 @@ function App(): React.JSX.Element {
 
   const [favorites, setFavorites] = useState<string[]>([]);
 
-    const updateFavorites = (newFavorites: string[]) => {
-      setFavorites(newFavorites);
-    };
+  const updateFavorites = (newFavorites: string[]) => {
+    setFavorites(newFavorites);
+  };
 
-    useEffect(() => {
-      const loadFavorites = async () => {
-        try {
-          const storedFavorites = await AsyncStorage.getItem('favoriteExercises');
-          if (storedFavorites) {
-            setFavorites(JSON.parse(storedFavorites));
-          }
-        } catch (error) {
-          console.error('Error loading favorites:', error);
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const storedFavorites = await AsyncStorage.getItem('favoriteExercises');
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
         }
-      };
-      loadFavorites();
-    }, []);
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      }
+    };
+    loadFavorites();
+  }, []);
 
   useEffect(() => {
     const loadCompletedData = async () => {
@@ -917,9 +923,9 @@ function App(): React.JSX.Element {
       case 'Workouts':
         return (
           <ActivityScreen 
-          navigateTo={navigateTo} 
-          updateFavorites={updateFavorites}
-        />
+            navigateTo={navigateTo} 
+            updateFavorites={updateFavorites}
+          />
         );
       case 'Profile':
         return (
@@ -939,8 +945,8 @@ function App(): React.JSX.Element {
         );
       case 'WorkoutTimer':
         return (
-        <WorkoutTimerScreen route={{ params: currentScreenParams }} navigateTo={navigateTo} />
-      );
+          <WorkoutTimerScreen route={{ params: currentScreenParams }} navigateTo={navigateTo} />
+        );
       case 'Running':
         return (
           <RunningScreen onRunningComplete={handleRunningComplete} />
@@ -948,6 +954,10 @@ function App(): React.JSX.Element {
       case 'Biking':
         return (
           <BikingScreen onRunningComplete={handleBikingComplete} />
+        );
+      case 'BarcodeScanner': // Add this case to render the BarcodeScannerScreen
+        return (
+          <BarcodeScannerScreen onBarCodeScanned={() => {}} onClose={() => navigateTo('Home')} />
         );
       case 'Home':
       default:
@@ -957,7 +967,6 @@ function App(): React.JSX.Element {
               <View style={styles.textContainer}>
                 <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
-                {/* <Text style={styles.dateText}>{formattedDate}</Text> */}
               </View>
               <TouchableWithoutFeedback onPress={() => navigateTo('Profile')}>
                 <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
@@ -991,19 +1000,19 @@ function App(): React.JSX.Element {
             </View>
 
             {favorites.length > 0 && (
-        <View style={styles.favoritesContainer}>
-          <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
-          {favorites.map((favorite, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.favoriteItem}
-              onPress={() => navigateTo('WorkoutTimer', { exercise: favorite, duration: 30 })}
-            >
-              <Text style={styles.favoriteText}>{favorite}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+              <View style={styles.favoritesContainer}>
+                <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
+                {favorites.map((favorite, index) => (
+                  <TouchableOpacity 
+                    key={index} 
+                    style={styles.favoriteItem}
+                    onPress={() => navigateTo('WorkoutTimer', { exercise: favorite, duration: 30 })}
+                  >
+                    <Text style={styles.favoriteText}>{favorite}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
 
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
@@ -1024,14 +1033,14 @@ function App(): React.JSX.Element {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor="#4CAF50" // Matching the background color
+        backgroundColor={currentScreen === 'BarcodeScanner' ? 'black' : "#4CAF50"}
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      {!isFirstTime && !showSplash && <Footer navigateTo={navigateTo} />}
+      {!isFirstTime && !showSplash && currentScreen !== 'BarcodeScanner' && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
   );
 };
