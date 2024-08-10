@@ -493,6 +493,14 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
     const sugarVal = parseInt(sugar, 10) || 0;
     const proteinVal = parseInt(protein, 10) || 0;
 
+     // Check if all fields have valid values
+        if (!productName || isNaN(cal) || isNaN(fatVal) || isNaN(sugarVal) || isNaN(proteinVal) || 
+        cal <= 0 || fatVal <= 0 || sugarVal <= 0 || proteinVal <= 0) {
+      // Show an alert or some feedback to the user
+      Alert.alert('Invalid Input', 'Please fill in all fields with valid values greater than 0.');
+      return;
+}
+
     const newEntry: FoodEntry = {
       name: productName,
       calories: cal,
@@ -1380,19 +1388,19 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   scanButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: 'rgba(76, 175, 80, 0.1)',  // Very light transparent green
     padding: 15,
     borderRadius: 8,
     marginBottom: 16,
     alignItems: 'center',
   },
   scanButtonText: {
-    color: '#fff',
+    color: '#4CAF50',
     fontSize: 16,
     fontWeight: '600',
   },
   calorieSaveButton: {
-    backgroundColor: '#ffa726',
+    backgroundColor: '#4CAF50',
     padding: 15,
     borderRadius: 8,
     marginBottom: 16,
@@ -1404,13 +1412,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   viewTotalButton: {
-    backgroundColor: '#ff7043',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   viewTotalButtonText: {
-    color: '#fff',
+    color: '#4CAF50',
     fontSize: 16,
     fontWeight: '600',
   },
