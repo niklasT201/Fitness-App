@@ -473,6 +473,18 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
   useEffect(() => {
     // Update footer visibility based on the showScanner state
     setShowFooter(!showScanner);
+
+    // Handle the hardware back button
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (showScanner) {
+        setShowScanner(false);
+        return true;
+      }
+      return false;
+    });
+
+    // Cleanup the event listener on unmount
+    return () => backHandler.remove();
   }, [showScanner, setShowFooter]);
 
   const addValues = async () => {
@@ -816,23 +828,29 @@ function App(): React.JSX.Element {
     }, 2000);
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (currentScreen === 'TotalValues') {
-        setCurrentScreen('Calories');
-        return true; // Prevent default behavior of closing the app
-      } else if (currentScreen === 'SettingsScreen') {
-        setCurrentScreen('Profile');
-        return true; 
-      } else if (currentScreen === 'Workouts') {
-        setCurrentScreen('Home');
-        return true; 
-      }else if (currentScreen === 'Running'|| "Biking") {
-        setCurrentScreen('Workouts');
-        return true; 
-      } else if (currentScreen !== 'Home') {
-        setCurrentScreen('Home');
-        return true; 
+      switch (currentScreen) {
+        case 'TotalValues':
+          setCurrentScreen('Calories');
+          return true;
+        case 'SettingsScreen':
+          setCurrentScreen('Profile');
+          return true;
+        case 'Workouts':
+        case 'Calories':
+        case 'Profile':
+          setCurrentScreen('Home');
+          return true;
+        case 'Running':
+        case 'Biking':
+          setCurrentScreen('Workouts');
+          return true;
+        case 'Home':
+          // Allow default behavior (exit app) when on Home screen
+          return false;
+        default:
+          setCurrentScreen('Home');
+          return true;
       }
-      return false; // Allow default behavior to happen if already on the home screen
     });
 
     return () => backHandler.remove(); // Cleanup the event listener on unmount
