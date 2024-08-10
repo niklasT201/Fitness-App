@@ -434,7 +434,7 @@ interface FoodEntry {
   protein: number;
 }
 
-function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateTo: (screen: string) => void, dailyValues: { calories: number; fat: number; sugar: number; protein: number }, setDailyValues: React.Dispatch<React.SetStateAction<{ calories: number; fat: number; sugar: number; protein: number }>> }): React.JSX.Element {
+function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter }: { navigateTo: (screen: string) => void, dailyValues: { calories: number; fat: number; sugar: number; protein: number }, setDailyValues: React.Dispatch<React.SetStateAction<{ calories: number; fat: number; sugar: number; protein: number }>>, setShowFooter: (visible: boolean) => void; }): React.JSX.Element {
   const [calories, setCalories] = useState('');
   const [fat, setFat] = useState('');
   const [sugar, setSugar] = useState('');
@@ -469,6 +469,11 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues }: { navigateT
     resetDailyValues();
     loadDailyValues();
   }, [setDailyValues]);
+
+  useEffect(() => {
+    // Update footer visibility based on the showScanner state
+    setShowFooter(!showScanner);
+  }, [showScanner, setShowFooter]);
 
   const addValues = async () => {
     const cal = parseInt(calories, 10) || 0;
@@ -792,6 +797,7 @@ function App(): React.JSX.Element {
   const [completedHours, setCompletedHours] = useState(0);
   const [completedWorkouts, setCompletedWorkouts] = useState(0);
   const [completeCalories, setCompletedCalories] = useState(0);
+  const [showFooter, setShowFooter] = useState(true);
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -813,10 +819,7 @@ function App(): React.JSX.Element {
       if (currentScreen === 'TotalValues') {
         setCurrentScreen('Calories');
         return true; // Prevent default behavior of closing the app
-      } else if (currentScreen === 'BarcodeScanner') {
-        setCurrentScreen('Calories');
-        return true; 
-      }else if (currentScreen === 'SettingsScreen') {
+      } else if (currentScreen === 'SettingsScreen') {
         setCurrentScreen('Profile');
         return true; 
       } else if (currentScreen === 'Workouts') {
@@ -843,6 +846,11 @@ function App(): React.JSX.Element {
   const navigateTo = (screen: string, params?: any) => {
     setCurrentScreen(screen);
     setCurrentScreenParams(params);
+    if (screen === 'BarcodeScanner') {
+      setShowFooter(false);
+    } else {
+      setShowFooter(true);
+    }
   };
 
   const handleWelcomeFinish = async () => {
@@ -937,7 +945,12 @@ function App(): React.JSX.Element {
         );
       case 'Calories':
         return (
-          <CaloriesScreen navigateTo={navigateTo} dailyValues={dailyValues} setDailyValues={setDailyValues} />
+          <CaloriesScreen
+          navigateTo={navigateTo}
+          dailyValues={dailyValues}
+          setDailyValues={setDailyValues}
+          setShowFooter={setShowFooter} // Pass the setShowFooter function
+        />
         );
       case 'TotalValues':
         return (
@@ -1033,17 +1046,15 @@ function App(): React.JSX.Element {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={currentScreen === 'BarcodeScanner' ? 'black' : "#4CAF50"}
+        backgroundColor={currentScreen === 'BarcodeScanner' ? 'black' : '#4CAF50'}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      {!isFirstTime && !showSplash && currentScreen !== 'BarcodeScanner' && <Footer navigateTo={navigateTo} />}
+      {!isFirstTime && !showSplash && showFooter && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   sectionContainer: {
