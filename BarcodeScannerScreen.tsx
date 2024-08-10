@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image  } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image, StatusBar } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Platform } from 'react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const overlayWidth = width * 0.8;
 
 interface BarcodeScannerScreenProps {
@@ -36,28 +36,32 @@ const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeSc
 
   return (
     <View style={styles.container}>
-    <RNCamera
-      style={styles.camera}
-      type={RNCamera.Constants.Type.back}
-      onBarCodeRead={handleBarCodeScanned}
-      captureAudio={false}
-    >
-      <View style={styles.overlay}>
-        <View style={styles.unfocusedContainer}></View>
-        <View style={styles.focusedContainer}>
-          <View style={styles.rectangleContainer}>
-            <View style={styles.rectangle}></View>
+      {/* Change the StatusBar color to fit the barcode scanner theme */}
+      <StatusBar barStyle="light-content" backgroundColor="black" />
+
+      <RNCamera
+        style={styles.camera}
+        type={RNCamera.Constants.Type.back}
+        onBarCodeRead={handleBarCodeScanned}
+        captureAudio={false}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.unfocusedContainer}></View>
+          <View style={styles.focusedContainer}>
+            <View style={styles.rectangleContainer}>
+              <View style={styles.rectangle}></View>
+            </View>
+            <Text style={styles.scanText}>Align the barcode within the frame</Text>
           </View>
-          <Text style={styles.scanText}>Align the barcode within the frame</Text>
+          <View style={styles.unfocusedContainer}></View>
         </View>
-        <View style={styles.unfocusedContainer}></View>
-      </View>
-    </RNCamera>
-    <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-     <Image source={require('./assets/close.png')} />
-    </TouchableOpacity>
-  </View>
-);
+      </RNCamera>
+
+      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+        <Image source={require('./assets/close.png')} style={styles.closeButtonImage} />
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -67,15 +71,22 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    height: height, // Make the camera fill the screen
   },
   closeButton: {
     position: 'absolute',
-    top: 40,
+    top: 20,
     right: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: 10,
+    padding: 8,
     borderRadius: 50,
     zIndex: 1,
+  },
+  closeButtonImage: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    tintColor:'#fff',
   },
   overlay: {
     flex: 1,
@@ -83,11 +94,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   unfocusedContainer: {
-    flex: 1,
+    flex: 0.7,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   focusedContainer: {
-    flex: 1,
+    flex: 1.6,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
