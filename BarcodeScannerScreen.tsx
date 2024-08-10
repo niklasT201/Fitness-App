@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image  } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Platform } from 'react-native';
+
+const { width } = Dimensions.get('window');
+const overlayWidth = width * 0.8;
 
 interface BarcodeScannerScreenProps {
   onBarCodeScanned: (data: string) => void;
@@ -25,73 +28,99 @@ const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeSc
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting camera permission</Text>;
+    return <Text style={styles.permissionText}>Requesting camera permission...</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text style={styles.permissionText}>No access to camera</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <RNCamera
-        style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        onBarCodeRead={handleBarCodeScanned}
-        captureAudio={false}
-      >
-        <View style={styles.overlay}>
-          <View style={styles.unfocusedContainer}></View>
-          <View style={styles.focusedContainer}>
-            <Text style={styles.scanText}>Scan a barcode</Text>
+    <RNCamera
+      style={styles.camera}
+      type={RNCamera.Constants.Type.back}
+      onBarCodeRead={handleBarCodeScanned}
+      captureAudio={false}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.unfocusedContainer}></View>
+        <View style={styles.focusedContainer}>
+          <View style={styles.rectangleContainer}>
+            <View style={styles.rectangle}></View>
           </View>
-          <View style={styles.unfocusedContainer}></View>
+          <Text style={styles.scanText}>Align the barcode within the frame</Text>
         </View>
-      </RNCamera>
-      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <Text style={styles.closeButtonText}>Close</Text>
-      </TouchableOpacity>
-    </View>
-  );
+        <View style={styles.unfocusedContainer}></View>
+      </View>
+    </RNCamera>
+    <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+     <Image source={require('./assets/close.png')} />
+    </TouchableOpacity>
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'black',
   },
   camera: {
     flex: 1,
-    height: 500,
   },
   closeButton: {
     position: 'absolute',
-    top: 20,
+    top: 40,
     right: 20,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     padding: 10,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    fontSize: 16,
-    color: 'black',
+    borderRadius: 50,
+    zIndex: 1,
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'transparent',
     flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   unfocusedContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   focusedContainer: {
-    flex: 2,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  rectangleContainer: {
+    width: overlayWidth,
+    height: overlayWidth * 0.6,
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  rectangle: {
+    width: overlayWidth - 20,
+    height: (overlayWidth * 0.6) - 20,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+    borderRadius: 8,
+  },
   scanText: {
+    marginTop: 20,
     color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  permissionText: {
+    flex: 1,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 18,
+    color: '#fff',
+    backgroundColor: '#000',
   },
 });
 
