@@ -99,80 +99,80 @@ function LoadingScreen(): React.JSX.Element {
   );
 }
 
+const activities = [
+  {
+    title: "Upper Body",
+    icon: '🏋️‍♂️',
+    exercises: [
+      /* { name: "Chest", duration: 15 },
+      { name: "Back", duration: 20 },
+      { name: "Shoulders", duration: 15 },
+      { name: "Arms", duration: 10 }, */
+      { name: "Chest Press", duration: 15 },
+      { name: "Push-Ups", duration: 10 },
+      { name: "Lat Pull-Downs", duration: 15 },
+      { name: "Rows", duration: 15 },
+      { name: "Shoulder Press", duration: 12 },
+      { name: "Lateral Raises", duration: 10 },
+      { name: "Bicep Curls", duration: 10 },
+      { name: "Hammer Curls", duration: 10 },
+      { name: "Tricep Extensions", duration: 10 },
+      { name: "Dips", duration: 8 },
+    ]
+  },
+  {
+    title: "Lower Body",
+    icon: '🏋️‍♀️',
+    exercises: [
+     /*  { name: "Legs", duration: 25 },
+      { name: "Glutes", duration: 20 }, */
+
+      { name: "Squats", duration: 15 },
+      { name: "Lunges", duration: 12 },
+      { name: "Leg Press", duration: 15 },
+      { name: "Deadlifts", duration: 15 },
+      { name: "Calf Raises", duration: 10 },
+      { name: "Leg Extensions", duration: 12 },
+      { name: "Leg Curls", duration: 12 },
+      { name: "Hip Thrusts", duration: 12 },
+      { name: "Step-Ups", duration: 10 },
+    ]
+  },
+  {
+    title: "Cardio",
+    icon: '🏃‍♂️',
+    exercises: [
+      { name: "Running", duration: 30 },
+      { name: "Biking", duration: 25 },
+
+      { name: "Jump Rope", duration: 15 },
+      { name: "Swimming", duration: 30 },
+      { name: "Rowing", duration: 20 },
+      { name: "Stair Climbing", duration: 15 },
+      { name: "Elliptical", duration: 25 },
+    ]
+  },
+  {
+    title: "Flexibility",
+    icon: '🧘‍♀️',
+    exercises: [
+      { name: "Yoga", duration: 20 },
+      { name: "Stretching", duration: 15 },
+
+      { name: "Pilates", duration: 25 },
+      { name: "Dynamic Stretching", duration: 10 },
+      { name: "Foam Rolling", duration: 10 },
+      { name: "Ballet-Inspired Stretches", duration: 15 },
+      { name: "Tai Chi", duration: 20 },
+    ]
+  }
+];
+
 function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen: string, params?: any) => void, updateFavorites: (newFavorites: string[]) => void }): React.JSX.Element {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const activities = [
-    {
-      title: "Upper Body",
-      icon: '🏋️‍♂️',
-      exercises: [
-        /* { name: "Chest", duration: 15 },
-        { name: "Back", duration: 20 },
-        { name: "Shoulders", duration: 15 },
-        { name: "Arms", duration: 10 }, */
-        { name: "Chest Press", duration: 15 },
-        { name: "Push-Ups", duration: 10 },
-        { name: "Lat Pull-Downs", duration: 15 },
-        { name: "Rows", duration: 15 },
-        { name: "Shoulder Press", duration: 12 },
-        { name: "Lateral Raises", duration: 10 },
-        { name: "Bicep Curls", duration: 10 },
-        { name: "Hammer Curls", duration: 10 },
-        { name: "Tricep Extensions", duration: 10 },
-        { name: "Dips", duration: 8 },
-      ]
-    },
-    {
-      title: "Lower Body",
-      icon: '🏋️‍♀️',
-      exercises: [
-       /*  { name: "Legs", duration: 25 },
-        { name: "Glutes", duration: 20 }, */
-
-        { name: "Squats", duration: 15 },
-        { name: "Lunges", duration: 12 },
-        { name: "Leg Press", duration: 15 },
-        { name: "Deadlifts", duration: 15 },
-        { name: "Calf Raises", duration: 10 },
-        { name: "Leg Extensions", duration: 12 },
-        { name: "Leg Curls", duration: 12 },
-        { name: "Hip Thrusts", duration: 12 },
-        { name: "Step-Ups", duration: 10 },
-      ]
-    },
-    {
-      title: "Cardio",
-      icon: '🏃‍♂️',
-      exercises: [
-        { name: "Running", duration: 30 },
-        { name: "Biking", duration: 25 },
-
-        { name: "Jump Rope", duration: 15 },
-        { name: "Swimming", duration: 30 },
-        { name: "Rowing", duration: 20 },
-        { name: "Stair Climbing", duration: 15 },
-        { name: "Elliptical", duration: 25 },
-      ]
-    },
-    {
-      title: "Flexibility",
-      icon: '🧘‍♀️',
-      exercises: [
-        { name: "Yoga", duration: 20 },
-        { name: "Stretching", duration: 15 },
-
-        { name: "Pilates", duration: 25 },
-        { name: "Dynamic Stretching", duration: 10 },
-        { name: "Foam Rolling", duration: 10 },
-        { name: "Ballet-Inspired Stretches", duration: 15 },
-        { name: "Tai Chi", duration: 20 },
-      ]
-    }
-  ];
-
   const [filteredActivities, setFilteredActivities] = useState(activities);
 
   useEffect(() => {
@@ -1020,7 +1020,7 @@ function App(): React.JSX.Element {
         );
       case 'CreatePlan':
         return (
-        <CreatePlanScreen navigateTo={navigateTo} activities={[]} />
+          <CreatePlanScreen navigateTo={navigateTo} activities={activities} />
         );
       case 'Home':
       default:
