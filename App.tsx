@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RunningScreen from './RunningScreen';
 import BikingScreen from './BikingScreen';
 import BarcodeScannerScreen from './BarcodeScannerScreen';
+import CreatePlanScreen from './CreatePlanScreen';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -916,6 +917,25 @@ function App(): React.JSX.Element {
     setFavorites(newFavorites);
   };
 
+  const [todayExercises, setTodayExercises] = useState<string[]>([]);
+
+  const loadTodayExercises = async () => {
+    try {
+      const storedPlan = await AsyncStorage.getItem('weeklyPlan');
+      if (storedPlan) {
+        const plan = JSON.parse(storedPlan);
+        const today = new Date().toLocaleString('en-us', {weekday: 'short'});
+        setTodayExercises(plan[today] || []);
+      }
+    } catch (error) {
+      console.error('Error loading today\'s exercises:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadTodayExercises();
+  }, []);
+
   useEffect(() => {
     const loadFavorites = async () => {
       try {
@@ -998,6 +1018,10 @@ function App(): React.JSX.Element {
         return (
           <BarcodeScannerScreen onBarCodeScanned={() => {}} onClose={() => navigateTo('Home')} />
         );
+      case 'CreatePlan':
+        return (
+        <CreatePlanScreen navigateTo={navigateTo} activities={[]} />
+        );
       case 'Home':
       default:
         return (
@@ -1053,6 +1077,31 @@ function App(): React.JSX.Element {
               </View>
             )}
 
+           {/* Add the Create Plan Button */}
+           <View style={styles.createPlanButtonContainer}>
+              <TouchableOpacity 
+                style={styles.createPlanButton}
+                onPress={() => navigateTo('CreatePlan')}
+              >
+                <Text style={styles.createPlanButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
+
+            {todayExercises.length > 0 && (
+              <View style={styles.todayPlanContainer}>
+                <Text style={styles.todayPlanTitle}>Today's Exercises</Text>
+                {todayExercises.map((exercise, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.exerciseItem}
+                    onPress={() => navigateTo('WorkoutTimer', { exercise, duration: 30 })}
+                  >
+                    <Text style={styles.exerciseText}>{exercise}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={require('./assets/running.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
@@ -1315,6 +1364,42 @@ const styles = StyleSheet.create({
     color: '#000000', // Changed to black color
     fontSize: 16,
     fontWeight: '700',
+  },
+  createPlanButtonContainer: {
+    zIndex: 10,  // Ensure the button is above other elements
+  },
+  createPlanButton: {
+    backgroundColor: '#ffffff', // Green color for the button
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Makes the button circular
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,  // Adds shadow to the button
+  },
+  createPlanButtonText: {
+    color: '#4CAF50',  // White color for the plus sign
+    fontSize: 40,   // Size of the plus sign
+    lineHeight: 45, // Ensures the plus sign is vertically centered
+    fontWeight: 'bold',
+  },
+  exerciseItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  exerciseName: {
+    fontSize: 16,
+  },
+  todayPlanContainer: {
+    marginTop: 20,
+  },
+  todayPlanTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
   },
   workoutImage: {
     width: '125%',
@@ -2045,7 +2130,6 @@ export default App;
 
 // Remove Total Screen
 // Add Report Screen and move the total Values to it
-// Add Bar Code Scanner
 // Add Calorie daily statistics
 // Add Day Plan system (Monday = curls, leg press/ Tuesday = dead lift, shoulder press etc...)
 // Button to create this day plan
