@@ -51,6 +51,10 @@ function CreatePlanScreen({
     });
   };
 
+  function alert(_arg0: string) {
+    throw new Error('Function not implemented.');
+}
+
   const handleSavePlan = async () => {
     try {
       await AsyncStorage.setItem('weeklyPlan', JSON.stringify(selectedExercises));
@@ -182,7 +186,3 @@ const styles = StyleSheet.create({
 });
 
 export default CreatePlanScreen;
-
-function alert(arg0: string) {
-    throw new Error('Function not implemented.');
-}
