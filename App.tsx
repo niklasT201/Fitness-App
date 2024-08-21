@@ -917,6 +917,12 @@ function App(): React.JSX.Element {
     setFavorites(newFavorites);
   };
 
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
+  };
+
   const [todayExercises, setTodayExercises] = useState<string[]>([]);
 
   const loadTodayExercises = async () => {
@@ -1043,15 +1049,43 @@ function App(): React.JSX.Element {
       default:
         return (
           <View style={{ ...backgroundStyle, padding: 16 }}>
+              <StatusBar
+                barStyle="light-content"
+                backgroundColor={isMenuVisible ? '#265728' : '#4CAF50'} // Match the overlay color
+              />
+            {isMenuVisible && (
+              <TouchableWithoutFeedback onPress={toggleMenu}>
+                <View style={styles.overlay} />
+              </TouchableWithoutFeedback>
+            )}
             <View style={styles.headerContainer}>
               <View style={styles.textContainer}>
                 <Text style={styles.greetingText}>Hello {userName}!</Text>
                 <Text style={styles.readyText}>Ready to workout?</Text>
               </View>
-              <TouchableWithoutFeedback onPress={() => navigateTo('Profile')}>
+              <TouchableOpacity onPress={toggleMenu}>
                 <Image source={require('./assets/profile.png')} style={styles.profilePicture} />
-              </TouchableWithoutFeedback>
+              </TouchableOpacity>
             </View>
+            
+             {/* Pop-up Menu */}
+              {isMenuVisible && (
+                <View style={styles.menuContainer}>
+                  <TouchableOpacity 
+                    style={styles.menuItem}
+                    onPress={() => { setIsMenuVisible(false); navigateTo('Profile'); }}
+                  >
+                    <Text style={styles.menuText}>Go to Profile</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.menuItem}
+                    onPress={() => { setIsMenuVisible(false); navigateTo('CreatePlan'); }}
+                  >
+                    <Text style={styles.menuText}>Create Plan</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
             <View style={styles.homeStat}>
               {completedWorkouts > 0 && (
                 <View style={styles.statBoxH}>
@@ -1095,6 +1129,7 @@ function App(): React.JSX.Element {
             )}
 
            {/* Add the Create Plan Button */}
+           {isMenuVisible && (
            <View style={styles.createPlanButtonContainer}>
               <TouchableOpacity 
                 style={styles.createPlanButton}
@@ -1103,6 +1138,7 @@ function App(): React.JSX.Element {
                 <Text style={styles.createPlanButtonText}>+</Text>
               </TouchableOpacity>
             </View>
+             )}
 
             {todayExercises.length > 0 && (
               <View style={styles.todayPlanContainer}>
@@ -1143,7 +1179,7 @@ function App(): React.JSX.Element {
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      {!isFirstTime && !showSplash && showFooter && <Footer navigateTo={navigateTo} />}
+      {!isFirstTime && !showSplash && showFooter && !isMenuVisible && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
   );
 }
@@ -1308,6 +1344,39 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     marginBottom: 19,
     marginRight: -15,
+  },
+  menuContainer: {
+    position: 'absolute',
+    top: 85,
+    right: 40,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 1000,
+    width: 250,
+  },
+  menuItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    borderRadius: 8,
+  },
+  menuText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999,
   },
   statBoxH: {
     alignItems: 'center',
