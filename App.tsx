@@ -924,17 +924,34 @@ function App(): React.JSX.Element {
       const storedPlan = await AsyncStorage.getItem('weeklyPlan');
       if (storedPlan) {
         const plan = JSON.parse(storedPlan);
-        const today = new Date().toLocaleString('en-us', {weekday: 'short'});
-        setTodayExercises(plan[today] || []);
+        const today = new Date().toLocaleString('en-us', { weekday: 'short' });
+  
+        // Check what's being retrieved
+        console.log("Today's key:", today); 
+        
+        console.log("Plan data:", plan); // logs the entire stored plan
+        
+        // Debugging step: check if the day's key is in the plan
+        if (plan[today]) {
+          setTodayExercises(plan[today]);
+        } else {
+          console.warn(`No exercises found for ${today}`);
+          setTodayExercises([]); // Ensure it's cleared if no exercises are found for today
+        }
+      } else {
+        console.warn('No weekly plan found in storage');
+        setTodayExercises([]);
       }
     } catch (error) {
       console.error('Error loading today\'s exercises:', error);
+      setTodayExercises([]); // Ensure to handle the state correctly if an error occurs
     }
   };
-
+  
   useEffect(() => {
     loadTodayExercises();
   }, []);
+  
 
   useEffect(() => {
     const loadFavorites = async () => {

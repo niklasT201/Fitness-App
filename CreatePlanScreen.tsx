@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Exercise {
@@ -51,18 +51,14 @@ function CreatePlanScreen({
     });
   };
 
-  function alert(_arg0: string) {
-    throw new Error('Function not implemented.');
-}
-
   const handleSavePlan = async () => {
     try {
       await AsyncStorage.setItem('weeklyPlan', JSON.stringify(selectedExercises));
-      alert('Plan saved successfully!');
+      Alert.alert('Success', 'Plan saved successfully!');
       navigateTo('Home');
     } catch (error) {
       console.error('Error saving plan:', error);
-      alert('Failed to save plan. Please try again.');
+      Alert.alert('Error', 'Failed to save plan. Please try again.');
     }
   };
 
