@@ -1109,10 +1109,13 @@ function App(): React.JSX.Element {
                 </View>
               )}
             </View>
+
+            {(favorites.length > 0 || todayExercises.length > 0) && (
             <View style={styles.chooseTrainingContainer}>
               <Text style={styles.chooseTrainingText}>Choose the Session</Text>
             </View>
-
+            )}
+            
             {favorites.length > 0 && (
               <View style={styles.favoritesContainer}>
                 <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
@@ -1129,7 +1132,7 @@ function App(): React.JSX.Element {
             )}
 
            {/* Add the Create Plan Button */}
-           {isMenuVisible && (
+           {(favorites.length == 0 && todayExercises.length == 0) && (
            <View style={styles.createPlanButtonContainer}>
               <TouchableOpacity 
                 style={styles.createPlanButton}
