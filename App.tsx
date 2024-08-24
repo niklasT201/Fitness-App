@@ -778,13 +778,19 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
       <View style={styles.card}>
         <Text style={styles.cardSectionTitle}>Settings</Text>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('GeneralSettings')}>
-          <Text style={styles.cardItemTitle}>General Settings</Text>
-          <Text style={styles.cardItemDescription}>Customize app preferences</Text>
+        <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('SettingsScreen')}>
+          <Image source={require('./assets/settings.png')} style={styles.icons} />
+          <View>
+            <Text style={styles.cardItemTitle}>General Settings</Text>
+            <Text style={styles.cardItemDescription}>Customize app preferences</Text>
+          </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('Feedback')}>
-          <Text style={styles.cardItemTitle}>Feedback</Text>
-          <Text style={styles.cardItemDescription}>Share your thoughts with us</Text>
+          <Image source={require('./assets/feedback.png')} style={styles.icons} />
+          <View>
+            <Text style={styles.cardItemTitle}>Feedback</Text>
+            <Text style={styles.cardItemDescription}>Share your thoughts with us</Text>
+          </View>
         </TouchableOpacity>
       </View>
       
@@ -793,12 +799,18 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         <Text style={styles.cardSectionTitle}>About</Text>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('AboutUs')}>
-          <Text style={styles.cardItemTitle}>About Us</Text>
-          <Text style={styles.cardItemDescription}>Learn more about our app and team</Text>
+          <Image source={require('./assets/about.png')} style={styles.icons} />
+          <View>
+            <Text style={styles.cardItemTitle}>About Us</Text>
+            <Text style={styles.cardItemDescription}>Learn more about our app and team</Text>
+          </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cardItem} onPress={() => navigateTo('PrivacyPolicy')}>
-          <Text style={styles.cardItemTitle}>Privacy Policy</Text>
-          <Text style={styles.cardItemDescription}>Read our privacy policy</Text>
+          <Image source={require('./assets/policy.png')} style={styles.icons} />
+          <View>
+            <Text style={styles.cardItemTitle}>Privacy Policy</Text>
+            <Text style={styles.cardItemDescription}>Read our privacy policy</Text>
+          </View>
         </TouchableOpacity>
       </View>
       <View style={styles.Pplaceholder}></View>
@@ -1537,7 +1549,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#f5f5f5',
   },
    inputContainer: {
     backgroundColor: '#ffffff',
@@ -1885,6 +1897,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
+  icons: {
+    height: 20,
+    width: 20,
+    marginRight: 20,  // Adds space between icon and text
+  },
   profileText: {
     fontSize: 25,
     color: '#ffffff',
@@ -1936,6 +1953,8 @@ const styles = StyleSheet.create({
   },
   cardItem: {
     marginBottom: 16,
+    flexDirection: 'row', // Align icon and text horizontally
+    alignItems: 'center', // Vertically align items in the center
   },
   cardItemTitle: {
     fontSize: 18,
@@ -2220,5 +2239,3 @@ export default App;
 // Remove Total Screen
 // Add Report Screen and move the total Values to it
 // Add Calorie daily statistics
-// Add Day Plan system (Monday = curls, leg press/ Tuesday = dead lift, shoulder press etc...)
-// Button to create this day plan
