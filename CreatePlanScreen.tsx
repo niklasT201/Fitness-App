@@ -23,6 +23,10 @@ function CreatePlanScreen({
   const [selectedExercises, setSelectedExercises] = useState<{ [key: string]: string[] }>({
     Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: []
   });
+  const [visibleDays, setVisibleDays] = useState<{ [key: string]: boolean }>({
+    Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false
+  });
+
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   useEffect(() => {
@@ -62,33 +66,46 @@ function CreatePlanScreen({
     }
   };
 
+  const toggleDayVisibility = (day: string) => {
+    setVisibleDays(prev => ({
+      ...prev,
+      [day]: !prev[day],
+    }));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Create Your Weekly Plan</Text>
       <ScrollView style={styles.scrollView}>
         {days.map((day) => (
           <View key={day} style={styles.daySection}>
-            <Text style={styles.dayTitle}>{day}</Text>
-            {activities.map((section: ActivitySection, index: number) => (
-              <View key={index} style={styles.activitySection}>
-                <Text style={styles.activityTitle}>{section.icon} {section.title}</Text>
-                {section.exercises.map((exercise: Exercise, i: number) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={[
-                      styles.exerciseItem,
-                      selectedExercises[day]?.includes(exercise.name) && styles.selectedExercise
-                    ]}
-                    onPress={() => handleExerciseToggle(day, exercise.name)}
-                  >
-                    <Text style={styles.exerciseName}>{exercise.name}</Text>
-                    {selectedExercises[day]?.includes(exercise.name) && (
-                      <Text style={styles.checkmark}>✓</Text>
-                    )}
-                  </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleDayVisibility(day)}>
+              <Text style={styles.dayTitle}>{day}</Text>
+            </TouchableOpacity>
+            {visibleDays[day] && (
+              <View>
+                {activities.map((section: ActivitySection, index: number) => (
+                  <View key={index} style={styles.activitySection}>
+                    <Text style={styles.activityTitle}>{section.icon} {section.title}</Text>
+                    {section.exercises.map((exercise: Exercise, i: number) => (
+                      <TouchableOpacity
+                        key={i}
+                        style={[
+                          styles.exerciseItem,
+                          selectedExercises[day]?.includes(exercise.name) && styles.selectedExercise
+                        ]}
+                        onPress={() => handleExerciseToggle(day, exercise.name)}
+                      >
+                        <Text style={styles.exerciseName}>{exercise.name}</Text>
+                        {selectedExercises[day]?.includes(exercise.name) && (
+                          <Text style={styles.checkmark}>✓</Text>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 ))}
               </View>
-            ))}
+            )}
           </View>
         ))}
       </ScrollView>
