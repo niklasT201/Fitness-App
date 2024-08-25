@@ -71,7 +71,7 @@ function CreatePlanScreen({
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Create Your Weekly Plan</Text>
-      <View style={styles.daysContainer}>
+      <ScrollView horizontal style={styles.daysContainer} showsHorizontalScrollIndicator={false}>
         {days.map((day) => (
           <TouchableOpacity 
             key={day} 
@@ -81,7 +81,7 @@ function CreatePlanScreen({
             <Text style={styles.dayText}>{day}</Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
       <ScrollView style={styles.scrollView}>
         {visibleDay && (
           <View style={styles.exerciseList}>
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
   },
   daysContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 10,
     paddingHorizontal: 15, // Adding padding to align with lists
   },
@@ -137,8 +136,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     backgroundColor: '#f0f0f0',
-    flex: 1, // Ensure equal width for each day
-    marginHorizontal: 5, // Spacing between day buttons
+    marginRight: 10, // Spacing between day buttons
+    minWidth: 80, // Minimum width to prevent squishing
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   activeDayButton: {
     backgroundColor: '#4CAF50',
@@ -146,6 +147,7 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 16,
     color: '#333',
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
