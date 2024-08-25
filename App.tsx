@@ -368,7 +368,6 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
 
   return (
     <View style={styles.wcontainer}>
-      <StatusBar barStyle="light-content" backgroundColor="#1E1E1E" />
       <Text style={styles.exerciseTitle}>{exercise}</Text>
       <View style={styles.timerCircle}>
         <View style={[styles.timerProgress, { width: `${progress * 100}%` }]} />
@@ -2023,6 +2022,10 @@ const styles = StyleSheet.create({
   },
 
 //Activities
+  exerciseText: {
+    fontSize: 16,
+    color: '#000',
+  },
   activityHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -2144,31 +2147,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E', // Dark background for a sleek look
+    backgroundColor: '#4CAF50', // Deeper light green
     padding: 20,
-  },
-  exerciseText: {
-    fontSize: 16,
-    color: '#000',
   },
   exerciseTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#FFF', // Gold color for the exercise title
+    color: '#FFF', // Darker green for the title
     marginBottom: 30,
     textAlign: 'center',
   },
   timerCircle: {
-    width: 300, // Slightly larger for better visual impact
+    width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: '#333', // Dark gray circle for contrast
+    backgroundColor: '#FFF', // Lighter green circle
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 10,
     overflow: 'hidden',
@@ -2178,60 +2177,61 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFD700', // Matching the gold theme
+    backgroundColor: '#66BB6A', // Green progress bar
     height: '100%',
   },
   wtimerText: {
     fontSize: 52,
     fontWeight: 'bold',
-    color: '#FFF', // White text for visibility
+    color: '#1B5E20', // Dark green text
     zIndex: 1,
   },
   wbuttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 50, // More spacing for balance
+    marginBottom: 50,
     marginTop: 50,
   },
   timerButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30, // More rounded buttons
-    marginHorizontal: 15, // Spacing between buttons
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  resetButton: {
-    backgroundColor: '#FF6347', // Tomato color for a soft warning look
+    backgroundColor: '#388E3C',
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 30,
     marginHorizontal: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  resetButton: {
+    backgroundColor: '#D32F2F', // Red for the reset button to indicate caution
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 30,
+    marginHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 10,
   },
   buttonText: {
-    color: '#FFF', // White text for buttons
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
   backButton: {
-    backgroundColor: '#333', // Dark background with gold text
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 20,
-    marginTop: 20,
+    marginTop: 10,
+    borderColor: '#FFF',
+    borderWidth: 2,
   },
   backButtonText: {
-    color: '#FFD700', // Gold color for the text
-    fontSize: 16,
+    color: '#FFF',
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -2246,5 +2246,4 @@ export default App;
 // Improve Create Plan Navbar
 // Improve Welcome Screen
 // Adding Images to Exercises
-// Improving Workout Timer Screen
 // Add Product APIs
