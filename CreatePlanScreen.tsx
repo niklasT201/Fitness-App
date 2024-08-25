@@ -23,9 +23,7 @@ function CreatePlanScreen({
   const [selectedExercises, setSelectedExercises] = useState<{ [key: string]: string[] }>({
     Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: []
   });
-  const [visibleDays, setVisibleDays] = useState<{ [key: string]: boolean }>({
-    Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false, Sun: false
-  });
+  const [visibleDay, setVisibleDay] = useState<string | null>(null);
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -67,47 +65,48 @@ function CreatePlanScreen({
   };
 
   const toggleDayVisibility = (day: string) => {
-    setVisibleDays(prev => ({
-      ...prev,
-      [day]: !prev[day],
-    }));
+    setVisibleDay(prev => (prev === day ? null : day));
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Create Your Weekly Plan</Text>
-      <ScrollView style={styles.scrollView}>
+      <View style={styles.daysContainer}>
         {days.map((day) => (
-          <View key={day} style={styles.daySection}>
-            <TouchableOpacity onPress={() => toggleDayVisibility(day)}>
-              <Text style={styles.dayTitle}>{day}</Text>
-            </TouchableOpacity>
-            {visibleDays[day] && (
-              <View>
-                {activities.map((section: ActivitySection, index: number) => (
-                  <View key={index} style={styles.activitySection}>
-                    <Text style={styles.activityTitle}>{section.icon} {section.title}</Text>
-                    {section.exercises.map((exercise: Exercise, i: number) => (
-                      <TouchableOpacity
-                        key={i}
-                        style={[
-                          styles.exerciseItem,
-                          selectedExercises[day]?.includes(exercise.name) && styles.selectedExercise
-                        ]}
-                        onPress={() => handleExerciseToggle(day, exercise.name)}
-                      >
-                        <Text style={styles.exerciseName}>{exercise.name}</Text>
-                        {selectedExercises[day]?.includes(exercise.name) && (
-                          <Text style={styles.checkmark}>✓</Text>
-                        )}
-                      </TouchableOpacity>
-                    ))}
-                  </View>
+          <TouchableOpacity 
+            key={day} 
+            style={[styles.dayButton, visibleDay === day && styles.activeDayButton]} 
+            onPress={() => toggleDayVisibility(day)}
+          >
+            <Text style={styles.dayText}>{day}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <ScrollView style={styles.scrollView}>
+        {visibleDay && (
+          <View style={styles.exerciseList}>
+            {activities.map((section: ActivitySection, index: number) => (
+              <View key={index} style={styles.activitySection}>
+                <Text style={styles.activityTitle}>{section.icon} {section.title}</Text>
+                {section.exercises.map((exercise: Exercise, i: number) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={[
+                      styles.exerciseItem,
+                      selectedExercises[visibleDay]?.includes(exercise.name) && styles.selectedExercise
+                    ]}
+                    onPress={() => handleExerciseToggle(visibleDay, exercise.name)}
+                  >
+                    <Text style={styles.exerciseName}>{exercise.name}</Text>
+                    {selectedExercises[visibleDay]?.includes(exercise.name) && (
+                      <Text style={styles.checkmark}>✓</Text>
+                    )}
+                  </TouchableOpacity>
                 ))}
               </View>
-            )}
+            ))}
           </View>
-        ))}
+        )}
       </ScrollView>
       <TouchableOpacity style={styles.saveButton} onPress={handleSavePlan}>
         <Text style={styles.saveButtonText}>Save Plan</Text>
@@ -128,14 +127,33 @@ const styles = StyleSheet.create({
     margin: 20,
     color: '#f5f5f5',
   },
+  daysContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    paddingHorizontal: 15, // Adding padding to align with lists
+  },
+  dayButton: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#f0f0f0',
+    flex: 1, // Ensure equal width for each day
+    marginHorizontal: 5, // Spacing between day buttons
+  },
+  activeDayButton: {
+    backgroundColor: '#4CAF50',
+  },
+  dayText: {
+    fontSize: 16,
+    color: '#333',
+  },
   scrollView: {
     flex: 1,
   },
-  daySection: {
-    marginBottom: 20,
+  exerciseList: {
+    padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 15,
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowOffset: {
@@ -145,12 +163,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
     elevation: 4,
-  },
-  dayTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#4CAF50',
   },
   activitySection: {
     marginBottom: 15,
