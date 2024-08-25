@@ -72,10 +72,14 @@ function CreatePlanScreen({
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Create Your Weekly Plan</Text>
       <ScrollView horizontal style={styles.daysContainer} showsHorizontalScrollIndicator={false}>
-        {days.map((day) => (
+        {days.map((day, index) => (
           <TouchableOpacity 
             key={day} 
-            style={[styles.dayButton, visibleDay === day && styles.activeDayButton]} 
+            style={[
+              styles.dayButton, 
+              visibleDay === day && styles.activeDayButton,
+              index === days.length - 1 && styles.lastDayButton // Special styling for Sunday
+            ]} 
             onPress={() => toggleDayVisibility(day)}
           >
             <Text style={styles.dayText}>{day}</Text>
@@ -144,6 +148,10 @@ const styles = StyleSheet.create({
   activeDayButton: {
     backgroundColor: '#4CAF50',
   },
+  lastDayButton: {
+    marginRight: 30, // No margin on the last day button (Sunday)
+    paddingRight: 15, // Add padding to the right side for spacing
+  },
   dayText: {
     fontSize: 16,
     color: '#333',
@@ -156,7 +164,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
