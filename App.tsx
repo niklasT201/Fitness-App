@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert, Animated  } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, Switch,useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert, Animated  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RunningScreen from './RunningScreen';
 import BikingScreen from './BikingScreen';
@@ -661,30 +661,91 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 
 
 function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
+
+  const toggleThemeSwitch = () => setIsDarkTheme(previousState => !previousState);
+
   return (
-    <ScrollView style={styles.screenContainer}>
+    <ScrollView style={styles.sscreenContainer}>
       <View style={styles.profileHeaderContainer}>
         <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
-        <Text style={styles.profileText}>Feedback</Text>
+        <Text style={styles.profileText}>Settings</Text>
       </View>
+
+      {/* App in Progress Section */}
       <View style={styles.settingsCard}>
         <Text style={styles.settingsHeader}>App in Progress</Text>
         <Text style={styles.settingsText}>
           This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
         </Text>
       </View>
+
+      {/* Theme Switch */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Feedback</Text>
-        <Text style={styles.settingsText}>
-          We value your feedback. Please send any suggestions or issues to:
-        </Text>
-        <Text style={styles.settingsEmail}>feedback@example.com</Text>
+        <Text style={styles.settingsHeader}>Theme</Text>
+        <View style={styles.switchContainer}>
+          <Text style={styles.settingsText}>Dark Purple & Pink</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#f5dd4b" }}
+            thumbColor={isDarkTheme ? "#f4f3f4" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleThemeSwitch}
+            value={isDarkTheme}
+          />
+        </View>
       </View>
+
+      {/* Notification Settings */}
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>Notifications</Text>
+        <View style={styles.switchContainer}>
+          <Text style={styles.settingsText}>Enable Notifications</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#4CAF50" }}
+            thumbColor="#f4f3f4"
+            ios_backgroundColor="#3e3e3e"
+          />
+        </View>
+        <View style={styles.switchContainer}>
+          <Text style={styles.settingsText}>Sound</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#4CAF50" }}
+            thumbColor="#f4f3f4"
+            ios_backgroundColor="#3e3e3e"
+          />
+        </View>
+      </View>
+
+      {/* Language Settings */}
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>Language</Text>
+        <TouchableOpacity style={styles.settingsButton}>
+          <Text style={styles.settingsButtonText}>Change Language</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* About Section */}
+      <View style={styles.settingsCard}>
+        <Text style={styles.settingsHeader}>About</Text>
+        <Text style={styles.settingsText}>
+          Version 1.0.0
+        </Text>
+        <TouchableOpacity style={styles.settingsButton}>
+          <Text style={styles.settingsButtonText}>Privacy Policy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.settingsButton}>
+          <Text style={styles.settingsButtonText}>Terms of Service</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Back Button */}
       <View style={styles.profileSettingsContainer}>
         <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
           <Text style={styles.settingsButtonText}>Back</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={styles.placeholder}></View>
     </ScrollView>
   );
 }
@@ -1892,21 +1953,6 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     marginTop: 25,
   },
-  settingsButton: {
-    borderColor: '#fff',
-    borderWidth: 1,
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  settingsButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
   icons: {
     height: 20,
     width: 20,
@@ -1989,19 +2035,23 @@ const styles = StyleSheet.create({
   },
 
   //Settings
+  sscreenContainer: {
+    flex: 1,
+    backgroundColor: '#4CAF50',
+  },
  settingsContainer: {
     padding: 16,
   },
   settingsCard: {
     width: '90%',
-    marginBottom: 3,
-    marginTop: 16,
+    marginBottom: 10,
+    marginTop: 10,
     padding: 16,
     borderWidth: 1,
     borderColor: '#cccccc',
     borderRadius: 8,
     backgroundColor: '#ffffff',
-    marginLeft: 15,
+    marginLeft: '5%',
   },
   settingsHeader: {
     fontSize: 20,
@@ -2009,10 +2059,30 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     marginBottom: 8,
   },
+  settingsButton: {
+    borderColor: '#fff',
+    borderWidth: 1,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  settingsButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
   settingsText: {
     fontSize: 16,
     fontWeight: '400',
     color: '#333333',
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   settingsEmail: {
