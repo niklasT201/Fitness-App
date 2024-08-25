@@ -367,7 +367,8 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
   const progress = 1 - timeLeft / (duration * 60);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wcontainer}>
+      <StatusBar barStyle="light-content" backgroundColor="#1E1E1E" />
       <Text style={styles.exerciseTitle}>{exercise}</Text>
       <View style={styles.timerCircle}>
         <View style={[styles.timerProgress, { width: `${progress * 100}%` }]} />
@@ -1661,6 +1662,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  container: {
+    marginTop: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+    margin: 0,
+    borderRadius: 16,
+  },
 
 //Total Values
   TscreenContainer: {
@@ -2129,57 +2140,37 @@ const styles = StyleSheet.create({
   },
 
 //Exercises
-  exerciseCard: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
+  wcontainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1E1E1E', // Dark background for a sleek look
+    padding: 20,
   },
   exerciseText: {
     fontSize: 16,
     color: '#000',
   },
-  timerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  WorktimerText: {
-    marginTop: 50,
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  timerButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-   container: {
-    marginTop: 20,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-    margin: 0,
-    borderRadius: 16,
-  },
   exerciseTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 40,
+    color: '#FFF', // Gold color for the exercise title
+    marginBottom: 30,
     textAlign: 'center',
   },
   timerCircle: {
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: '#e0e0e0',
+    width: 300, // Slightly larger for better visual impact
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: '#333', // Dark gray circle for contrast
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
     overflow: 'hidden',
   },
   timerProgress: {
@@ -2187,50 +2178,62 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FFD700', // Matching the gold theme
     height: '100%',
   },
   wtimerText: {
-    fontSize: 48,
+    fontSize: 52,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFF', // White text for visibility
     zIndex: 1,
   },
   wbuttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 30,
-    marginTop: 70,
+    marginBottom: 50, // More spacing for balance
+    marginTop: 50,
   },
   timerButton: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginHorizontal: 10,
+    paddingHorizontal: 40,
+    borderRadius: 30, // More rounded buttons
+    marginHorizontal: 15, // Spacing between buttons
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
   },
   resetButton: {
-    backgroundColor: '#F44336',
+    backgroundColor: '#FF6347', // Tomato color for a soft warning look
     paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginHorizontal: 10,
+    paddingHorizontal: 40,
+    borderRadius: 30,
+    marginHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFF', // White text for buttons
     fontSize: 18,
     fontWeight: 'bold',
   },
   backButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: '#333', // Dark background with gold text
+    paddingVertical: 12,
+    paddingHorizontal: 30,
     borderRadius: 20,
+    marginTop: 20,
   },
   backButtonText: {
-    color: '#fff',
+    color: '#FFD700', // Gold color for the text
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
@@ -2239,3 +2242,9 @@ export default App;
 // Remove Total Screen
 // Add Report Screen and move the total Values to it
 // Add Calorie daily statistics
+// Adding Pink Mode to Settingsscreen
+// Improve Create Plan Navbar
+// Improve Welcome Screen
+// Adding Images to Exercises
+// Improving Workout Timer Screen
+// Add Product APIs
