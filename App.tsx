@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, Switch,useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert, Animated  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemeProvider } from './ThemeContext';
 import RunningScreen from './RunningScreen';
 import BikingScreen from './BikingScreen';
 import BarcodeScannerScreen from './BarcodeScannerScreen';
@@ -686,7 +687,7 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
         <View style={styles.switchContainer}>
           <Text style={styles.settingsText}>Dark Purple & Pink</Text>
           <Switch
-            trackColor={{ false: "#767577", true: "#f5dd4b" }}
+            trackColor={{ false: "#767577", true: "#4CAF50" }}
             thumbColor={isDarkTheme ? "#f4f3f4" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleThemeSwitch}
@@ -1154,7 +1155,7 @@ function App(): React.JSX.Element {
                     style={styles.menuItem}
                     onPress={() => { setIsMenuVisible(false); navigateTo('CreatePlan'); }}
                   >
-                    <Text style={styles.menuText}>Create Plan</Text>
+                    <Text style={styles.menuText}>Edite Plan</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -2044,7 +2045,7 @@ const styles = StyleSheet.create({
   },
   settingsCard: {
     width: '90%',
-    marginBottom: 10,
+    marginBottom: 5,
     marginTop: 10,
     padding: 16,
     borderWidth: 1,
@@ -2312,7 +2313,7 @@ export default App;
 // Remove Total Screen
 // Add Report Screen and move the total Values to it
 // Add Calorie daily statistics
-// Adding Pink Mode to Settingsscreen
+// Adding Pink Mode to Settingsscreen #ff71bd #603ca6
 // Improve Create Plan Navbar
 // Improve Welcome Screen
 // Adding Images to Exercises
