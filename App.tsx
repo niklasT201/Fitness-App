@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, Button, Switch,useColorScheme, View, TouchableWithoutFeedback, TouchableOpacity, Image, Dimensions, BackHandler, Alert, Animated  } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ThemeProvider } from './ThemeContext';
+import { useTheme } from './ThemeContext'; 
 import RunningScreen from './RunningScreen';
 import BikingScreen from './BikingScreen';
 import BarcodeScannerScreen from './BarcodeScannerScreen';
@@ -37,32 +37,6 @@ type SectionProps = {
   title: string;
   children: React.ReactNode;
 };
-
-function Section({ children, title }: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? '#000000' : '#000000', // Changed to black
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? '#333333' : '#333333', // Changed to darker grey
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   return (
@@ -662,12 +636,10 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 
 
 function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
-  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
-
-  const toggleThemeSwitch = () => setIsDarkTheme(previousState => !previousState);
+  const { isDarkTheme, toggleTheme } = useTheme();
 
   return (
-    <ScrollView style={styles.sscreenContainer}>
+    <ScrollView style={[styles.sscreenContainer, { backgroundColor: isDarkTheme ? '#603ca6' : '#4CAF50' }]}>
       <View style={styles.profileHeaderContainer}>
         <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
         <Text style={styles.profileText}>Settings</Text>
@@ -690,7 +662,7 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
             trackColor={{ false: "#767577", true: "#4CAF50" }}
             thumbColor={isDarkTheme ? "#f4f3f4" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleThemeSwitch}
+            onValueChange={toggleTheme}
             value={isDarkTheme}
           />
         </View>
@@ -881,7 +853,7 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
 }
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const { isDarkTheme } = useTheme(); // Access the theme context
   const [currentScreen, setCurrentScreen] = useState('Home');
   const [currentScreenParams, setCurrentScreenParams] = useState<any>(null);
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -940,8 +912,17 @@ function App(): React.JSX.Element {
   }, [currentScreen]);
 
   const backgroundStyle = {
-    backgroundColor: currentScreen === 'BarcodeScanner' ? 'black' : '#4CAF50', // Use black background for BarcodeScanner
+    backgroundColor: currentScreen === 'BarcodeScanner' 
+      ? 'black' 
+      : (isDarkTheme ? '#603ca6' : '#4CAF50'), // Adjust for dark or light theme, except for BarcodeScanner
     flex: 1,
+  };
+
+  const statusBarStyle = {
+    barStyle: backgroundStyle.backgroundColor === 'black' || isDarkTheme 
+      ? 'light-content' 
+      : 'dark-content',
+    backgroundColor: backgroundStyle.backgroundColor,
   };
 
   const navigateTo = (screen: string, params?: any) => {
@@ -1250,7 +1231,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle={isDarkTheme  ? 'light-content' : 'dark-content'}
         backgroundColor={currentScreen === 'BarcodeScanner' ? 'black' : '#4CAF50'}
       />
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
@@ -1284,7 +1265,6 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flex: 1,
-    backgroundColor: '#4CAF50',
   },
 
 //Footer
@@ -1595,7 +1575,6 @@ const styles = StyleSheet.create({
 //Calories
   CscreenContainer: {
     flex: 1,
-    backgroundColor: '#4CAF50',
     padding: 16,
   },
   wheaderContainer: {
@@ -2126,7 +2105,6 @@ const styles = StyleSheet.create({
   },
   AscreenContainer: {
     flex: 1,
-    backgroundColor: '#4CAF50',
     marginTop: 20,
   },
   AsectionContainer: {
