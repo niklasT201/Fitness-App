@@ -162,6 +162,8 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
   
   const [filteredActivities, setFilteredActivities] = useState(activities);
 
+  const { isDarkTheme } = useTheme(); // Use the theme context
+
   useEffect(() => {
     if (searchQuery === '') {
       setFilteredActivities(activities);
@@ -242,6 +244,7 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
       }
     };
   
+    const favoriteIconColor = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   return (
     <View style={styles.AscreenContainer}>
@@ -299,7 +302,7 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
                   <Text style={styles.exerciseText}>{exercise.name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={styles.favoriteButton}
+                  style={[styles.favoriteButton, {backgroundColor: favoriteIconColor}]}
                   onPress={() => toggleFavorite(exercise.name)}
                 >
                   <Text style={styles.favoriteIcon}>
@@ -535,6 +538,9 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
     );
   }
 
+  const { isDarkTheme } = useTheme(); // Use the theme context
+  const buttonColor = isDarkTheme ? '#603ca6' : '#4CAF50';
+  const transButton = isDarkTheme ? 'rgba(96, 60, 166, 0.1)' : 'rgba(76, 175, 80, 0.1)';
   return (
     <ScrollView style={styles.CscreenContainer}>
         <View style={styles.wheaderContainer}>
@@ -581,15 +587,15 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
         onChangeText={setProtein}
         keyboardType="numeric"
       />
-      <TouchableOpacity style={styles.scanButton} onPress={() => setShowScanner(true)}>
-        <Text style={styles.scanButtonText}>Scan Barcode</Text>
+      <TouchableOpacity style={[styles.scanButton, {backgroundColor: transButton}]} onPress={() => setShowScanner(true)}>
+        <Text style={[styles.scanButtonText,{color: buttonColor}]}>Scan Barcode</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.calorieSaveButton} onPress={addValues}>
+      <TouchableOpacity style={[styles.calorieSaveButton, {backgroundColor: buttonColor}]} onPress={addValues}>
         <Text style={styles.calorieSaveButtonText}>Add</Text>
       </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.viewTotalButton} onPress={() => navigateTo('TotalValues')}>
-        <Text style={styles.viewTotalButtonText}>View Total Values</Text>
+        <Text style={[styles.viewTotalButtonText, {color: buttonColor}]}>View Total Values</Text>
       </TouchableOpacity>
       <View style={styles.placeholder}></View>
     </ScrollView>
@@ -649,9 +655,10 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
 
 function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   const { isDarkTheme, toggleTheme } = useTheme();
+  const colorSwitch = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   return (
-    <ScrollView style={[styles.sscreenContainer, { backgroundColor: isDarkTheme ? '#603ca6' : '#4CAF50' }]}>
+    <ScrollView style={[styles.sscreenContainer, { backgroundColor: colorSwitch }]}>
       <View style={styles.profileHeaderContainer}>
         <Image source={require('./assets/profile.png')} style={styles.profileHeaderImage} />
         <Text style={styles.profileText}>Settings</Text>
@@ -659,7 +666,8 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
       {/* App in Progress Section */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>App in Progress</Text>
+        <Text style={[styles.settingsHeader, {color: colorSwitch}]}>App in Progress</Text>
+        <View style={styles.separator} />
         <Text style={styles.settingsText}>
           This app is still in progress. Design changes, functions, and features may be updated or changed. We appreciate your understanding.
         </Text>
@@ -667,11 +675,12 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
       {/* Theme Switch */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Theme</Text>
+        <Text style={[styles.settingsHeader, {color: colorSwitch}]}>Theme</Text>
+        <View style={styles.separator} />
         <View style={styles.switchContainer}>
           <Text style={styles.settingsText}>Dark Purple & Pink</Text>
           <Switch
-            trackColor={{ false: "#767577", true: "#4CAF50" }}
+            trackColor={{ false: "#767577", true: colorSwitch }}
             thumbColor={isDarkTheme ? "#f4f3f4" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleTheme}
@@ -682,7 +691,8 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
       {/* Notification Settings */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Notifications</Text>
+        <Text style={[styles.settingsHeader, {color: colorSwitch}]}>Notifications</Text>
+        <View style={styles.separator} />
         <View style={styles.switchContainer}>
           <Text style={styles.settingsText}>Enable Notifications</Text>
           <Switch
@@ -703,29 +713,31 @@ function SettingsScreen({ navigateTo }: { navigateTo: (screen: string) => void }
 
       {/* Language Settings */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>Language</Text>
-        <TouchableOpacity style={styles.settingsButton}>
+        <Text style={[styles.settingsHeader, {color: colorSwitch}]}>Language</Text>
+        <View style={styles.separator} />
+        <TouchableOpacity style={[styles.settingsButton, {backgroundColor: colorSwitch}]}>
           <Text style={styles.settingsButtonText}>Change Language</Text>
         </TouchableOpacity>
       </View>
 
       {/* About Section */}
       <View style={styles.settingsCard}>
-        <Text style={styles.settingsHeader}>About</Text>
+        <Text style={[styles.settingsHeader, {color: colorSwitch}]}>About</Text>
+        <View style={styles.separator} />
         <Text style={styles.settingsText}>
           Version 1.0.0
         </Text>
-        <TouchableOpacity style={styles.settingsButton}>
+        <TouchableOpacity style={[styles.settingsButton, {backgroundColor: colorSwitch}]}>
           <Text style={styles.settingsButtonText}>Privacy Policy</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsButton}>
+        <TouchableOpacity style={[styles.settingsButton, {backgroundColor: colorSwitch}]}>
           <Text style={styles.settingsButtonText}>Terms of Service</Text>
         </TouchableOpacity>
       </View>
 
       {/* Back Button */}
       <View style={styles.profileSettingsContainer}>
-        <TouchableOpacity style={styles.settingsButton} onPress={() => navigateTo('Profile')}>
+        <TouchableOpacity style={[styles.settingsButton, {backgroundColor: colorSwitch}]} onPress={() => navigateTo('Profile')}>
           <Text style={styles.settingsButtonText}>Back</Text>
         </TouchableOpacity>
       </View>
@@ -741,6 +753,8 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
   const [joinMonth, setJoinMonth] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
+  const { isDarkTheme } = useTheme(); 
+  const buttonColor = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   useEffect(() => {
     const loadUserName = async () => {
@@ -790,11 +804,11 @@ function ProfileScreen({ onNameChange, navigateTo, completedWorkouts, completedH
         )}
         <Text style={styles.profileDetail}>Joined: {joinMonth} 2024</Text>
         {isEditing ? (
-          <TouchableOpacity style={styles.editProfileButton} onPress={handleSave}>
+          <TouchableOpacity style={[styles.editProfileButton, {backgroundColor: buttonColor}]} onPress={handleSave}>
             <Text style={styles.editProfileButtonText}>Save</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.editProfileButton} onPress={() => setIsEditing(true)}>
+          <TouchableOpacity style={[styles.editProfileButton, {backgroundColor: buttonColor}]} onPress={() => setIsEditing(true)}>
             <Text style={styles.editProfileButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         )}
@@ -878,6 +892,7 @@ function App(): React.JSX.Element {
   const [completeCalories, setCompletedCalories] = useState(0);
   const [showFooter, setShowFooter] = useState(true);
   const backgroundColor = isDarkTheme ? '#603ca6' : '#4CAF50';
+  const shadowedColor = isDarkTheme ? '#301e52' : '#265728';
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -1112,7 +1127,7 @@ function App(): React.JSX.Element {
           <View style={{ ...backgroundStyle, padding: 16, backgroundColor }}>
             <StatusBar
               barStyle={isDarkTheme ? 'light-content' : 'dark-content'}
-              backgroundColor={isMenuVisible ? '#265728' : backgroundColor} // Match the overlay color
+              backgroundColor={isMenuVisible ? shadowedColor : backgroundColor} // Match the overlay color
             />
             {isMenuVisible && (
               <TouchableWithoutFeedback onPress={toggleMenu}>
@@ -1199,7 +1214,7 @@ function App(): React.JSX.Element {
                 style={styles.createPlanButton}
                 onPress={() => navigateTo('CreatePlan')}
               >
-                <Text style={styles.createPlanButtonText}>+</Text>
+                <Text style={[styles.createPlanButtonText, {color: backgroundColor}]}>+</Text>
               </TouchableOpacity>
             </View>
              )}
@@ -1492,7 +1507,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5', // Light gray background for non-current days
   },
   currentDayCard: {
-    backgroundColor: '#4CAF50', // Your theme green for the current day
+    backgroundColor: 'transparent', // Your theme green for the current day
   },
   dayText: {
     fontSize: 14,
