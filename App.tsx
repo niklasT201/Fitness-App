@@ -63,10 +63,18 @@ function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React
   );
 }
 
+
 function LoadingScreen(): React.JSX.Element {
+  const { isDarkTheme } = useTheme();
+
+  const backgroundColor = isDarkTheme ? '#603ca6' : '#4CAF50';
+
   return (
-    <ScrollView style={styles.screenContainer}>
-       <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
+    <ScrollView style={[styles.screenContainer, { backgroundColor }]}>
+      <StatusBar
+        barStyle={isDarkTheme ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundColor}
+      />
       <View style={styles.loading}>
         <Image source={require('./assets/logo.png')} style={styles.loadingImage} />
       </View>
@@ -865,6 +873,7 @@ function App(): React.JSX.Element {
   const [completedWorkouts, setCompletedWorkouts] = useState(0);
   const [completeCalories, setCompletedCalories] = useState(0);
   const [showFooter, setShowFooter] = useState(true);
+  const backgroundColor = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -916,13 +925,6 @@ function App(): React.JSX.Element {
       ? 'black' 
       : (isDarkTheme ? '#603ca6' : '#4CAF50'), // Adjust for dark or light theme, except for BarcodeScanner
     flex: 1,
-  };
-
-  const statusBarStyle = {
-    barStyle: backgroundStyle.backgroundColor === 'black' || isDarkTheme 
-      ? 'light-content' 
-      : 'dark-content',
-    backgroundColor: backgroundStyle.backgroundColor,
   };
 
   const navigateTo = (screen: string, params?: any) => {
@@ -1103,11 +1105,11 @@ function App(): React.JSX.Element {
       case 'Home':
       default:
         return (
-          <View style={{ ...backgroundStyle, padding: 16 }}>
-              <StatusBar
-                barStyle="light-content"
-                backgroundColor={isMenuVisible ? '#265728' : '#4CAF50'} // Match the overlay color
-              />
+          <View style={{ ...backgroundStyle, padding: 16, backgroundColor }}>
+            <StatusBar
+              barStyle={isDarkTheme ? 'light-content' : 'dark-content'}
+              backgroundColor={isMenuVisible ? '#265728' : backgroundColor} // Match the overlay color
+            />
             {isMenuVisible && (
               <TouchableWithoutFeedback onPress={toggleMenu}>
                 <View style={styles.overlay} />
@@ -1231,15 +1233,26 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
-        barStyle={isDarkTheme  ? 'light-content' : 'dark-content'}
-        backgroundColor={currentScreen === 'BarcodeScanner' ? 'black' : '#4CAF50'}
+        barStyle={
+          currentScreen === 'BarcodeScanner' || isDarkTheme 
+          ? 'light-content' 
+          : 'dark-content'
+        }
+        backgroundColor={
+          currentScreen === 'BarcodeScanner' 
+          ? 'black' 
+          : isDarkTheme 
+          ? '#603ca6' 
+          : '#4CAF50'
+        }
       />
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
       {!isFirstTime && !showSplash && showFooter && !isMenuVisible && <Footer navigateTo={navigateTo} />}
     </SafeAreaView>
-  );
+);
+
 }
 
 const styles = StyleSheet.create({
@@ -1308,8 +1321,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Center the image horizontally
   },
   loadingImage: {
-    backgroundColor: '#4CAF50',
-    width: '100%',
+    width: '70%',
     height: '100%',
     aspectRatio: 1, // Maintain aspect ratio
     resizeMode: 'contain', // Contain within the container
@@ -2196,7 +2208,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#4CAF50', // Deeper light green
     padding: 20,
   },
   exerciseTitle: {
