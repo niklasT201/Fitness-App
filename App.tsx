@@ -39,9 +39,13 @@ type SectionProps = {
 };
 
 function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+  const { isDarkTheme } = useTheme();  // Use the theme context
+
+  const footerBackgroundColor = isDarkTheme ? '#4f308c' : '#388E3C';  // Adjust the background color based on the theme
+
   return (
     <View style={styles.footerContainer}>
-      <View style={styles.footer}>
+       <View style={[styles.footer, { backgroundColor: footerBackgroundColor }]}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Home')}>
           <Image source={require('./assets/homeW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Home</Text>
