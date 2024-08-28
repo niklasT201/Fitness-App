@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Image, StatusBar 
 import { RNCamera } from 'react-native-camera';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Platform } from 'react-native';
+import { useTheme } from './ThemeContext'; 
 
 const { width, height } = Dimensions.get('window');
 const overlayWidth = width * 0.8;
@@ -14,6 +15,8 @@ interface BarcodeScannerScreenProps {
 
 const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeScanned, onClose }) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const { isDarkTheme } = useTheme();  // Use the theme context
+  const colorSwitch =  isDarkTheme ? '#603ca6' : '#4CAF50';
 
   useEffect(() => {
     (async () => {
@@ -49,7 +52,7 @@ const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeSc
           <View style={styles.unfocusedContainer}></View>
           <View style={styles.focusedContainer}>
             <View style={styles.rectangleContainer}>
-              <View style={styles.rectangle}></View>
+              <View style={[styles.rectangle, {borderColor: colorSwitch}]}></View>
             </View>
             <Text style={styles.scanText}>Align the barcode within the frame</Text>
           </View>

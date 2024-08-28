@@ -323,6 +323,10 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
   const { exercise, duration } = route.params;
   const [timeLeft, setTimeLeft] = useState(duration * 60); // Convert minutes to seconds
   const [isActive, setIsActive] = useState(false);
+  const { isDarkTheme } = useTheme();  
+  const colorSwitch = isDarkTheme ? '#4f308c' : '#388E3C';
+  const textSwitch = isDarkTheme ? '#401b5e' : '#1B5E20';
+  const buttonSwitch = isDarkTheme ? '#6e45bf' : '#4acf60';
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -361,13 +365,13 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
       <Text style={styles.exerciseTitle}>{exercise}</Text>
       <View style={styles.timerCircle}>
         <View style={[styles.timerProgress, { width: `${progress * 100}%` }]} />
-        <Text style={styles.wtimerText}>{formatTime(timeLeft)}</Text>
+        <Text style={[styles.wtimerText, {color: textSwitch}]}>{formatTime(timeLeft)}</Text>
       </View>
       <View style={styles.wbuttonContainer}>
-        <TouchableOpacity style={styles.timerButton} onPress={toggleTimer}>
+        <TouchableOpacity style={[styles.timerButton, {backgroundColor: colorSwitch}]} onPress={toggleTimer}>
           <Text style={styles.buttonText}>{isActive ? 'Pause' : 'Start'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.resetButton} onPress={resetTimer}>
+        <TouchableOpacity style={[styles.resetButton, {backgroundColor: buttonSwitch}]} onPress={resetTimer}>
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
       </View>
@@ -604,6 +608,9 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
 
 function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; fat: number; sugar: number; protein: number } }): React.JSX.Element {
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
+  const { isDarkTheme } = useTheme(); // Use the theme context
+  const colorSwitch = isDarkTheme ? '#603ca6' : '#4CAF50';
+  const cardSwitch = isDarkTheme ? '#f2e8f5' : '#e8f5e9';
 
   useEffect(() => {
     const loadFoodEntries = async () => {
@@ -619,20 +626,20 @@ function TotalValuesScreen({ dailyValues }: { dailyValues: { calories: number; f
       <Text style={styles.TheaderText}>Total Values</Text>
     </View>
     <View style={styles.totalValuesContainer}>
-      <View style={styles.valueContainer}>
-        <Text style={styles.valueLabel}>Consumed Calories:</Text>
+      <View style={[styles.valueContainer, {backgroundColor: cardSwitch}]}>
+        <Text style={[styles.valueLabel, {color: colorSwitch}]}>Consumed Calories:</Text>
         <Text style={styles.totalValuesText}>{dailyValues.calories} kcal</Text>
       </View>
-      <View style={styles.valueContainer}>
-        <Text style={styles.valueLabel}>Consumed Protein:</Text>
+      <View style={[styles.valueContainer, {backgroundColor: cardSwitch}]}>
+        <Text style={[styles.valueLabel, {color: colorSwitch}]}>Consumed Protein:</Text>
         <Text style={styles.totalValuesText}>{dailyValues.protein} g</Text>
       </View>
-      <View style={styles.valueContainer}>
-        <Text style={styles.valueLabel}>Consumed Sugar:</Text>
+      <View style={[styles.valueContainer, {backgroundColor: cardSwitch}]}>
+        <Text style={[styles.valueLabel, {color: colorSwitch}]}>Consumed Sugar:</Text>
         <Text style={styles.totalValuesText}>{dailyValues.sugar} g</Text>
       </View>
-      <View style={styles.valueContainer}>
-        <Text style={styles.valueLabel}>Consumed Fat:</Text>
+      <View style={[styles.valueContainer, {backgroundColor: cardSwitch}]}>
+        <Text style={[styles.valueLabel, {color: colorSwitch}]}>Consumed Fat:</Text>
         <Text style={styles.totalValuesText}>{dailyValues.fat} g</Text>
       </View>
     </View>
@@ -893,6 +900,7 @@ function App(): React.JSX.Element {
   const [showFooter, setShowFooter] = useState(true);
   const backgroundColor = isDarkTheme ? '#603ca6' : '#4CAF50';
   const shadowedColor = isDarkTheme ? '#301e52' : '#265728';
+  const workoutColor = isDarkTheme ? '#8a69bf' : '#6ABF69';
 
   useEffect(() => {
     const checkUserName = async () => {
@@ -1198,7 +1206,7 @@ function App(): React.JSX.Element {
                 {favorites.map((favorite, index) => (
                   <TouchableOpacity 
                     key={index} 
-                    style={styles.favoriteItem}
+                    style={[styles.favoriteItem, {backgroundColor: workoutColor}]}
                     onPress={() => navigateTo('WorkoutTimer', { exercise: favorite, duration: 30 })}
                   >
                     <Text style={styles.favoriteText}>{favorite}</Text>
@@ -1756,7 +1764,7 @@ const styles = StyleSheet.create({
   TheaderText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#ffffff',
   },
   totalValuesContainer: {
     backgroundColor: '#ffffff',
@@ -2268,8 +2276,8 @@ const styles = StyleSheet.create({
   wbuttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 50,
-    marginTop: 50,
+    marginBottom: 40,
+    marginTop: 40,
   },
   timerButton: {
     backgroundColor: '#388E3C',
@@ -2304,7 +2312,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 20,
-    marginTop: 10,
+    marginTop: 5,
     borderColor: '#FFF',
     borderWidth: 2,
   },

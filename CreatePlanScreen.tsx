@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from './ThemeContext'; 
 
 interface Exercise {
   name: string;
@@ -24,6 +25,9 @@ function CreatePlanScreen({
     Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: []
   });
   const [visibleDay, setVisibleDay] = useState<string | null>(null);
+  const { isDarkTheme } = useTheme();  // Use the theme context
+  const colorSwitch =  isDarkTheme ? '#603ca6' : '#4CAF50';
+  const transButton = isDarkTheme ? '#ece0f2' : '#e0f2e0';
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -97,13 +101,13 @@ function CreatePlanScreen({
                     key={i}
                     style={[
                       styles.exerciseItem,
-                      selectedExercises[visibleDay]?.includes(exercise.name) && styles.selectedExercise
+                      selectedExercises[visibleDay]?.includes(exercise.name) && [styles.selectedExercise, {backgroundColor: transButton}]
                     ]}
                     onPress={() => handleExerciseToggle(visibleDay, exercise.name)}
                   >
                     <Text style={styles.exerciseName}>{exercise.name}</Text>
                     {selectedExercises[visibleDay]?.includes(exercise.name) && (
-                      <Text style={styles.checkmark}>✓</Text>
+                      <Text style={[styles.checkmark, {color: colorSwitch}]}>✓</Text>
                     )}
                   </TouchableOpacity>
                 ))}
@@ -113,7 +117,7 @@ function CreatePlanScreen({
         )}
       </ScrollView>
       <TouchableOpacity style={styles.saveButton} onPress={handleSavePlan}>
-        <Text style={styles.saveButtonText}>Save Plan</Text>
+        <Text style={[styles.saveButtonText, {color: colorSwitch}]}>Save Plan</Text>
       </TouchableOpacity>
       <View style={styles.placeholder}></View>
     </SafeAreaView>
@@ -146,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeDayButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: 'transparent',
   },
   lastDayButton: {
     marginRight: 30, // No margin on the last day button (Sunday)
