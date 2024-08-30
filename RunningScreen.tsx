@@ -78,7 +78,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
 
   return (
     <View style={styles.runningContainer}>
-      <Image source={require('./assets/runtimer.png')} style={styles.runningImage} />
+      <Image source={require('./assets/cards/runtimer.png')} style={styles.runningImage} />
       <View style={styles.progressBarContainer}>
         <Animated.View
           style={[
@@ -215,7 +215,6 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
       },
       startButton: {
         marginTop: 20,
-        backgroundColor: '#4CAF50',
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,

@@ -80,7 +80,7 @@ function LoadingScreen(): React.JSX.Element {
         backgroundColor={backgroundColor}
       />
       <View style={styles.loading}>
-        <Image source={require('./assets/logo.png')} style={styles.loadingImage} />
+        <Image source={require('./assets/App-Logo/logo.png')} style={styles.loadingImage} />
       </View>
     </ScrollView>
   );
@@ -415,7 +415,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
         </TouchableOpacity>
       </View>
       <View style={styles.welcomeImageContainer}>
-        <Image source={require('./assets/start.png')} style={styles.welcomeImage} />
+        <Image source={require('./assets//people/start.png')} style={styles.welcomeImage} />
       </View>
     </View>
   );
@@ -1243,13 +1243,13 @@ function App(): React.JSX.Element {
             )}
           
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
-              <Image source={require('./assets/running.png')} style={styles.workoutImage} />
+              <Image source={require('./assets/cards/running.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
-              <Image source={require('./assets/lifting.png')} style={styles.workoutImage} />
+              <Image source={require('./assets/cards/lifting.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
-              <Image source={require('./assets/biking.png')} style={styles.workoutImage} />
+              <Image source={require('./assets/cards/biking.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <View style={styles.placeholder}></View>
           </View>
