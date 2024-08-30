@@ -406,6 +406,8 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
   const [month, setMonth] = useState('');
+  const { isDarkTheme } = useTheme(); // Use the theme context
+  const colorSwitch = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   useEffect(() => {
     const currentMonth = new Date().getMonth();
@@ -421,8 +423,8 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
   };
 
   return (
-    <View style={[styles.welcomeContainer, { height: screenHeight }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
+    <View style={[styles.welcomeContainer, { height: screenHeight, backgroundColor: colorSwitch }]}>
+      <StatusBar barStyle="light-content" backgroundColor={colorSwitch} />
       <View style={styles.welcomeContent}>
         <Text style={styles.welcomeText}>Welcome to Stay Strong Fitness!</Text>
         <TextInput
@@ -432,7 +434,7 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
           onChangeText={setName}
         />
         <TouchableOpacity style={styles.saveButton} onPress={handlePress}>
-          <Text style={styles.saveButtonText}>Save</Text>
+          <Text style={[styles.saveButtonText, {color: colorSwitch}]}>Save</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.welcomeImageContainer}>
