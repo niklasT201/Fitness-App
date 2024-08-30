@@ -38,6 +38,27 @@ type SectionProps = {
   children: React.ReactNode;
 };
 
+type Exercise = {
+  name: string;
+  duration: number;
+  image?: any; // Use the appropriate type for your image imports
+};
+type Activity = {
+  title: string;
+  icon: string;
+  exercises: Exercise[];
+};
+
+type Favorite = {
+  name: string;
+  image?: any;
+};
+
+type ActivityScreenProps = {
+  navigateTo: (screen: string, params?: any) => void;
+  updateFavorites: (newFavorites: Favorite[]) => void;
+};
+
 function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
   const { isDarkTheme } = useTheme();  // Use the theme context
 
@@ -86,7 +107,7 @@ function LoadingScreen(): React.JSX.Element {
   );
 }
 
-const activities = [
+const activities: Activity[] = [
   {
     title: "Upper Body",
     icon: '🏋️‍♂️',
@@ -99,7 +120,7 @@ const activities = [
       { name: "Push-Ups", duration: 10 },
       { name: "Lat Pull-Downs", duration: 15 },
       { name: "Rows", duration: 15 },
-      { name: "Shoulder Press", duration: 12 },
+      { name: "Shoulder Press", duration: 12, image: require('./assets/cards/shoulder press.png') },
       { name: "Lateral Raises", duration: 10 },
       { name: "Bicep Curls", duration: 10 },
       { name: "Hammer Curls", duration: 10 },
@@ -155,12 +176,13 @@ const activities = [
   }
 ];
 
-function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen: string, params?: any) => void, updateFavorites: (newFavorites: string[]) => void }): React.JSX.Element {
+function ActivityScreen({ navigateTo, updateFavorites }: ActivityScreenProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const [filteredActivities, setFilteredActivities] = useState(activities);
+  const [filteredActivities, setFilteredActivities] = useState<Activity[]>(activities);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
 
   const { isDarkTheme } = useTheme(); // Use the theme context
 
@@ -188,11 +210,11 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
     }
   };
 
-  const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const currentDate = new Date();
-  const currentDay: number = currentDate.getDay();
-  // Adjusting for Sunday being 0 in getDay()
-  const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
+    const days: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const currentDate = new Date();
+    const currentDay: number = currentDate.getDay();
+    // Adjusting for Sunday being 0 in getDay()
+    const adjustedCurrentDay: number = currentDay === 0 ? 6 : currentDay - 1;
 
     // Calculate the day numbers for the week
     const dayNumbers: number[] = Array.from({ length: 7 }, (_, i) => {
@@ -209,7 +231,6 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
     };
     const formattedDate = currentDate.toLocaleDateString('en-US', options);
 
-    const [favorites, setFavorites] = useState<string[]>([]);
 
     useEffect(() => {
       // Load favorites when component mounts
@@ -227,12 +248,12 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
       }
     };
   
-    const toggleFavorite = async (exerciseName: string) => {
-      let newFavorites;
-      if (favorites.includes(exerciseName)) {
-        newFavorites = favorites.filter(name => name !== exerciseName);
+    const toggleFavorite = async (exerciseName: string, image?: any) => {
+      let newFavorites: Favorite[];
+      if (favorites.some(fav => fav.name === exerciseName)) {
+        newFavorites = favorites.filter(fav => fav.name !== exerciseName);
       } else {
-        newFavorites = [...favorites, exerciseName];
+        newFavorites = [...favorites, { name: exerciseName, image }];
       }
       setFavorites(newFavorites);
       try {
@@ -303,10 +324,10 @@ function ActivityScreen({ navigateTo, updateFavorites  }: { navigateTo: (screen:
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.favoriteButton, {backgroundColor: favoriteIconColor}]}
-                  onPress={() => toggleFavorite(exercise.name)}
+                  onPress={() => toggleFavorite(exercise.name, exercise.image)}
                 >
                   <Text style={styles.favoriteIcon}>
-                    {favorites.includes(exercise.name) ? '★' : '☆'}
+                    {favorites.some(fav => fav.name === exercise.name) ? '★' : '☆'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -995,9 +1016,9 @@ function App(): React.JSX.Element {
     setCompletedCalories(prev => prev + 300); // Add the calories burned in biking
   };
 
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
 
-  const updateFavorites = (newFavorites: string[]) => {
+  const updateFavorites = (newFavorites: Favorite[]) => {
     setFavorites(newFavorites);
   };
 
@@ -1079,9 +1100,21 @@ function App(): React.JSX.Element {
     return <LoadingScreen />;
   }
 
+  const images = {
+    running: isDarkTheme ? require('./assets/cards/running-purple.png') : require('./assets/cards/running.png'),
+    biking: isDarkTheme ? require('./assets/cards/biking-purple.png') : require('./assets/cards/biking.png'),
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'Workouts':
+        return (
+          <ActivityScreen 
+            navigateTo={navigateTo} 
+            updateFavorites={updateFavorites}
+          />
+        );
+      case 'Lifting':
         return (
           <ActivityScreen 
             navigateTo={navigateTo} 
@@ -1201,19 +1234,23 @@ function App(): React.JSX.Element {
             )}
             
             {favorites.length > 0 && (
-              <View style={styles.favoritesContainer}>
-                <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
-                {favorites.map((favorite, index) => (
-                  <TouchableOpacity 
-                    key={index} 
-                    style={[styles.favoriteItem, {backgroundColor: workoutColor}]}
-                    onPress={() => navigateTo('WorkoutTimer', { exercise: favorite, duration: 30 })}
-                  >
-                    <Text style={styles.favoriteText}>{favorite}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
+            <View style={styles.favoritesContainer}>
+              <Text style={styles.favoritesTitle}>Favorite Workouts</Text>
+              {favorites.map((favorite, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.favoriteItem, {backgroundColor: workoutColor}]}
+                  onPress={() => navigateTo('WorkoutTimer', { exercise: favorite.name, duration: 30 })}
+                >
+                  {favorite.image ? (
+                    <Image source={favorite.image} style={styles.workoutImage} />
+                  ) : (
+                    <Text style={styles.favoriteText}>{favorite.name}</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
            {/* Add the Create Plan Button */}
            {(favorites.length == 0 && todayExercises.length == 0) && (
@@ -1243,13 +1280,13 @@ function App(): React.JSX.Element {
             )}
           
             <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
-              <Image source={require('./assets/cards/running.png')} style={styles.workoutImage} />
+              <Image source={images.running} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
               <Image source={require('./assets/cards/lifting.png')} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
-              <Image source={require('./assets/cards/biking.png')} style={styles.workoutImage} />
+              <Image source={images.biking} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <View style={styles.placeholder}></View>
           </View>
@@ -1609,6 +1646,12 @@ const styles = StyleSheet.create({
   favoriteText: {
     color: '#fff',
     fontSize: 16,
+  },
+  favoriteImage: {
+    width: '100%',
+    height: 100,
+    resizeMode: 'cover',
+    borderRadius: 8,
   },
 
 //Calories

@@ -96,7 +96,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
             styles.progressBar,
             {
               width: `${(calorieProgress / totalCalories) * 100}%`,
-              backgroundColor: 'red',
+              backgroundColor: '#ebabe4',
             },
           ]}
         />
@@ -160,7 +160,7 @@ function RunningScreen({ onRunningComplete }: { onRunningComplete: () => void })
     },
     progressBar: {
       height: '100%',
-      backgroundColor: '#44c94a',
+      backgroundColor: '#f5a4cf',
     },
     progressText: {
       marginLeft: 10,
