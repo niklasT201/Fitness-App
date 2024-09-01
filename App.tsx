@@ -51,6 +51,7 @@ type Activity = {
 
 type Favorite = {
   name: string;
+  duration: number;
   image?: any;
 };
 
@@ -120,9 +121,12 @@ const activities: Activity[] = [
       { name: "Push-Ups", duration: 10 },
       { name: "Lat Pull-Downs", duration: 15 },
       { name: "Rows", duration: 15 },
-      { name: "Shoulder Press", duration: 12, image: require('./assets/cards/shoulder press.png') },
+      { name: "Dumbbell Rowing", duration: 15, image: require('./assets/cards/dumbbell-rowing.png') }, // New exercise
+      { name: "Shoulder Press", duration: 12, image: require('./assets/cards/shoulder-press.png') },
+      { name: "Overhead Press", duration: 12, image: require('./assets/cards/overhead-press.png') }, // New exercise
       { name: "Lateral Raises", duration: 10 },
-      { name: "Bicep Curls", duration: 10 },
+      { name: "Bicep Curls", duration: 10, image: require('./assets/cards/Bizeps-Curls.png') },
+      { name: "Bicep Curls with Barbell", duration: 12, image: require('./assets/cards/Bicep-curls-barbell.png') }, // New exercise
       { name: "Hammer Curls", duration: 10 },
       { name: "Tricep Extensions", duration: 10 },
       { name: "Dips", duration: 8 },
@@ -137,6 +141,7 @@ const activities: Activity[] = [
 
       { name: "Squats", duration: 15 },
       { name: "Lunges", duration: 12 },
+      { name: "Lunges Dumbbell", duration: 12, image: require('./assets/cards/lunges-dumbbell.png') }, 
       { name: "Leg Press", duration: 15 },
       { name: "Deadlifts", duration: 15 },
       { name: "Calf Raises", duration: 10 },
@@ -248,17 +253,16 @@ function ActivityScreen({ navigateTo, updateFavorites }: ActivityScreenProps) {
       }
     };
   
-    const toggleFavorite = async (exerciseName: string, image?: any) => {
+    const toggleFavorite = async (exerciseName: string, duration: number, image?: any) => {
       let newFavorites: Favorite[];
       if (favorites.some(fav => fav.name === exerciseName)) {
         newFavorites = favorites.filter(fav => fav.name !== exerciseName);
       } else {
-        newFavorites = [...favorites, { name: exerciseName, image }];
+        newFavorites = [...favorites, { name: exerciseName, duration, image }];
       }
       setFavorites(newFavorites);
       try {
         await AsyncStorage.setItem('favoriteExercises', JSON.stringify(newFavorites));
-        // Use updateFavorites directly, not props.updateFavorites
         updateFavorites(newFavorites);
       } catch (error) {
         console.error('Error saving favorites:', error);
@@ -324,7 +328,7 @@ function ActivityScreen({ navigateTo, updateFavorites }: ActivityScreenProps) {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.favoriteButton, {backgroundColor: favoriteIconColor}]}
-                  onPress={() => toggleFavorite(exercise.name, exercise.image)}
+                  onPress={() => toggleFavorite(exercise.name, exercise.duration, exercise.image)}
                 >
                   <Text style={styles.favoriteIcon}>
                     {favorites.some(fav => fav.name === exercise.name) ? '★' : '☆'}
@@ -1241,13 +1245,15 @@ function App(): React.JSX.Element {
               {favorites.map((favorite, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={[styles.favoriteItem, {backgroundColor: workoutColor}]}
-                  onPress={() => navigateTo('WorkoutTimer', { exercise: favorite.name, duration: 30 })}
+                  style={styles.favoriteItem}
+                  onPress={() => navigateTo('WorkoutTimer', { exercise: favorite.name, duration: favorite.duration })}
                 >
                   {favorite.image ? (
-                    <Image source={favorite.image} style={styles.workoutImage} />
+                    <Image source={favorite.image} style={styles.favoriteImage} />
                   ) : (
-                    <Text style={styles.favoriteText}>{favorite.name}</Text>
+                    <View style={[styles.favoriteTextContainer, {backgroundColor: workoutColor}]}>
+                      <Text style={styles.favoriteText}>{favorite.name}</Text>
+                    </View>
                   )}
                 </TouchableOpacity>
               ))}
@@ -1281,7 +1287,7 @@ function App(): React.JSX.Element {
               </View>
             )}
           
-            <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
+            {/* <TouchableWithoutFeedback onPress={() => navigateTo('Running')}>
               <Image source={images.running} style={styles.workoutImage} />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Lifting')}>
@@ -1289,7 +1295,7 @@ function App(): React.JSX.Element {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={() => navigateTo('Biking')}>
               <Image source={images.biking} style={styles.workoutImage} />
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
             <View style={styles.placeholder}></View>
           </View>
         );
@@ -1587,11 +1593,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   createPlanButtonContainer: {
-    zIndex: 10,  // Ensure the button is above other elements
-  },
+    position: 'absolute',
+    bottom: 5,    // Position the button 20 units from the bottom
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex:10,
+},
   createPlanButton: {
     backgroundColor: '#ffffff', // Green color for the button
-    width: 60,
+    width: 250,
     height: 60,
     borderRadius: 30, // Makes the button circular
     justifyContent: 'center',
@@ -1640,20 +1652,26 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   favoriteItem: {
-    backgroundColor: '#6ABF69',
+    marginBottom: 5,
+  },
+  favoriteImage: {
+    width: '125%',
+    height: 200,
+    marginBottom: -20,
+    marginTop: -15,
+    borderRadius: 15,
+    alignSelf: 'center',
+    transform: [{ scale: 0.8 }], // Scale down to zoom out
+  },
+  favoriteTextContainer: {
     padding: 10,
     borderRadius: 5,
-    marginBottom: 5,
+    marginTop: 5,
   },
   favoriteText: {
     color: '#fff',
     fontSize: 16,
-  },
-  favoriteImage: {
-    width: '100%',
-    height: 100,
-    resizeMode: 'cover',
-    borderRadius: 8,
+    /* textAlign: 'center', */ 
   },
 
 //Calories
