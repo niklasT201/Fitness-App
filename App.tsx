@@ -410,7 +410,7 @@ function WorkoutTimerScreen({ route, navigateTo }: { route: { params: { exercise
 function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Element {
   const [name, setName] = useState('');
   const [month, setMonth] = useState('');
-  const { isDarkTheme } = useTheme(); // Use the theme context
+  const { isDarkTheme, toggleTheme } = useTheme();
   const colorSwitch = isDarkTheme ? '#603ca6' : '#4CAF50';
 
   useEffect(() => {
@@ -437,6 +437,13 @@ function WelcomeScreen({ onFinish }: { onFinish: () => void }): React.JSX.Elemen
           value={name}
           onChangeText={setName}
         />
+        <Switch
+            trackColor={{ false: "#767577", true: '#a13ca6' }}
+            thumbColor={isDarkTheme ? "#f4f3f4" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleTheme}
+            value={isDarkTheme}
+          />
         <TouchableOpacity style={styles.saveButton} onPress={handlePress}>
           <Text style={[styles.saveButtonText, {color: colorSwitch}]}>Save</Text>
         </TouchableOpacity>
