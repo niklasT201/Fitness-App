@@ -560,17 +560,15 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
     setProtein('');
   };
 
-  const handleBarCodeScanned = (data: string) => {
-    // Here you would typically make an API call to get product information
-    // For this example, we'll just set a placeholder product name
-    setProductName(`Scanned Product (${data})`);
+  const handleBarCodeScanned = (productName: string) => {
+    setProductName(productName);
     setShowScanner(false);
   };
 
   if (showScanner) {
     return (
       <BarcodeScannerScreen
-        onBarCodeScanned={handleBarCodeScanned}
+        onBarCodeScanned={handleBarCodeScanned} // Pass the handler to the scanner screen
         onClose={() => setShowScanner(false)}
       />
     );
@@ -2403,4 +2401,3 @@ export default App;
 // Improve Create Plan Navbar
 // Improve Welcome Screen
 // Adding Images to Exercises
-// Add Product APIs
