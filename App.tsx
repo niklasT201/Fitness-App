@@ -60,29 +60,34 @@ type ActivityScreenProps = {
   updateFavorites: (newFavorites: Favorite[]) => void;
 };
 
-function Footer({ navigateTo }: { navigateTo: (screen: string) => void }): React.JSX.Element {
+function Footer({ navigateTo, currentScreen }: { navigateTo: (screen: string) => void, currentScreen: string }): React.JSX.Element {
   const { isDarkTheme } = useTheme();  // Use the theme context
 
   const footerBackgroundColor = isDarkTheme ? '#4f308c' : '#388E3C';  // Adjust the background color based on the theme
 
+  // Check if the current screen is "Calories"
+  const isCaloriesScreen = currentScreen === 'Calories';
+  const isProfileScreen = currentScreen === 'Profile';
+  const isHomeScreen = currentScreen === 'Home';
+
   return (
     <View style={styles.footerContainer}>
-       <View style={[styles.footer, { backgroundColor: footerBackgroundColor }]}>
+      <View style={[styles.footer, { backgroundColor: footerBackgroundColor }]}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Home')}>
-          <Image source={require('./assets/homeW.png')} style={styles.footerIcon} />
-          <Text style={styles.footerButtonText}>Home</Text>
+          <Image source={require('./assets/homeW.png')} style={[styles.footerIcon, isHomeScreen && {tintColor: '#ff71bd'}]} />
+          <Text style={[styles.footerButtonText, isHomeScreen && {color: '#ff71bd'}]}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Workouts')}>
           <Image source={require('./assets/workoutW.png')} style={styles.footerIcon} />
           <Text style={styles.footerButtonText}>Workouts</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Calories')}>
-          <Image source={require('./assets/fireW.png')} style={styles.footerIcon} />
-          <Text style={styles.footerButtonText}>Report</Text>
+          <Image source={require('./assets/fireW.png')} style={[styles.footerIcon, isCaloriesScreen && { tintColor: '#ff71bd' }]} />
+          <Text style={[styles.footerButtonText, isCaloriesScreen && { color: '#ff71bd' }]}>Report</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
-          <Image source={require('./assets/userW.png')} style={styles.footerIcon} />
-          <Text style={styles.footerButtonText}>Profile</Text>
+          <Image source={require('./assets/userW.png')} style={[styles.footerIcon, isProfileScreen && { tintColor: '#ff71bd' }]} />
+          <Text style={[styles.footerButtonText, isProfileScreen && { color: '#ff71bd' }]}>Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -1336,7 +1341,7 @@ function App(): React.JSX.Element {
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
         {isFirstTime ? <WelcomeScreen onFinish={handleWelcomeFinish} /> : renderScreen()}
       </ScrollView>
-      {!isFirstTime && !showSplash && showFooter && !isMenuVisible && <Footer navigateTo={navigateTo} />}
+      {!isFirstTime && !showSplash && showFooter && !isMenuVisible && <Footer navigateTo={navigateTo} currentScreen={currentScreen}/>}
     </SafeAreaView>
 );
 
