@@ -66,28 +66,29 @@ function Footer({ navigateTo, currentScreen }: { navigateTo: (screen: string) =>
   const footerBackgroundColor = isDarkTheme ? '#4f308c' : '#388E3C';  // Adjust the background color based on the theme
 
   // Check if the current screen is "Calories"
-  const isCaloriesScreen = currentScreen === 'Calories';
-  const isProfileScreen = currentScreen === 'Profile';
-  const isHomeScreen = currentScreen === 'Home';
+  const isProfileScreen = currentScreen === 'Profile' || currentScreen === 'SettingsScreen';
+  const isCaloriesScreen = currentScreen === 'Calories' || currentScreen === 'TotalValues';
+  const isHomeScreen = currentScreen === 'Home' || currentScreen === 'CreatePlan';
+  const isWorkoutScreen = currentScreen === 'Workouts' || currentScreen === 'WorkoutTimer' || currentScreen === 'Biking' || currentScreen === 'Running' || currentScreen === 'Lifting';
 
   return (
     <View style={styles.footerContainer}>
       <View style={[styles.footer, { backgroundColor: footerBackgroundColor }]}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Home')}>
-          <Image source={require('./assets/homeW.png')} style={[styles.footerIcon, isHomeScreen && {tintColor: '#ff71bd'}]} />
-          <Text style={[styles.footerButtonText, isHomeScreen && {color: '#ff71bd'}]}>Home</Text>
+          <Image source={require('./assets/homeW.png')} style={[styles.footerIcon, isHomeScreen && {tintColor: '#cc5c98'}]} />
+          <Text style={[styles.footerButtonText, isHomeScreen && {color: '#cc5c98'}]}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Workouts')}>
-          <Image source={require('./assets/workoutW.png')} style={styles.footerIcon} />
-          <Text style={styles.footerButtonText}>Workouts</Text>
+          <Image source={require('./assets/workoutW.png')} style={[styles.footerIcon, isWorkoutScreen && {tintColor: '#cc5c98'}]} />
+          <Text style={[styles.footerButtonText, isWorkoutScreen && {color: '#cc5c98'}]}>Workouts</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Calories')}>
-          <Image source={require('./assets/fireW.png')} style={[styles.footerIcon, isCaloriesScreen && { tintColor: '#ff71bd' }]} />
-          <Text style={[styles.footerButtonText, isCaloriesScreen && { color: '#ff71bd' }]}>Report</Text>
+          <Image source={require('./assets/fireW.png')} style={[styles.footerIcon, isCaloriesScreen && { tintColor: '#cc5c98' }]} />
+          <Text style={[styles.footerButtonText, isCaloriesScreen && { color: '#cc5c98' }]}>Report</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigateTo('Profile')}>
-          <Image source={require('./assets/userW.png')} style={[styles.footerIcon, isProfileScreen && { tintColor: '#ff71bd' }]} />
-          <Text style={[styles.footerButtonText, isProfileScreen && { color: '#ff71bd' }]}>Profile</Text>
+          <Image source={require('./assets/userW.png')} style={[styles.footerIcon, isProfileScreen && { tintColor: '#cc5c98' }]} />
+          <Text style={[styles.footerButtonText, isProfileScreen && { color: '#cc5c98' }]}>Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
