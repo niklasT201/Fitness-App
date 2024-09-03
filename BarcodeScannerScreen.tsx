@@ -9,13 +9,18 @@ const { width, height } = Dimensions.get('window');
 const overlayWidth = width * 0.8;
 
 interface BarcodeScannerScreenProps {
-  onBarCodeScanned: (productName: string) => void; // Update the type to return a product name
+  onBarCodeScanned: (productInfo: {
+    productName: string;
+    calories: string;
+    fat: string;
+    sugar: string;
+    protein: string;
+  }) => void;
   onClose: () => void;
 }
 
 const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeScanned, onClose }) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [scannedProduct, setScannedProduct] = useState<string | null>(null);
   const { isDarkTheme } = useTheme();  // Use the theme context
   const colorSwitch = isDarkTheme ? '#603ca6' : '#4CAF50';
 
@@ -37,11 +42,19 @@ const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeSc
       
       if (product.status === 1) {
         const productName = product.product.product_name || 'Unknown Product';
-        setScannedProduct(productName); // Set the product name from the API response
-        onBarCodeScanned(productName); // Pass the product name back to CaloriesScreen
+        const nutriments = product.product.nutriments || {};
+        
+        const productInfo = {
+          productName,
+          calories: nutriments['energy-kcal_100g'] ? nutriments['energy-kcal_100g'].toString() : '',
+          fat: nutriments['fat_100g'] ? nutriments['fat_100g'].toString() : '',
+          sugar: nutriments['sugars_100g'] ? nutriments['sugars_100g'].toString() : '',
+          protein: nutriments['proteins_100g'] ? nutriments['proteins_100g'].toString() : '',
+        };
+
+        onBarCodeScanned(productInfo); // Pass the product info back to CaloriesScreen
       } else {
         Alert.alert('Product not found', 'The scanned product is not available in the database.');
-        setScannedProduct('Product not found');
       }
     } catch (error) {
       Alert.alert('Error', 'Unable to fetch product information. Please try again.');
@@ -57,13 +70,12 @@ const BarcodeScannerScreen: React.FC<BarcodeScannerScreenProps> = ({ onBarCodeSc
 
   return (
     <View style={styles.container}>
-      {/* Change the StatusBar color to fit the barcode scanner theme */}
       <StatusBar barStyle="light-content" backgroundColor="black" />
 
       <RNCamera
         style={styles.camera}
         type={RNCamera.Constants.Type.back}
-        onBarCodeRead={scannedProduct ? undefined : handleBarCodeScanned}
+        onBarCodeRead={handleBarCodeScanned}
         captureAudio={false}
       >
         <View style={styles.overlay}>
@@ -92,7 +104,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-    height: height, // Make the camera fill the screen
+    height: height,
   },
   closeButton: {
     position: 'absolute',
@@ -153,31 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
     backgroundColor: '#000',
-  },
-  productInfoContainer: {
-    position: 'absolute',
-    bottom: 100,
-    left: 20,
-    right: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    padding: 15,
-    borderRadius: 10,
-  },
-  productInfoText: {
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  scanAgainButton: {
-    borderWidth: 2,
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  scanAgainButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
 });
 

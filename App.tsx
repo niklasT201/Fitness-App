@@ -517,18 +517,18 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
   }, [showScanner, setShowFooter]);
 
   const addValues = async () => {
-    const cal = parseInt(calories, 10) || 0;
-    const fatVal = parseInt(fat, 10) || 0;
-    const sugarVal = parseInt(sugar, 10) || 0;
-    const proteinVal = parseInt(protein, 10) || 0;
+    const cal = parseFloat(calories) || 0;
+    const fatVal = parseFloat(fat) || 0;
+    const sugarVal = parseFloat(sugar) || 0;
+    const proteinVal = parseFloat(protein) || 0;
 
      // Check if all fields have valid values
-        if (!productName || isNaN(cal) || isNaN(fatVal) || isNaN(sugarVal) || isNaN(proteinVal) || 
-        cal <= 0 || fatVal <= 0 || sugarVal <= 0 || proteinVal <= 0) {
+     if (!productName || isNaN(cal) || isNaN(fatVal) || isNaN(sugarVal) || isNaN(proteinVal) ||
+      cal <= 0 || fatVal <= 0 || sugarVal <= 0 || proteinVal <= 0) {
       // Show an alert or some feedback to the user
       Alert.alert('Invalid Input', 'Please fill in all fields with valid values greater than 0.');
       return;
-}
+    }
 
     const newEntry: FoodEntry = {
       name: productName,
@@ -558,10 +558,20 @@ function CaloriesScreen({ navigateTo, dailyValues, setDailyValues, setShowFooter
     setFat('');
     setSugar('');
     setProtein('');
-  };
+};
 
-  const handleBarCodeScanned = (productName: string) => {
-    setProductName(productName);
+  const handleBarCodeScanned = (productInfo: {
+    productName: string;
+    calories: string;
+    fat: string;
+    sugar: string;
+    protein: string;
+  }) => {
+    setProductName(productInfo.productName);
+    setCalories(productInfo.calories);
+    setFat(productInfo.fat);
+    setSugar(productInfo.sugar);
+    setProtein(productInfo.protein);
     setShowScanner(false);
   };
 
