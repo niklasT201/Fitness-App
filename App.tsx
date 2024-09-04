@@ -42,6 +42,7 @@ type Exercise = {
   name: string;
   duration: number;
   image?: any; // Use the appropriate type for your image imports
+  darkImage?: any;
 };
 type Activity = {
   title: string;
@@ -53,6 +54,7 @@ type Favorite = {
   name: string;
   duration: number;
   image?: any;
+  darkImage?: any;
 };
 
 type ActivityScreenProps = {
@@ -128,12 +130,12 @@ const activities: Activity[] = [
       { name: "Push-Ups", duration: 10 },
       { name: "Lat Pull-Downs", duration: 15 },
       { name: "Rows", duration: 15 },
-      { name: "Dumbbell Rowing", duration: 15, image: require('./assets/cards/dumbbell-rowing.png') }, // New exercise
-      { name: "Shoulder Press", duration: 12, image: require('./assets/cards/shoulder-press.png') },
-      { name: "Overhead Press", duration: 12, image: require('./assets/cards/overhead-press.png') }, // New exercise
+      { name: "Dumbbell Rowing", duration: 15, image: require('./assets/cards/dumbbell-rowing.png'), darkImage: require('./assets/cards/dumbbell-rowing-purple.png') },
+      { name: "Shoulder Press", duration: 12, image: require('./assets/cards/shoulder-press.png'),  darkImage: require('./assets/cards/shoulder-press-purple.png') },
+      { name: "Overhead Press", duration: 12, image: require('./assets/cards/overhead-press.png'),  darkImage: require('./assets/cards/overhead-press-purple.png') },
       { name: "Lateral Raises", duration: 10 },
-      { name: "Bicep Curls", duration: 10, image: require('./assets/cards/Bizeps-Curls.png') },
-      { name: "Bicep Curls with Barbell", duration: 12, image: require('./assets/cards/Bicep-curls-barbell.png') }, // New exercise
+      { name: "Bicep Curls", duration: 10, image: require('./assets/cards/Bizeps-Curls.png'), darkImage: require('./assets/cards/Bizeps-Curls-purple.png') },
+      { name: "Bicep Curls with Barbell", duration: 12, image: require('./assets/cards/Bicep-curls-barbell.png'), darkImage: require('./assets/cards/Bicep-curls-barbell-purple.png') },
       { name: "Hammer Curls", duration: 10 },
       { name: "Tricep Extensions", duration: 10 },
       { name: "Dips", duration: 8 },
@@ -148,7 +150,7 @@ const activities: Activity[] = [
 
       { name: "Squats", duration: 15 },
       { name: "Lunges", duration: 12 },
-      { name: "Lunges Dumbbell", duration: 12, image: require('./assets/cards/lunges-dumbbell.png') }, 
+      { name: "Lunges Dumbbell", duration: 12, image: require('./assets/cards/lunges-dumbbell.png'),  darkImage: require('./assets/cards/lunges-dumbbell-purple.png')}, 
       { name: "Leg Press", duration: 15 },
       { name: "Deadlifts", duration: 15 },
       { name: "Calf Raises", duration: 10 },
@@ -260,12 +262,12 @@ function ActivityScreen({ navigateTo, updateFavorites }: ActivityScreenProps) {
       }
     };
   
-    const toggleFavorite = async (exerciseName: string, duration: number, image?: any) => {
+    const toggleFavorite = async (exerciseName: string, duration: number, image?: any, darkImage?: any) => {
       let newFavorites: Favorite[];
       if (favorites.some(fav => fav.name === exerciseName)) {
         newFavorites = favorites.filter(fav => fav.name !== exerciseName);
       } else {
-        newFavorites = [...favorites, { name: exerciseName, duration, image }];
+        newFavorites = [...favorites, { name: exerciseName, duration, image, darkImage }];
       }
       setFavorites(newFavorites);
       try {
@@ -335,7 +337,7 @@ function ActivityScreen({ navigateTo, updateFavorites }: ActivityScreenProps) {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={[styles.favoriteButton, {backgroundColor: favoriteIconColor}]}
-                  onPress={() => toggleFavorite(exercise.name, exercise.duration, exercise.image)}
+                  onPress={() => toggleFavorite(exercise.name, exercise.duration, exercise.image, exercise.darkImage)}
                 >
                   <Text style={styles.favoriteIcon}>
                     {favorites.some(fav => fav.name === exercise.name) ? '★' : '☆'}
@@ -1128,10 +1130,10 @@ function App(): React.JSX.Element {
     return <LoadingScreen />;
   }
 
-  const images = {
+  /* const images = {
     running: isDarkTheme ? require('./assets/cards/running-purple.png') : require('./assets/cards/running.png'),
     biking: isDarkTheme ? require('./assets/cards/biking-purple.png') : require('./assets/cards/biking.png'),
-  };
+  }; */
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -1271,7 +1273,10 @@ function App(): React.JSX.Element {
                   onPress={() => navigateTo('WorkoutTimer', { exercise: favorite.name, duration: favorite.duration })}
                 >
                   {favorite.image ? (
-                    <Image source={favorite.image} style={styles.favoriteImage} />
+                    <Image 
+                      source={isDarkTheme ? favorite.darkImage : favorite.image} 
+                      style={styles.favoriteImage} 
+                    />
                   ) : (
                     <View style={[styles.favoriteTextContainer, {backgroundColor: workoutColor}]}>
                       <Text style={styles.favoriteText}>{favorite.name}</Text>
